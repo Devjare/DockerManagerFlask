@@ -1,0 +1,12 @@
+flask-restplus==0.9.2
+Flask-SQLAlchemy==2.1
+requests
+flask
+flask_json
+json2html
+simplejson
+gevent
+flask-restful
+sqlalchemy
+Flask-SQLAlchemy
+docker

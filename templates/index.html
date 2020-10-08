@@ -1,0 +1,154 @@
+{% extends 'base.html' %} {% block title %} Panel de control {% endblock %} {% block head %} {{ super() }}
+{% endblock %} {% block content %}
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Panel de control</h1>
+        <!--<div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group mr-2">
+                            <button class="btn btn-sm btn-outline-secondary">Share</button>
+                            <button class="btn btn-sm btn-outline-secondary">Export</button>
+                        </div>
+                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle">
+                            <span data-feather="calendar"></span>
+                            This week
+                        </button>
+                    </div>-->
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <h3>Bienvenido, ¿qué vas a hacer hoy?</h3>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-6">
+
+                            <div class="card text-white bg-info mb-3 text-center" style="max-width: 18rem;">
+                                <!--<div class="card-header">Header</div>-->
+                                <div class="card-body">
+                                    <h5 class="card-title">Planificación</h5>
+                                    <p class="card-text">Nomenclatura para representar formalmente los componentes de la arquitectura.</p>
+                                    <a href="/planificacion" class="btn btn-dark">Abrir</a>
+                                </div>
+                            </div>
+
+                            <!--<div class="small-box bg-aqua">
+                                <div class="inner">
+                                    <h3>RAID</h3>
+                                    <h3>Designer</h3>
+                                </div>
+                                <div class="icon">
+                                    <i class="fa fa-cubes"></i>
+                                </div>
+                                <a href="#" class="small-box-footer"> Open
+                                    <i class="fa fa-arrow-circle-right"></i>
+                                </a>
+                            </div> -->
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card text-white bg-secondary mb-3 text-center" style="max-width: 18rem;">
+                                <!--<div class="card-header">Header</div>-->
+                                <div class="card-body">
+                                    <h5 class="card-title">Representación</h5>
+                                    <p class="card-text">Representa mediante un grafo las interacciones entre los componentes de la arquitectura.</p>
+                                    <a href="/representacion" class="btn btn-dark">Abrir</a>
+                                </div>
+                            </div>
+                            <!--<div class="small-box bg-blue">
+                                <div class="inner">
+                                    <h3>Workload</h3>
+                                    <h3>Generator</h3>
+                                </div>
+                                <div class="icon">
+                                    <i class="fa fa-exchange"></i>
+                                </div>
+                                <a href="#" class="small-box-footer"> Open
+                                    <i class="fa fa-arrow-circle-right"></i>
+                                </a>
+                            </div>-->
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card text-white bg-success mb-3 text-center" style="max-width: 18rem;">
+                                <!--<div class="card-header">Header</div>-->
+                                <div class="card-body">
+                                    <h5 class="card-title">Despliegue</h5>
+                                    <p class="card-text">Se encarga del lanzar las unidades de construcción y subservicios virtuales en la infraestructura.</p>
+                                    <a href="/despliegue" class="btn btn-dark">Abrir</a>
+                                </div>
+                            </div>
+                            <!--<div class="small-box bg-green">
+                                <div class="inner">
+                                    <h3>Simulation</h3>
+                                    <h3>Launcher</h3>
+                                </div>
+                                <div class="icon">
+                                    <i class="fa fa-rocket"></i>
+                                </div>
+                                <p href="#" class="small-box-footer"> Open
+                                    <i class="fa fa-arrow-circle-right"></i>
+                                </p>
+                            </div>-->
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card text-white bg-danger mb-3 text-center" style="max-width: 18rem;">
+                                <!--<div class="card-header">Header</div>-->
+                                <div class="card-body">
+                                    <h5 class="card-title">Acoplamiento</h5>
+                                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                    <a href="/acoplamiento" class="btn btn-dark">Abrir</a>
+                                </div>
+                            </div>
+                            <!--<div class="small-box bg-teal">
+                                <div class="inner">
+                                    <h3>Manage</h3>
+                                    <h3>Workgroups</h3>
+                                </div>
+                                <div class="icon">
+                                    <i class="fa fa-users"></i>
+                                </div>
+                                <p href="#" class="small-box-footer"> Open
+                                    <i class="fa fa-arrow-circle-right"></i>
+                                </p>
+                            </div>-->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <!--<div class="row">
+                        <div class="col-md-4 col-md-offset-3 col-xs-4 col-xs-offset-4">
+                            <img src="#" class="img-rounded" alt="User avatar">
+                            <img src="#" class="img-rounded" alt="User avatar">
+                        </div>
+                    </div> -->
+                    <!--<div class="row">
+                        <div class="col-md-12">
+                            <hr>
+                            <dl class="dl-horizontal">
+                                <dt>Email</dt>
+                                <dd></dd>
+                                <dt>Organization:</dt>
+                                <dd></dd>
+                                <dt>Active Project:</dt>
+                                <dd>
+                                    <small>[
+                                        <a href="#">Active a Project</a>]</small>
+                                </dd>
+                                <dt>Active Workgroup:</dt>
+                                <dd>
+                                    <small>[
+                                        <a href="#">Active a Project</a>]</small>
+                                </dd>
+                            </dl>
+                        </div>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+</div>
+</div>
+{% endblock %}
+{% block footer %} {{ super() }} {% endblock %}
