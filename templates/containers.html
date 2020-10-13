@@ -1,10 +1,51 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
-    Containers Management page
-</body>
-</html>
+
+{% extends 'base.html' %} {% block title %} Definición {% endblock %} {% block head %} {{ super() }} {% endblock %} {%
+block content %}
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+    <div class="site-content">
+        <!-- CONTAINER LIST PANEL *** START ***-->
+        <div class="content m-0">
+            <div class="row titlebar p-3">
+                <div class="d-flex p-2 justify-contente-between align-items-center">
+                    <h4 class="m-2">Container List</h4>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filter by</button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="#">Running</a>
+                            <a class="dropdown-item" href="#">Stopped/Paused</a>
+                            <a class="dropdown-item" href="#">Created</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="options">
+                    <div class="searchbar">
+                        <input type="text" id="searchText" placeholder="Search">
+                    </div>
+                    <div class="view-format">
+                        <img src="{{url_for('static',filename='images/gridviewicon.png')}}" alt="" id="vgrid" width="20px" height="20px">
+                        <img src="{{url_for('static',filename='images/listicon.png')}}" alt="" id="vlist" width="20px" height="20px">
+                    </div>
+                </div>
+            </div>
+            <div id="containersPanel" class="row containers">
+                <div class="card-columns">
+                </div>
+            </div>
+        </div>
+        <!-- CONTAINER LIST PANEL ***  END  ***-->
+    </div>
+    <div id="rightPanel" class="right-panel">
+        <div class="container">
+            <div class="row">
+                <h3 id="rp-title">Launch Detalis</h3>	
+            </div>
+            <div class="row">
+                <div class="line"></div>
+            </div>
+            <div id="btnLaunch" class="launch-button row bg-success text-white">
+                <h3>Launch me!<h3>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %} {% block footer %} {{ super() }} {% endblock %}

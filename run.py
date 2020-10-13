@@ -18,10 +18,13 @@ app.config.update(
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
-client = docker.DockerClient(base_url='http://192.168.1.87:2375/')
+# 192.168.1.148:2375 <-- original IP
+LOCALIP = "http://192.168.1.148:2375"
+# client = docker.DockerClient(base_url='http://192.168.1.87:2375/')
+client = docker.DockerClient(base_url=LOCALIP + "/")
 
 images = {
-    "name": "http://192.168.1.87:5000",
+    "name": "http://localhost:5000",
     "endpoint": "/v2/_catalog",
     "children": []
 }
@@ -148,6 +151,13 @@ def coupling():
     return render_template(
         'planificacion.html')
 
+@app.route('/containers')
+def listContainers():
+    return render_template('containers.html')
+
+@app.route('/signin')
+def signin():
+    return render_template('signin.html')
 
 # API
 
@@ -186,8 +196,10 @@ def getForwardHeaders(request):
 
 
 def getSilo(headers):
+    print "GETSILO METHOD~~~~~~~~~~~~~~~~~~~~~~~"
     try:
-        url = images['name'] + "/" + images['endpoint']
+        print "Trying to get Images..........."
+        url = images['name'] + images['endpoint']
         res = requests.get(url, headers=headers, timeout=3.0)
     except:
         res = None

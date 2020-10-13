@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Container Manager</title>
+        <link rel="stylesheet" href="{{url_for("static", filename="css/bootstrap.min.css")}}">
+    </head>
+    <body class="d-flex justify-content-center align-items-center">
+        <div>
+            <div class="signin-form">
+                <div class="d-flex justify-content-center"></div>
+                <div class="d-flex justify-content-center"></div>
+                <form class="form-signin" action="/signin">
+                    <div class="images d-flex justify-content-center">
+                        <img class="mb-4" src="{{url_for("static", filename="images/cinveslogo.png")}}" alt="Cinvestav Tamaulipas Logo" width="200px" height=90px">
+                        <img class="mb-4" src="{{url_for("static", filename="images/dockerlogo.png")}}" alt="Docker Logo" width="100px" height="90px">
+                    </div>
+                    <h1 class="h3 mb-3 font-weight-normal">Sign in Please</h1>
+                    <label class="sr-only" for="inputEmail">Email address</label>
+                    <input id="inputEmail" class="form-control" type="email" placeholder="Email address">
+                    <label class="sr-only" for="inputPassword">Password</label>
+                    <input id="inputPassword" class="form-control" type="password">
+                    <div class="checkbox mb-3">
+                        <label>
+                            <input type="checkbox" value="remember-me">
+                            Remember me
+                        </label>
+                    </div>
+                    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+                    <p class="mt-5 mb-3 text-muted">@ 2020 - 2020</p>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>
