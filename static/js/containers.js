@@ -2,6 +2,45 @@ console.log('Containers JS');
 // TODO: ADD builder.html
 //
 // TODO: ADD LIST VIEW OPTION TO CONTAINER PANEL
+
+var containersList = [
+    {"id": "80DF7765HLIJK", "name": "Python Server For WEBAPI", "timeactive": "3h","status":"created"}, 
+    {"id": "99DFJAKFJ123D", "name": "Java Server For Photography site", "timeactive": "3d","status":"exited"},
+    {"id": "ASD912LOKF233", "name": "Go Server For Files Management", "timeactive": "24h","status":"restarting"},
+    {"id": "OECNJR28491HF", "name": "Store Management Storage", "timeactive": "24min","status":"dead"},
+    {"id": "1H28HF03HF73H", "name": "CSGO Deathmatch server", "timeactive": "1week","status":"paused"},
+    {"id": "POMKHFH1371HF", "name": "Another Server :(", "timeactive": "6s","status":"running"},
+]
+
+// id="filterByRunning
+// id="filterByDead"
+// id="filterByPaused"
+// id="filterByCreated"
+// id="filterByRestarting"
+
+function filterContainersBy(state) {
+    filtered = [];
+    if(state == 'created/exited') { 
+        filtered.push(containersList.filter(c => c.status == 'created'));
+        filtered.push(containersList.filter(c => c.status == 'exited'));
+    } else 
+        filtered.push(containersList.filter(c => c.status == state));
+
+    console.log(`filtered containers by: ${state}`, filtered)
+    return filtered;
+}
+
+function filterBy(state) {
+    clearContainersPanel();
+    filteredContainers = filterContainersBy(state);
+    loadContainers(filteredContainers);
+}
+
+function clearContainersPanel() {
+    // Delete all cards from container panel.
+    document.querySelector('#containersPanel > .card-columns').innerHTML = '';
+}
+
 function buildContainerHtmlTemplate(containerinfo) {
 
     let cardHeaderClasses = "";
@@ -43,19 +82,10 @@ ${cardActionButton}</div>
     return containerHtmlTemplate;
 }
 // suppouse the containers load
-loadContainers();
-function loadContainers() {
+loadContainers(containersList);
+function loadContainers(containers) {
     // query to API to get containers of user.
-    containersList = [
-        {"id": "80DF7765HLIJK", "name": "Python Server For WEBAPI", "timeactive": "3h","status":"created"}, 
-        {"id": "99DFJAKFJ123D", "name": "Java Server For Photography site", "timeactive": "3d","status":"exited"},
-        {"id": "ASD912LOKF233", "name": "Go Server For Files Management", "timeactive": "24h","status":"restarting"},
-        {"id": "OECNJR28491HF", "name": "Store Management Storage", "timeactive": "24min","status":"dead"},
-        {"id": "1H28HF03HF73H", "name": "CSGO Deathmatch server", "timeactive": "1week","status":"paused"},
-        {"id": "POMKHFH1371HF", "name": "Another Server :(", "timeactive": "6s","status":"running"},
-    ]
-
-    containersList.forEach(c => {
+    containers.forEach(c => {
         console.log('container: ', c);
         template = buildContainerHtmlTemplate(c);
         console.log('template', template);
