@@ -1,3 +1,7 @@
+body {
+    overflow-x: hidden!important;
+}
+
 li {
 	list-style-type: none;
 	padding: 0;
@@ -24,13 +28,6 @@ li {
 	background: #0060A8!important;
 }
 
-.line {
-	width: 90%;
-	margin: auto 0;
-	height: 1px;
-	background-color: black;
-}
-
 .site-content {
 	width:  100%;
 	height: 100%;
@@ -38,6 +35,7 @@ li {
 	flex-direction: row;
 	/* background: darkgray; */
 	z-index: 1;
+        overflow: hidden;
 }
 
 .titlebar {
@@ -76,27 +74,29 @@ li {
 
 .right-panel {
 	position: absolute;
-	padding: 10px;
-	top: 56px;
-	right: -600px;
-	width: 500px;
+	right: 0px;
+	width: 0px;
 	height: 100%;
 	box-shadow: -9px 1px 9px -5px rgba(0,0,0,0.75);
 
 	/* display: flex; */
 	flex-direction: column;
-	transition:  right 1s;
+	transition: all 1s;
 
 	background: #F8F9FA;
-        z-index: 7000!important;
-}
-
-.right-panel:hover {
-	right: -445px;
+        /* display: none; */
 }
 
 .rp-title {
 	width: 100%;
+        padding: 10px;
+}
+
+.rp-title:after {
+    content: "";
+    width: 100%;
+    height: 1px;
+    background: black;
 }
 
 .launch-button {
@@ -111,6 +111,7 @@ li {
     border: none;
     position: absolute;
     bottom: 0px;
+    overflow: auto;
 }
 
 .launch-button:hover {
@@ -140,7 +141,7 @@ li {
 }
 
 .containers {
-    padding: 10px;
+    padding: 20px;
     display: flex;
     flex-wrap: wrap;
     overflow: auto;

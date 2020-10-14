@@ -1,7 +1,7 @@
 
 {% extends 'base.html' %} {% block title %} Definición {% endblock %} {% block head %} {{ super() }} {% endblock %} {%
 block content %}
-<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4 position-relative">
     <div class="site-content">
         <!-- CONTAINER LIST PANEL *** START ***-->
         <div class="content m-0">
@@ -11,9 +11,11 @@ block content %}
                     <div class="btn-group">
                         <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filter by</button>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="#">Running</a>
-                            <a class="dropdown-item" href="#">Stopped/Paused</a>
-                            <a class="dropdown-item" href="#">Created</a>
+                            <a id="filterByRunning" class="dropdown-item" href="#">Running</a>
+                            <a id="filterByDead" class="dropdown-item" href="#">Dead</a>
+                            <a id="filterByPaused" class="dropdown-item" href="#">Paused</a>
+                            <a id="filterByCreated" class="dropdown-item" href="#">Created/Exited</a>
+                            <a id="filterByRestarting" class="dropdown-item" href="#">Restarting</a>
                         </div>
                     </div>
                 </div>
@@ -32,20 +34,23 @@ block content %}
                 </div>
             </div>
         </div>
-        <!-- CONTAINER LIST PANEL ***  END  ***-->
-    </div>
-    <div id="rightPanel" class="right-panel">
-        <div class="container">
-            <div class="row">
-                <h3 id="rp-title">Launch Detalis</h3>	
-            </div>
-            <div class="row">
-                <div class="line"></div>
-            </div>
-            <div id="btnLaunch" class="launch-button row bg-success text-white">
-                <h3>Launch me!<h3>
+
+        <div id="rightPanel" class="right-panel">
+            <div class="container">
+                <div class="row rp-title">
+                    <h3>Launch Detalis</h3>	
+                </div>
+                <div class="rp-content">
+                    Aqui va el contenido del panel
+                </div>
+                <div class="rp-footer">
+                    <div id="btnLaunch" class="launch-button row bg-success text-white">
+                        <h3>Launch me!<h3>
+                    </div>
+                </div>
             </div>
         </div>
+        <!-- CONTAINER LIST PANEL ***  END  ***-->
     </div>
 </main>
 {% endblock %} {% block footer %} {{ super() }} {% endblock %}
