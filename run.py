@@ -19,7 +19,7 @@ db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
 # 192.168.1.148:2375 <-- original IP
-LOCALIP = "http://192.168.1.148:2375"
+LOCALIP = "unix://var/run/docker.sock"
 # client = docker.DockerClient(base_url='http://192.168.1.87:2375/')
 client = docker.DockerClient(base_url=LOCALIP + "/")
 

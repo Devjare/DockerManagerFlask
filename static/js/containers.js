@@ -20,11 +20,10 @@ var containersList = [
 
 function filterContainersBy(state) {
     filtered = [];
-    if(state == 'created/exited') { 
-        filtered.push(containersList.filter(c => c.status == 'created'));
-        filtered.push(containersList.filter(c => c.status == 'exited'));
-    } else 
-        filtered.push(containersList.filter(c => c.status == state));
+    if(state == 'created/exited') 
+        filtered = containersList.filter(c => c.status == 'created' || c.status == 'exited');
+    else 
+        filtered = containersList.filter(c => c.status == state);
 
     console.log(`filtered containers by: ${state}`, filtered)
     return filtered;
