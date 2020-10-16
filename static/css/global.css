@@ -66,10 +66,18 @@ li {
 .view-format {
 	display: flex;
 	justify-content: space-between;
+        align-items: center;
 }
 
-.view-format > img {
-	margin: 5px;
+.view-format > svg {
+	margin: 10px;
+        cursor: pointer;
+        width: 18px;
+        height: 18px;
+}
+
+.view-format > svg:hover {
+    background: lightgray;
 }
 
 .right-panel {

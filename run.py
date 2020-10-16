@@ -153,7 +153,21 @@ def coupling():
 
 @app.route('/containers')
 def listContainers():
-    return render_template('containers.html')
+    allcontainers = client.containers.list(all=True);
+    formattedContainers = map(containerToJson, allcontainers)
+    print('formatted obj: ', formattedContainers)
+    return render_template('containers.html', containers=formattedContainers)
+
+# Function to map Containers objet to json, in order to use themo on JS
+def containerToJson(container):
+    image = {"id": container.image.id, "tags": container.image.tags}
+    c = {"id": container.id, "name": container.name, "status": container.status, "image": image}
+    return json.dumps(c)
+
+@app.route('/containers/<id>')
+def getContainerInfo(id):
+    print('id of container info: ', id)
+    return {"contaienrinfo": 'Hello {id}'}
 
 @app.route('/signin')
 def signin():
