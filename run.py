@@ -176,6 +176,30 @@ def startContainer(id):
     dockercli.start(id)
     return 'running'
 
+@app.route('/containers/stop/<id>')
+def stopContainer(id):
+    print('stopping container: ', id)
+    dockercli.stop(id)
+    return 'running'
+
+@app.route('/containers/restart/<id>')
+def restartContainer(id):
+    print('REstarting container: ', id)
+    dockercli.restart(id)
+    return 'running'
+
+@app.route('/containers/pause/<id>')
+def pauseContainer(id):
+    print('pausing container: ', id)
+    dockercli.pause(id)
+    return 'running'
+
+@app.route('/containers/unpause/<id>')
+def unpauseContainer(id):
+    print('pausing container: ', id)
+    dockercli.unpause(id)
+    return 'running'
+
 @app.route('/signin')
 def signin():
     return render_template('signin.html')

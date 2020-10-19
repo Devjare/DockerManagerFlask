@@ -5,13 +5,15 @@ console.log('Containers JS');
 // THE LIBRARY DOESN'T SHOW EVEN HALF OF THE INFORMATION COMPARED TO DOCKER INSPECT)
 // TODO: ADD LIST VIEW OPTION TO CONTAINER PANEL
 
-function launchContainer(id) {
+function containerAction(id, action) {
     var req = new XMLHttpRequest();
-    req.open('GET', `http://localhost:8000/containers/start/${id}`, true);
+    req.open('GET', `http://localhost:8000/containers/${action}/${id}`, true);
     req.onreadystatechange = (e) => {
         if(req.readyState == 4) {
-            if(req.status == 200) 
+            if(req.status == 200) {
+                console.log(`${action}ing container: ${id}`);
                 dump(req.responseText)
+            }
             else
                 dump("Error procesing petition");
         }
@@ -22,34 +24,29 @@ function launchContainer(id) {
 // containers actions
 
 function startContainer(id) {
-    console.log('starting container');
-    console.log(id);
-
     // showmodal
     $('#modal').modal('show');
     $('#modal').ready(() => {
         $('#modalFooter > #btnLaunchContainer').click((e) => {
-            alert(`launching container: ${id}`);
-            launchContainer(id);
+            containerAction(id, 'start');
         });
     });
 }
 
-function showmodal() {
-}
-
 function restartContainer(id) {
-    console.log('restarting container: ', id);
+    containerAction(id, 'restart');
 }
 
 function stopContainer(id) {
-    console.log('stoping container: ', id);
+    containerAction(id, 'stop');
 }
 
 function pauseContainer(id) {
-    console.log('pausing container: ', id);
+    containerAction(id, 'pause');
 }
-
+function unpauseContainer(id) {
+    containerAction(id, 'unpause');
+}
 var containersIds;
 var containers;
 function buildContainerHtmlTemplate(containerinfo) {
@@ -69,8 +66,7 @@ function buildContainerHtmlTemplate(containerinfo) {
     }
     else if(containerinfo.status == "paused") { 
         cardActionButton = `
-        <button onclick="startContainer('${containerinfo.id}')" class="btn btn-success">Start</button>
-        <button onclick="restartContainer('${containerinfo.id}')" class="btn btn-warning">Restart</button>`
+        <button onclick="unpauseContainer('${containerinfo.id}')" class="btn btn-success">Start</button>`
     }
     else if(containerinfo.status == "dead") { 
         cardActionButton = `
