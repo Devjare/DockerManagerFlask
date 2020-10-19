@@ -42,6 +42,8 @@ li {
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
+        flex-wrap: wrap;
+        width: 100%;
 }
 
 .titlebar::after {
@@ -54,7 +56,8 @@ li {
 .options {
 	display: flex;
 	flex-direction: row;
-	justify-content: space-around;
+	justify-content: space-between;
+        flex-wrap: wrap;
 	padding: 5px;
 }
 
@@ -65,7 +68,7 @@ li {
 
 .view-format {
 	display: flex;
-	justify-content: space-between;
+	justify-content: space-around;
         align-items: center;
 }
 
@@ -85,11 +88,11 @@ li {
 	right: 0px;
 	width: 0px;
 	height: 95vh;
-	box-shadow: -9px 1px 9px -5px rgba(0,0,0,0.75);
+	box-shadow: -3px 0px 3px -2px rgba(0,0,0,0.75);
 
 	/* display: flex; */
 	flex-direction: column;
-	transition: all 1s;
+	transition: width 1s;
 
 	background: #F8F9FA;
         /* display: none; */
@@ -155,6 +158,24 @@ li {
     overflow: auto;
     width: 100%;
     height: 86%;
+}
+
+.grid-card-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.grid-card-header > svg {
+        cursor: pointer;
+        width: 18px;
+        height: 18px;
+}
+.grid-card-header > svg:hover {
+    background: lightgray;
+}
+
+#containersList {
+    display: none;
 }
 
 /* BOOTSTRAP SPECIFIC MODIFICATIONS */

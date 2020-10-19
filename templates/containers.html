@@ -11,18 +11,12 @@ block content %}
                     <div class="btn-group">
                         <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filter by</button>
                         <div class="dropdown-menu">
-                            <!-- Original 
-                                <a onclick="filterBy('running')" id="filterByRunning" class="dropdown-item" href="#">Running</a>
-                                <a onclick="filterBy('dead')" id="filterByDead" class="dropdown-item" href="#">Dead</a>
-                                <a onclick="filterBy('paused')" id="filterByPaused" class="dropdown-item" href="#">Paused</a>
-                                <a onclick="filterBy('created/exited')" id="filterByCreated" class="dropdown-item" href="#">Created/Exited</a>
-                                <a onclick="filterBy('restarting')" id="filterByRestarting" class="dropdown-item" href="#">Restarting</a> -->
+                            <a onclick="filterBy('running')" id="filterByRunning" class="dropdown-item" href="#">Running</a>
+                            <a onclick="filterBy('dead')" id="filterByDead" class="dropdown-item" href="#">Dead</a>
+                            <a onclick="filterBy('paused')" id="filterByPaused" class="dropdown-item" href="#">Paused</a>
+                            <a onclick="filterBy('created/exited')" id="filterByCreated" class="dropdown-item" href="#">Created/Exited</a>
+                            <a onclick="filterBy('restarting')" id="filterByRestarting" class="dropdown-item" href="#">Restarting</a>
 
-                                <a id="filterByRunning" class="dropdown-item" href="#">Running</a>
-                                <a id="filterByDead" class="dropdown-item" href="#">Dead</a>
-                                <a id="filterByPaused" class="dropdown-item" href="#">Paused</a>
-                                <a id="filterByCreated" class="dropdown-item" href="#">Created/Exited</a>
-                                <a id="filterByRestarting" class="dropdown-item" href="#">Restarting</a>
                         </div>
                     </div>
                 </div>
@@ -32,19 +26,30 @@ block content %}
                     </div>
                     <div class="view-format">
                         <!-- <img src="{{url_for('static',filename='images/gridviewicon.png')}}" alt="" id="vgrid" width="20px" height="20px">
-                        <img src="{{url_for('static',filename='images/listicon.png')}}" alt="" id="vlist" width="20px" height="20px"> -->
-                        <span onclick="formatView('grid')" data-feather="grid"></span>
-                        <span onclick="formatView('list')" data-feather="list"></span>
-                        <span onclick="refresh()" data-feather="refresh-cw"></span>
+                            <img src="{{url_for('static',filename='images/listicon.png')}}" alt="" id="vlist" width="20px" height="20px"> -->
+                            <span onclick="formatView('grid')" data-feather="grid"></span>
+                            <span onclick="formatView('list')" data-feather="list"></span>
+                            <span onclick="refresh()" data-feather="refresh-cw"></span>
                     </div>
                 </div>
             </div>
-            <div id="containersPanel" class="row containers">
-                <div class="card-columns">
+            <div id="containersPanel" class="row">
+                <div id="containersGrid" class="containers-grid containers">
+                    <div class="card-columns"></div>
+                </div>
+                <div id="containersList" class="containers-list containers">
+                    <div class="list-group">
+                        <button type="button" class="list-group-item list-group-item-action active">
+                            Cras justo odio
+                        </button>
+                        <button type="button" class="list-group-item list-group-item-action">Dapibus ac facilisis in</button>
+                        <button type="button" class="list-group-item list-group-item-action">Morbi leo risus</button>
+                        <button type="button" class="list-group-item list-group-item-action">Porta ac consectetur ac</button>
+                        <button type="button" class="list-group-item list-group-item-action" disabled>Vestibulum at eros</button>
+                    </div>
                 </div>
             </div>
         </div>
-
         <div id="rightPanel" class="right-panel">
             <div class="container">
                 <div class="row rp-title">
@@ -56,6 +61,26 @@ block content %}
                 <div class="rp-footer">
                     <div id="btnLaunch" class="launch-button row bg-success text-white">
                         <h3>Launch me!<h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 id="modalTitle" class="modal-title">Modal title</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div id="modalBody" class="modal-body">
+                        </div>
+                        <div id="modalFooter" class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button id="btnLaunchContainer" type="button" class="btn btn-primary">Launch</button>
+                        </div>
                     </div>
                 </div>
             </div>

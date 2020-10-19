@@ -22,7 +22,8 @@ ma = Marshmallow(app)
 LOCALIP = "unix://var/run/docker.sock"
 # client = docker.DockerClient(base_url='http://192.168.1.87:2375/')
 client = docker.DockerClient(base_url=LOCALIP + "/")
-
+# lowlevel client.
+dockercli = docker.APIClient(base_url="unix://var/run/docker.sock")
 images = {
     "name": "http://localhost:5000",
     "endpoint": "/v2/_catalog",
@@ -168,6 +169,12 @@ def containerToJson(container):
 def getContainerInfo(id):
     print('id of container info: ', id)
     return {"contaienrinfo": 'Hello {id}'}
+
+@app.route('/containers/start/<id>')
+def startContainer(id):
+    print('starting container: ', id)
+    dockercli.start(id)
+    return 'running'
 
 @app.route('/signin')
 def signin():

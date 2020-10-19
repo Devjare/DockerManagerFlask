@@ -4,6 +4,52 @@ console.log('Containers JS');
 // DOESN'T SHOW EVERY DETAIL(FOR PETITON OF DOC IVAN ON THE DOCKER INSPECT COMMAND,
 // THE LIBRARY DOESN'T SHOW EVEN HALF OF THE INFORMATION COMPARED TO DOCKER INSPECT)
 // TODO: ADD LIST VIEW OPTION TO CONTAINER PANEL
+
+function launchContainer(id) {
+    var req = new XMLHttpRequest();
+    req.open('GET', `http://localhost:8000/containers/start/${id}`, true);
+    req.onreadystatechange = (e) => {
+        if(req.readyState == 4) {
+            if(req.status == 200) 
+                dump(req.responseText)
+            else
+                dump("Error procesing petition");
+        }
+    };
+    req.send(null);
+}
+
+// containers actions
+
+function startContainer(id) {
+    console.log('starting container');
+    console.log(id);
+
+    // showmodal
+    $('#modal').modal('show');
+    $('#modal').ready(() => {
+        $('#modalFooter > #btnLaunchContainer').click((e) => {
+            alert(`launching container: ${id}`);
+            launchContainer(id);
+        });
+    });
+}
+
+function showmodal() {
+}
+
+function restartContainer(id) {
+    console.log('restarting container: ', id);
+}
+
+function stopContainer(id) {
+    console.log('stoping container: ', id);
+}
+
+function pauseContainer(id) {
+    console.log('pausing container: ', id);
+}
+
 var containersIds;
 var containers;
 function buildContainerHtmlTemplate(containerinfo) {
@@ -17,40 +63,40 @@ function buildContainerHtmlTemplate(containerinfo) {
     let cardActionButton = "";
     if(containerinfo.status == "running") {
         cardActionButton = `
-        <button id="pause-${containerinfo.id}" class="btn btn-info">Pause</button>
-        <button id="restart-${containerinfo.id}" class="btn btn-warning" onclick="showLaunchDetails('${containerinfo.id}')">Restart</button>
-        <button id="stop-${containerinfo.id}" class="btn btn-danger">Stop</button>`;
+        <button onclick="pauseContainer('${containerinfo.id}')" class="btn btn-info">Pause</button>
+        <button onclick="restartContainer('${containerinfo.id}')" class="btn btn-warning">Restart</button>
+        <button onclick="stopContainer('${containerinfo.id}')" class="btn btn-danger">Stop</button>`;
     }
     else if(containerinfo.status == "paused") { 
         cardActionButton = `
-        <button id="start-${containerinfo.id}" class="btn btn-success" onclick="showLaunchDetails('${containerinfo.id}')">Start</button>
-        <button id="restart-${containerinfo.id}" class="btn btn-warning" onclick="showLaunchDetails('${containerinfo.id}')">Restart</button>`
+        <button onclick="startContainer('${containerinfo.id}')" class="btn btn-success">Start</button>
+        <button onclick="restartContainer('${containerinfo.id}')" class="btn btn-warning">Restart</button>`
     }
     else if(containerinfo.status == "dead") { 
         cardActionButton = `
-        <button id="start-${containerinfo.id}" class="btn btn-success" onclick="showLaunchDetails('${containerinfo.id}')">Start</button>
-        <button id="restart-${containerinfo.id}" class="btn btn-warning" onclick="showLaunchDetails('${containerinfo.id}')">Restart</button>`
+        <button class="btn btn-success" onclick="startContainer('${containerninfo.id}')">Start</button>
+        <button onclick="restartContainer('${containerinfo.id}')" class="btn btn-warning">Restart</button>`
     }
     else if(containerinfo.status == "restarting") cardActionButton = "";
-    else cardActionButton = `<button id="start-${containerinfo.id}" class="btn btn-success" onclick="showLaunchDetails('${containerinfo.id}')">Start</button>`
+    else cardActionButton = `<button onclick="startContainer('${containerinfo.id}')" class="btn btn-success">Start</button>`
 
     var containerHtmlTemplate = `
-<div class="card">
-<div class="card-header ${cardHeaderClasses}"> ${containerinfo.name} (${containerinfo.status})</div>
+<div id="${containerinfo.id}" class="card">
+<div class="card-header ${cardHeaderClasses} grid-card-header">
+    ${containerinfo.name} (${containerinfo.status})
+    <span onclick="showContainerDetails('${containerinfo.id}')" data-feather="info"></span>
+</div>
 <div class="card-body">
 <p class="card-text"><strong>ID: </strong>${containerinfo.id}</p>
 <p class="card-text"><strong>Base Image: </strong>${containerinfo.image.id}</p>
 ${cardActionButton}</div></div>`
-// <div class="card-footer">
-// <small class="text-muted">Time Active: ${containerinfo.timeactive}</small>
-// </div></div>`
     return containerHtmlTemplate;
 }
 function loadContainers(containers) {
     // query to API to get containers of user.
     containers.forEach(c => {
         template = buildContainerHtmlTemplate(c);
-        document.querySelector('#containersPanel > div').innerHTML += template;
+        document.querySelector('#containersGrid > div').innerHTML += template;
     });
 }
 function loadFlaskVars(vars) {
@@ -59,46 +105,48 @@ function loadFlaskVars(vars) {
     loadContainers(containers);
 }
 
-var containersList = [
-    {"id": "80DF7765HLIJK", "name": "Python Server For WEBAPI", "timeactive": "3h","status":"created"}, 
-    {"id": "99DFJAKFJ123D", "name": "Java Server For Photography site", "timeactive": "3d","status":"exited"},
-    {"id": "ASD912LOKF233", "name": "Go Server For Files Management", "timeactive": "24h","status":"restarting"},
-    {"id": "OECNJR28491HF", "name": "Store Management Storage", "timeactive": "24min","status":"dead"},
-    {"id": "1H28HF03HF73H", "name": "CSGO Deathmatch server", "timeactive": "1week","status":"paused"},
-    {"id": "POMKHFH1371HF", "name": "Another Server :(", "timeactive": "6s","status":"running"},
-]
+function showContainerDetails(id) {
+    console.log('showing details of: ', id);
+}
 
 function refresh() {
     console.log('refreshing containers list');
 }
 
 function formatView(format) {
-    console.log(`now viewing in format ${format}`);
+    if(format == 'list') {
+        // list
+        document.getElementById('containersList').style.display = 'flex';
+        document.getElementById('containersGrid').style.display = 'none';
+    } else {
+        // grid
+        document.getElementById('containersList').style.display = 'none';
+        document.getElementById('containersGrid').style.display = 'flex';
+    }
 }
 
 function filterContainersBy(state) {
     filtered = [];
     if(state == 'created/exited') 
-        filtered = containersList.filter(c => c.status == 'created' || c.status == 'exited');
+        filtered = containers.filter(c => c.status == 'created' || c.status == 'exited');
     else 
-        filtered = containersList.filter(c => c.status == state);
+        filtered = containers.filter(c => c.status == state);
 
     console.log(`filtered containers by: ${state}`, filtered)
     return filtered;
 }
 
 function filterBy(state) {
-   // clearContainersPanel();
-   // filteredContainers = filterContainersBy(state);
-   // loadContainers(filteredContainers);
+   clearContainersPanel();
+   filteredContainers = filterContainersBy(state);
+   loadContainers(filteredContainers);
 }
 
 function clearContainersPanel() {
     // Delete all cards from container panel.
-    document.querySelector('#containersPanel > .card-columns').innerHTML = '';
+    document.querySelector('#containersGrid > .card-columns').innerHTML = '';
 }
 
-// suppouse the containers load
 
 // function to show launch details panel.
 function showLaunchDetails(containerId) {
