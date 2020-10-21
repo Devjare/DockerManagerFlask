@@ -152,17 +152,27 @@ def coupling():
     return render_template(
         'planificacion.html')
 
+@app.route('/containers/json')
+def getContainers():
+    args = request.args
+    allContainers = args.get('all') == 'True'
+    
+    containers = dockercli.containers(all=(allContainers))
+
+    return {'containers': containers}
+
 @app.route('/containers')
 def listContainers():
-    allcontainers = client.containers.list(all=True);
-    formattedContainers = map(containerToJson, allcontainers)
-    print('formatted obj: ', formattedContainers)
-    return render_template('containers.html', containers=formattedContainers)
+    containerslist = dockercli.containers(all=True);
+    # allcontainers = client.containers.list(all=True);
+    # formattedContainers = map(containerToJson, allcontainers)
+    jsonArray = { "containers": containerslist }
+    return render_template('containers.html', containers=json.dumps(jsonArray))
 
 # Function to map Containers objet to json, in order to use themo on JS
 def containerToJson(container):
     image = {"id": container.image.id, "tags": container.image.tags}
-    c = {"id": container.id, "name": container.name, "status": container.status, "image": image}
+    c = {"id": container.short_id, "name": container.name, "status": container.status, "image": image}
     return json.dumps(c)
 
 @app.route('/containers/<id>')
