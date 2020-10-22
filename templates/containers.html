@@ -7,21 +7,21 @@ block content %}
             <div class="row titlebar p-3">
                 <div class="d-flex p-2 justify-content-between align-items-center">
                     <h4 class="m-2">Container List</h4>
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filter by</button>
+                    <div class="btn-group dropright">
+                        <button id="btnFilterBy" type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filter by</button>
                         <div class="dropdown-menu">
                             <a onclick="filterBy('running')" id="filterByRunning" class="dropdown-item" href="#">Running</a>
                             <a onclick="filterBy('dead')" id="filterByDead" class="dropdown-item" href="#">Dead</a>
                             <a onclick="filterBy('paused')" id="filterByPaused" class="dropdown-item" href="#">Paused</a>
                             <a onclick="filterBy('created/exited')" id="filterByCreated" class="dropdown-item" href="#">Created/Exited</a>
                             <a onclick="filterBy('restarting')" id="filterByRestarting" class="dropdown-item" href="#">Restarting</a>
-
+                            <a onclick="filterBy('all')" id="filterByAll" class="dropdown-item" href="#">All</a>
                         </div>
                     </div>
                 </div>
                 <div class="options">
                     <div class="searchbar">
-                        <input type="text" id="searchText" placeholder="Search">
+                        <input oninput="searchContainers()" type="text" id="searchText" placeholder="Search">
                     </div>
                     <div class="view-format">
                         <!-- <img src="{{url_for('static',filename='images/gridviewicon.png')}}" alt="" id="vgrid" width="20px" height="20px">
@@ -56,44 +56,27 @@ block content %}
                 </div>
             </div>
         </div>
-        <div id="rightPanel" class="right-panel">
-            <div class="container">
-                <div class="row rp-title">
-                    <h3>Launch Detalis</h3>	
-                </div>
-                <div class="rp-content">
-                    Aqui va el contenido del panel
-                </div>
-                <div class="rp-footer">
-                    <div id="btnLaunch" class="launch-button row bg-success text-white">
-                        <h3>Launch me!<h3>
+        <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-dark text-white">
+                        <h5 id="modalTitle" class="modal-title">Modal title</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
-                </div>
-            </div>
-
-            <!-- Modal -->
-            <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header bg-dark text-white">
-                            <h5 id="modalTitle" class="modal-title">Modal title</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+                    <div id="modalBody" class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row"><strong>ID:&nbsp;</strong><p id="container-id"></p></div>
+                            <div class="row"><strong>Name: &nbsp;</strong><p id="container-name"></p></div>
+                            <div class="row"><strong>IP/Ports: &nbsp;</strong><p id="container-ipport"></p></div>
+                            <div class="row"><strong>State: &nbsp;</strong><p id="container-state"></p></div>
+                            <div class="row"><strong>Status: &nbsp;</strong><p id="container-status"></p></div>
+                            <div class="row"><strong>Image: &nbsp;</strong><a href="#" id="container-image"></a></div>
+                            <div class="row"><strong>Created: &nbsp;</strong><p id="container-created"></p></div>
                         </div>
-                        <div id="modalBody" class="modal-body">
-                            <div class="container-fluid">
-                                <div class="row"><strong>ID:&nbsp;</strong><p id="container-id"></p></div>
-                                <div class="row"><strong>Name: &nbsp;</strong><p id="container-name"></p></div>
-                                <div class="row"><strong>IP/Ports: &nbsp;</strong><p id="container-ipport"></p></div>
-                                <div class="row"><strong>State: &nbsp;</strong><p id="container-state"></p></div>
-                                <div class="row"><strong>Status: &nbsp;</strong><p id="container-status"></p></div>
-                                <div class="row"><strong>Image: &nbsp;</strong><a href="#" id="container-image"></a></div>
-                                <div class="row"><strong>Created: &nbsp;</strong><p id="container-created"></p></div>
-                            </div>
-                        </div>
-                        <div id="modalFooter" class="modal-footer">
-                        </div>
+                    </div>
+                    <div id="modalFooter" class="modal-footer">
                     </div>
                 </div>
             </div>

@@ -1,7 +1,19 @@
 // TODO: ADD XMLHTTPREQUEST object to the top to make it global
 // TODO: ADD builder.html
+// TODO: USE GENERATORS FOR docker stats() STREAM FROM FLASK
+// TODO: GENERATE USER DATA ON SQLITE DATABASE FOR AUTH
+// TODO: ADD 'All' FILTER FOR CONTAINERS
+// TODO: IF FILTER IS FILTERING ON GRID VIEW, RESULTS ARE SHOWN ON GRID VIEW
+// SOLVE THAT THE OPPOSITE HAPPENS(FILTER ON GRID, SHOWS LIST FILTERED)
+// TODO: IMPLEMENT SEARCH BAR FUNCTIONALITY
+// TODO: TRY TO IMPLEMENT LIVE RELOAD TO CONTAINERS, LEAVING OUT THE REFRESH BUTTON.
+// TODO: DESING CONTAINER/IMAGE DETAILS SCREEN(THIS IS GONNA USE GRAPHICS).
+// TODO: CLOSE MODAL WHEN CONTAINER ACTION IS PRESSED(BUTTON)
 
+// global vars
 var xhr = new XMLHttpRequest();
+var filter = 'all';
+var currentView = 'list';
 
 function showPopover(id) {
     $(`#${id}`).popover('show');
@@ -116,13 +128,21 @@ var containersIds;
 var containers;
 
 function buildContainerTableRow(container) {
-    let template = `<tr>
+    let color = "";
+    let state = container.State;
+
+    if(state == 'running') color = 'success';
+    else if(state == 'paused') color = 'info';
+    else if(state == 'stopped') color = 'danger';
+    else if(state == 'restarting') color = 'warning';
+    let template = `<tr class="table-${color}">
       <th scope="row">1</th>
       <td>${container.Id}</td>
       <td>${container.Names[0]}</td>
       <td>${container.State}</td>
       <td>${container.Ports[0]?"NONE":container.Ports[0]}</td>
-      <td><a href="#" id="${container.Id}" class="popover-item" data-placement="bottom" data-toggle="popover" title="Image Info" data-content="ID: ${container.ImageID}">${container.Image}</a></td>
+      <td><a href="#" id="${container.Id}" class="popover-item" data-placement="bottom" 
+      data-toggle="popover" title="Image Info" data-content="ID: ${container.ImageID}">${container.Image}</a></td>
       <td><a href="#" onclick="showContainerDetails('${container.Id}')">More</a></td>
     </tr>`
     return template;
@@ -138,15 +158,15 @@ function buildContainerHtmlTemplate(container) {
     else if(state == "restarting") cardHeaderClasses = "bg-warning"
 
     var containerHtmlTemplate = `
-<div id="${container.Id}" class="card">
-<div class="card-header ${cardHeaderClasses} grid-card-header">
-    ${container.Names} (${state})
-    <span onclick="showContainerDetails('${container.Id}')" data-feather="info"></span>
-</div>
-<div class="card-body">
-<p class="card-text"><strong>ID: </strong>${container.Id}</p>
-<p class="card-text"><strong>Base Image: </strong>${container.Image}</p>
-<a onclick="showContainerDetails('${container.Id}')" href="#">More...</a></div></div>`
+    <div id="${container.Id}" class="card">
+    <div class="card-header ${cardHeaderClasses} grid-card-header">${container.Names} (${state})
+        <span onclick="showContainerDetails('${container.Id}')" data-feather="info"></span>
+    </div>
+    <div class="card-body">
+        <p class="card-text"><strong>ID: </strong>${container.Id}</p>
+        <p class="card-text"><strong>Base Image: </strong>${container.Image}</p>
+        <a onclick="showContainerDetails('${container.Id}')" href="#">More...</a>
+    </div></div>`
     return containerHtmlTemplate;
 }
 function loadContainers(containers) {
@@ -157,9 +177,14 @@ function loadContainers(containers) {
 
         gridTemplate = buildContainerHtmlTemplate(c);
         document.querySelector('#containersGrid > div').innerHTML += gridTemplate;
-
-        document.getElementById('containersGrid').style.display="none";
-        document.getElementById('containersList').style.display="flex";
+    
+        if(currentView == 'list') {
+            document.getElementById('containersGrid').style.display="none";
+            document.getElementById('containersList').style.display="flex";
+        } else {
+            document.getElementById('containersGrid').style.display="flex";
+            document.getElementById('containersList').style.display="none";
+        }
         feather.replace();
     });
 }
@@ -196,11 +221,13 @@ function formatView(format) {
         document.getElementById('containersList').style.display = 'none';
         document.getElementById('containersGrid').style.display = 'flex';
     }
+    currentView = format;
 }
 
 function filterContainersBy(state) {
     filtered = [];
-    if(state == 'created/exited') 
+    if(state == 'all') filtered = containers;
+    else if(state == 'created/exited') 
         filtered = containers.filter(c => c.State == 'created' || c.State == 'exited');
     else 
         filtered = containers.filter(c => c.State == state);
@@ -211,8 +238,24 @@ function filterContainersBy(state) {
 
 function filterBy(state) {
     clearContainersPanel();
+    $('#btnFilterBy').text(state);
     filteredContainers = filterContainersBy(state);
     loadContainers(filteredContainers);
+}
+
+function findContainersBy(pattern) {
+    console.log('finding among: ', containers);
+    return containers.filter(c => 
+        c.Id.includes(pattern)  
+        || c.Names[0].includes(pattern) 
+        || c.Image.includes(pattern) 
+        || c.ImageID.includes(pattern));
+}
+
+function searchContainers() {
+    let text = $('#searchText')[0].value;
+    loadContainers(findContainersBy(text));
+    console.log('searching for: ', text);
 }
 
 function clearContainersPanel() {
@@ -220,15 +263,3 @@ function clearContainersPanel() {
     document.querySelector('#containersGrid > .card-columns').innerHTML = '';
     document.querySelector('.table-body').innerHTML = '';
 }
-
-function showContainerDetailsRight(id) {
-    console.log('container details to show: ', id);
-    document.getElementById('rightPanel').style.width = "500px";
-
-}
-
-function hideLaunchDetailsPanel() {
-    document.getElementById('rightPanel').style.width = "0";
-}
-
-document.getElementById('btnLaunch').onclick = hideLaunchDetailsPanel;
