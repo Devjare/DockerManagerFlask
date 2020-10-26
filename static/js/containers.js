@@ -1,18 +1,13 @@
-// TODO: ADD XMLHTTPREQUEST object to the top to make it global
 // TODO: ADD builder.html
 // TODO: USE GENERATORS FOR docker stats() STREAM FROM FLASK
 // TODO: GENERATE USER DATA ON SQLITE DATABASE FOR AUTH
-// TODO: ADD 'All' FILTER FOR CONTAINERS
-// TODO: IF FILTER IS FILTERING ON GRID VIEW, RESULTS ARE SHOWN ON GRID VIEW
-// SOLVE THAT THE OPPOSITE HAPPENS(FILTER ON GRID, SHOWS LIST FILTERED)
-// TODO: IMPLEMENT SEARCH BAR FUNCTIONALITY
 // TODO: TRY TO IMPLEMENT LIVE RELOAD TO CONTAINERS, LEAVING OUT THE REFRESH BUTTON.
 // TODO: DESING CONTAINER/IMAGE DETAILS SCREEN(THIS IS GONNA USE GRAPHICS).
-// TODO: CLOSE MODAL WHEN CONTAINER ACTION IS PRESSED(BUTTON)
+// TODO: Search while in a filtered section, not working, solve.
 
 // global vars
 var xhr = new XMLHttpRequest();
-var filter = 'all';
+var currentFilter = 'all';
 var currentView = 'list';
 
 function showPopover(id) {
@@ -95,16 +90,16 @@ function showModal(container) {
      </label>
      </div>
     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-    <button onclick="triggerContainerAction('${id}','start')" type="button" class="btn btn-primary">Start</button>`
+    <button onclick="triggerContainerAction('${id}','start')" type="button" class="btn btn-primary" data-dismiss="modal">Start</button>`
     } else if(state == 'paused') {
         modalFooter += `<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button onclick="triggerContainerAction('${id}','unpause')" type="button" class="btn btn-info">Unpause</button>
-        <button onclick="triggerContainerAction('${id}','stop')" type="button" class="btn btn-danger">Stop</button>`
+        <button onclick="triggerContainerAction('${id}','unpause')" type="button" class="btn btn-info" data-dismiss="modal">Unpause</button>
+        <button onclick="triggerContainerAction('${id}','stop')" type="button" class="btn btn-danger" data-dismiss="modal">Stop</button>`
     } else if(state == 'running') {
         modalFooter += `<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button onclick="triggerContainerAction('${id}','restart')" type="button" class="btn btn-warning">Restart</button>
-        <button onclick="triggerContainerAction('${id}','pause')" type="button" class="btn btn-info">Pause</button>
-        <button onclick="triggerContainerAction('${id}','stop')" type="button" class="btn btn-danger">Stop</button>`
+        <button onclick="triggerContainerAction('${id}','restart')" type="button" class="btn btn-warning" data-dismiss="modal">Restart</button>
+        <button onclick="triggerContainerAction('${id}','pause')" type="button" class="btn btn-info" data-dismiss="modal">Pause</button>
+        <button onclick="triggerContainerAction('${id}','stop')" type="button" class="btn btn-danger" data-dismiss="modal">Stop</button>`
     }
 
     $('#modalFooter').html(modalFooter);
@@ -169,9 +164,14 @@ function buildContainerHtmlTemplate(container) {
     </div></div>`
     return containerHtmlTemplate;
 }
-function loadContainers(containers) {
+function loadContainers(containers, filter) {
     clearContainersPanel();
-    containers.forEach(c => {
+    console.log('containers before: ', containers);
+    let filtered;
+    if(filter != 'all') filtered = filterContainersBy(filter);
+    else filtered = containers;
+    console.log('filtered containers: ', filtered);
+    filtered.forEach(c => {
         rowsTemplate = buildContainerTableRow(c);
         document.querySelector('.table-body').innerHTML += rowsTemplate;
 
@@ -190,7 +190,7 @@ function loadContainers(containers) {
 }
 function loadFlaskVars(vars) {
     containers = vars['containers'];
-    loadContainers(containers);
+    loadContainers(containers, currentFilter);
 }
 
 function refresh() {
@@ -198,10 +198,8 @@ function refresh() {
     xhr.onreadystatechange = (e) => {
         if(xhr.readyState == 4) {
             if(xhr.status == 200) {
-                console.log('response on refresh: ', xhr.responseText);
                 containers = JSON.parse(xhr.responseText)['containers'];
-                console.log('refresh containers: ', containers);
-                loadContainers(containers);
+                loadContainers(containers, currentFilter);
                 dump(xhr.responseText)
             }
             else
@@ -238,9 +236,10 @@ function filterContainersBy(state) {
 
 function filterBy(state) {
     clearContainersPanel();
+    currentFilter = state;
     $('#btnFilterBy').text(state);
     filteredContainers = filterContainersBy(state);
-    loadContainers(filteredContainers);
+    loadContainers(filteredContainers, currentFilter);
 }
 
 function findContainersBy(pattern) {
@@ -254,7 +253,7 @@ function findContainersBy(pattern) {
 
 function searchContainers() {
     let text = $('#searchText')[0].value;
-    loadContainers(findContainersBy(text));
+    loadContainers(findContainersBy(text), currentFilter);
     console.log('searching for: ', text);
 }
 
