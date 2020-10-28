@@ -19,6 +19,7 @@
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt"
                                                                                               crossorigin="anonymous">
         <link rel="stylesheet" href="{{url_for('static', filename='css/global.css')}}">
+        <link rel="stylesheet" href="{{url_for('static', filename='css/base.css')}}">
         {% endblock %}
     </head>
 
@@ -64,10 +65,48 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="/containers">
+                                <a id="itemContainers" class="nav-link" href="#">
                                     <span data-feather="users"></span>
                                     Contenedores
                                 </a>
+                                <div class="containers-item-submenu">
+                                    <ul>
+                                        <li>
+                                            <a href="/containers">
+                                                <span data-feather="list"></span>
+                                                Lista
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#">
+                                                <span data-feather="info"></span>
+                                                Detalles
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="nav-item">
+                                <a id="itemImages" class="nav-link" href="#">
+                                    <span data-feather="users"></span>
+                                    Imagenes
+                                </a>
+                                <div class="images-item-submenu">
+                                    <ul>
+                                        <li>
+                                            <a href="/images">
+                                                <span data-feather="list"></span>
+                                                Lista
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#">
+                                                <span data-feather="info"></span>
+                                                Detalles
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </li>
                             <!--<li class="nav-item">
                                 <a class="nav-link" href="#">
@@ -136,6 +175,7 @@
 
                     <!-- Custom JS Files -->
                     <script src="{{url_for('static', filename='js/containers.js')}}"></script>
+                    <script src="{{url_for('static', filename='js/base.js')}}"></script>
                     <script>loadFlaskVars({{containers | safe}})</script>
 
                     <!-- Graphs -->

@@ -7,6 +7,7 @@ import os
 
 from flask import Flask, request, jsonify, abort, render_template, session
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import ForeignKey
 from flask_marshmallow import Marshmallow
 
 app = Flask(__name__)
@@ -61,11 +62,14 @@ class Piece(db.Model):
     def __repr__(self):
         return '<UC %d>' % self.id
 
+
 class User(db.Model):
     __tablename__ = 'users'
     uid = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(255))
     password = db.Column(db.String(255))
+
+    containers = db.relationship('Container', secondary='users_containers')
 
     def __init__(self, uid, username, password):
         self.uid = uid
@@ -78,10 +82,22 @@ class Container(db.Model):
     name = db.Column(db.String(255)) 
     image_id = db.Column(db.String(255))
 
+    users = db.relationship('User', secondary='users_containers')
+
     def __init__(self, id, name, image_id):
         self.id = id
         self.name = name
         self.image_id = image_id
+
+class UsersContainers(db.Model):
+    __tablename__ = 'users_containers'
+    user_id = db.Column(db.Integer, 
+            ForeignKey('containers.id'),
+            primary_key=True)
+    container_id = db.Column(db.String(255),
+            ForeignKey('users.uid'),
+            primary_key=True)
+
 
 ##### SCHEMAS #####
 class ServiceSchema(ma.Schema):
@@ -113,6 +129,9 @@ class ContainerSchema(ma.Schema):
     class Meta:
         fields = ('id', 'name', 'image_id')
 
+class UserContainersSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'user_id', 'container_id')
 service_schema = ServiceSchema()
 services_schema = ServiceSchema(many=True)
 piece_schema = PieceSchema()
@@ -148,6 +167,16 @@ def loadDatabase():
             db.session.commit()
 
     return 'Containers loaded into DB!'
+
+@app.route('/testdb')
+def testdb():
+    data = db.session.query( Container, User ).filter(
+            UsersContainers.container_id == Container.id,
+            UsersContainers.user_id == User.uid).order_by(UsersContainers.user_id).all();
+
+    for x in data:
+        print('Container: {}, of: {}'.format(x.Container.name, x.User.username))
+    return 'aqui ta'
 
 # Raiz
 
@@ -217,6 +246,7 @@ def coupling():
 
 @app.route('/containers/json')
 def getContainers():
+    print('on session: ', session['username'])
     args = request.args
     allContainers = args.get('all') == 'True'
     
@@ -226,6 +256,7 @@ def getContainers():
 
 @app.route('/containers')
 def listContainers():
+    # list containers only of the given user.
     containerslist = dockercli.containers(all=True);
     # allcontainers = client.containers.list(all=True);
     # formattedContainers = map(containerToJson, allcontainers)
@@ -287,6 +318,9 @@ def login():
 
         exists = authenticate(username, password)
         if(exists):
+            
+            # retrieve user's containers' ids from database
+            # save that data on session.
             return main()
         else:
             return 'User doesnt exists.'

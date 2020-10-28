@@ -4,6 +4,13 @@
 // TODO: TRY TO IMPLEMENT LIVE RELOAD TO CONTAINERS, LEAVING OUT THE REFRESH BUTTON.
 // TODO: DESING CONTAINER/IMAGE DETAILS SCREEN(THIS IS GONNA USE GRAPHICS).
 // TODO: Search while in a filtered section, not working, solve.
+// TODO: Add sign up screen
+// TODO: Allow to create new users.
+// TODO: Maybe make an admin account, who can see every container.
+// TODO: Show only containers of the logged in user.
+// TODO: Add detailed screen for containers/images.
+// TODO: Add images screen(Just like the containers one)
+// TODO: ADD DELETE OPTION FOR CONTAINERS/IMAGES
 
 // global vars
 var xhr = new XMLHttpRequest();
@@ -35,6 +42,7 @@ function triggerContainerAction(id, action) {
             if(xhr.status == 200) {
                 console.log(`${action}ing container: ${id}`);
                 dump(xhr.responseText)
+                refresh();
             }
             else
                 dump("Error procesing petition");
@@ -122,20 +130,27 @@ function showContainerDetails(id) {
 var containersIds;
 var containers;
 
-function buildContainerTableRow(container) {
+function buildContainerTableRow(container, index) {
     let color = "";
     let state = container.State;
+    let ipport = "";
+        
+    if(container.Ports.length > 0) {
+        let p = container.Ports[0];
+        ipport = `${p.IP}:${p.PublicPort}->${p.PrivatePort}/${p.Type}`;
+        console.log('port: ', ipport);
+    }
 
     if(state == 'running') color = 'success';
     else if(state == 'paused') color = 'info';
     else if(state == 'stopped') color = 'danger';
     else if(state == 'restarting') color = 'warning';
     let template = `<tr class="table-${color}">
-      <th scope="row">1</th>
+      <th scope="row">${index}</th>
       <td>${container.Id}</td>
       <td>${container.Names[0]}</td>
       <td>${container.State}</td>
-      <td>${container.Ports[0]?"NONE":container.Ports[0]}</td>
+      <td>${ipport == ""?"NONE":ipport}</td>
       <td><a href="#" id="${container.Id}" class="popover-item" data-placement="bottom" 
       data-toggle="popover" title="Image Info" data-content="ID: ${container.ImageID}">${container.Image}</a></td>
       <td><a href="#" onclick="showContainerDetails('${container.Id}')">More</a></td>
@@ -171,8 +186,9 @@ function loadContainers(containers, filter) {
     if(filter != 'all') filtered = filterContainersBy(filter);
     else filtered = containers;
     console.log('filtered containers: ', filtered);
+    let index = 1;
     filtered.forEach(c => {
-        rowsTemplate = buildContainerTableRow(c);
+        rowsTemplate = buildContainerTableRow(c, index);
         document.querySelector('.table-body').innerHTML += rowsTemplate;
 
         gridTemplate = buildContainerHtmlTemplate(c);
@@ -185,6 +201,7 @@ function loadContainers(containers, filter) {
             document.getElementById('containersGrid').style.display="flex";
             document.getElementById('containersList').style.display="none";
         }
+        index++;
         feather.replace();
     });
 }
@@ -194,7 +211,7 @@ function loadFlaskVars(vars) {
 }
 
 function refresh() {
-    xhr.open('GET', `http://localhost:8000/containers/json?all=True&since=relaxed_wilson`, true);
+    xhr.open('GET', `http://localhost:8000/containers/json?all=True`, true);
     xhr.onreadystatechange = (e) => {
         if(xhr.readyState == 4) {
             if(xhr.status == 200) {
@@ -243,7 +260,6 @@ function filterBy(state) {
 }
 
 function findContainersBy(pattern) {
-    console.log('finding among: ', containers);
     return containers.filter(c => 
         c.Id.includes(pattern)  
         || c.Names[0].includes(pattern) 
@@ -254,7 +270,6 @@ function findContainersBy(pattern) {
 function searchContainers() {
     let text = $('#searchText')[0].value;
     loadContainers(findContainersBy(text), currentFilter);
-    console.log('searching for: ', text);
 }
 
 function clearContainersPanel() {
