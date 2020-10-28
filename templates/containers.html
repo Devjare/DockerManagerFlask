@@ -1,0 +1,87 @@
+{% extends 'base.html' %} {% block title %} Definición {% endblock %} {% block head %} {{ super() }} {% endblock %} {%
+block content %}
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4 position-relative">
+    <div class="site-content">
+        <!-- CONTAINER LIST PANEL *** START ***-->
+        <div class="content m-0">
+            <div class="row titlebar p-3">
+                <div class="d-flex p-2 justify-content-between align-items-center">
+                    <h4 class="m-2">Container List</h4>
+                    <div class="btn-group dropright">
+                        <button id="btnFilterBy" type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filter by</button>
+                        <div class="dropdown-menu">
+                            <a onclick="filterBy('running')" id="filterByRunning" class="dropdown-item" href="#">Running</a>
+                            <a onclick="filterBy('dead')" id="filterByDead" class="dropdown-item" href="#">Dead</a>
+                            <a onclick="filterBy('paused')" id="filterByPaused" class="dropdown-item" href="#">Paused</a>
+                            <a onclick="filterBy('created/exited')" id="filterByCreated" class="dropdown-item" href="#">Created/Exited</a>
+                            <a onclick="filterBy('restarting')" id="filterByRestarting" class="dropdown-item" href="#">Restarting</a>
+                            <a onclick="filterBy('all')" id="filterByAll" class="dropdown-item" href="#">All</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="options">
+                    <div class="searchbar">
+                        <input oninput="searchContainers()" type="text" id="searchText" placeholder="Search">
+                    </div>
+                    <div class="view-format">
+                        <!-- <img src="{{url_for('static',filename='images/gridviewicon.png')}}" alt="" id="vgrid" width="20px" height="20px">
+                            <img src="{{url_for('static',filename='images/listicon.png')}}" alt="" id="vlist" width="20px" height="20px"> -->
+                            <span onclick="formatView('grid')" data-feather="grid"></span>
+                            <span onclick="formatView('list')" data-feather="list"></span>
+                            <span onclick="refresh()" data-feather="refresh-cw"></span>
+                    </div>
+                </div>
+            </div>
+            <div id="containersPanel" class="row">
+                <div id="containersGrid" class="containers-grid containers">
+                    <div class="card-columns"></div>
+                </div>
+                <div id="containersList" class="containers-list containers">
+                    <div class="list-group">
+                        <table class="table table-bordered table-stripped table-responsive-sm table-hover">
+                            <thead class="thead-dark"><tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Container ID</th>
+                                    <th scope="col">Container Name</th>
+                                    <th scope="col">State</th>
+                                    <th scope="col">Ports</th>
+                                    <th scope="col">Image</th>
+                                    <th scope="col">More</th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-dark text-white">
+                        <h5 id="modalTitle" class="modal-title">Modal title</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div id="modalBody" class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row"><strong>ID:&nbsp;</strong><p id="container-id"></p></div>
+                            <div class="row"><strong>Name: &nbsp;</strong><p id="container-name"></p></div>
+                            <div class="row"><strong>IP/Ports: &nbsp;</strong><p id="container-ipport"></p></div>
+                            <div class="row"><strong>State: &nbsp;</strong><p id="container-state"></p></div>
+                            <div class="row"><strong>Status: &nbsp;</strong><p id="container-status"></p></div>
+                            <div class="row"><strong>Image: &nbsp;</strong><a href="#" id="container-image"></a></div>
+                            <div class="row"><strong>Created: &nbsp;</strong><p id="container-created"></p></div>
+                        </div>
+                    </div>
+                    <div id="modalFooter" class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- CONTAINER LIST PANEL ***  END  ***-->
+    </div>
+</main>
+{% endblock %} {% block footer %} {{ super() }} {% endblock %}

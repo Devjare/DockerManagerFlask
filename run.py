@@ -3,9 +3,11 @@ import datetime
 import requests
 import simplejson as json
 import docker
+import os
 
-from flask import Flask, request, jsonify, abort, render_template
+from flask import Flask, request, jsonify, abort, render_template, session
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import ForeignKey
 from flask_marshmallow import Marshmallow
 
 app = Flask(__name__)
@@ -18,10 +20,16 @@ app.config.update(
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
-client = docker.DockerClient(base_url='http://192.168.1.87:2375/')
+app.secret_key = os.urandom(24)
 
+# 192.168.1.148:2375 <-- original IP
+LOCALIP = "unix://var/run/docker.sock"
+# client = docker.DockerClient(base_url='http://192.168.1.87:2375/')
+client = docker.DockerClient(base_url=LOCALIP + "/")
+# lowlevel client.
+dockercli = docker.APIClient(base_url="unix://var/run/docker.sock")
 images = {
-    "name": "http://192.168.1.87:5000",
+    "name": "http://localhost:5000",
     "endpoint": "/v2/_catalog",
     "children": []
 }
@@ -55,6 +63,42 @@ class Piece(db.Model):
         return '<UC %d>' % self.id
 
 
+class User(db.Model):
+    __tablename__ = 'users'
+    uid = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(255))
+    password = db.Column(db.String(255))
+
+    containers = db.relationship('Container', secondary='users_containers')
+
+    def __init__(self, uid, username, password):
+        self.uid = uid
+        self.username = username
+        self.password = password
+
+class Container(db.Model):
+    __tablename__ = 'containers'
+    id = db.Column(db.String(255), primary_key=True)
+    name = db.Column(db.String(255)) 
+    image_id = db.Column(db.String(255))
+
+    users = db.relationship('User', secondary='users_containers')
+
+    def __init__(self, id, name, image_id):
+        self.id = id
+        self.name = name
+        self.image_id = image_id
+
+class UsersContainers(db.Model):
+    __tablename__ = 'users_containers'
+    user_id = db.Column(db.Integer, 
+            ForeignKey('containers.id'),
+            primary_key=True)
+    container_id = db.Column(db.String(255),
+            ForeignKey('users.uid'),
+            primary_key=True)
+
+
 ##### SCHEMAS #####
 class ServiceSchema(ma.Schema):
     class Meta:
@@ -77,14 +121,66 @@ class PieceSchema(ma.Schema):
     #name = fields.Str()
     #host = fields.Str()
 
+class UserSchema(ma.Schema):
+    class Meta:
+        fields = ('uid', 'username', 'password')
+
+class ContainerSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'name', 'image_id')
+
+class UserContainersSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'user_id', 'container_id')
 service_schema = ServiceSchema()
 services_schema = ServiceSchema(many=True)
 piece_schema = PieceSchema()
 pieces_schema = PieceSchema(many=True)
+user_schema = UserSchema()
+users_schema = UserSchema(many=True)
+container_schema= ContainerSchema()
+containers_schema = ContainerSchema(many=True)
+
+# load
+def loadAllContainersOnDB():
+    # make a route just to fill database once
+    # but look up for a way to load the containers info
+    # only once and not every time the systems loads.
+    pass
+
+# only to load containers on database, test purposes.s
+@app.route('/loadDatabase')
+def loadDatabase():
+    allcontainers = client.containers.list(all=True)
+    
+    for c in allcontainers:
+        container = Container.query.get('123')
+        if(container != None):
+            # pending see how to update if value already exists while loading full database
+            # altough it shouldn't be really necesary, since this function specifically
+            # should be called once and only once to fill just ONCE the database with
+            # the current containers.
+            db.session.query(Containers)
+        else:
+            new_container = Container(c.id, c.name, c.image.id)
+            db.session.add(new_container)
+            db.session.commit()
+
+    return 'Containers loaded into DB!'
+
+@app.route('/testdb')
+def testdb():
+    data = db.session.query( Container, User ).filter(
+            UsersContainers.container_id == Container.id,
+            UsersContainers.user_id == User.uid).order_by(UsersContainers.user_id).all();
+
+    for x in data:
+        print('Container: {}, of: {}'.format(x.Container.name, x.User.username))
+    return 'aqui ta'
 
 # Raiz
 
-@app.route('/')
+@app.route('/home')
 @app.route('/index.html')
 def main():
     return render_template('index.html')
@@ -148,6 +244,102 @@ def coupling():
     return render_template(
         'planificacion.html')
 
+@app.route('/containers/json')
+def getContainers():
+    print('on session: ', session['username'])
+    args = request.args
+    allContainers = args.get('all') == 'True'
+    
+    containers = dockercli.containers(all=(allContainers))
+
+    return {'containers': containers}
+
+@app.route('/containers')
+def listContainers():
+    # list containers only of the given user.
+    containerslist = dockercli.containers(all=True);
+    # allcontainers = client.containers.list(all=True);
+    # formattedContainers = map(containerToJson, allcontainers)
+    jsonArray = { "containers": containerslist }
+    return render_template('containers.html', containers=json.dumps(jsonArray))
+
+# Function to map Containers objet to json, in order to use themo on JS
+def containerToJson(container):
+    image = {"id": container.image.id, "tags": container.image.tags}
+    c = {"id": container.short_id, "name": container.name, "status": container.status, "image": image}
+    return json.dumps(c)
+
+@app.route('/containers/<id>')
+def getContainerInfo(id):
+    print('id of container info: ', id)
+    return {"contaienrinfo": 'Hello {id}'}
+
+@app.route('/containers/start/<id>')
+def startContainer(id):
+    print('starting container: ', id)
+    dockercli.start(id)
+    return 'running'
+
+@app.route('/containers/stop/<id>')
+def stopContainer(id):
+    print('stopping container: ', id)
+    dockercli.stop(id)
+    return 'running'
+
+@app.route('/containers/restart/<id>')
+def restartContainer(id):
+    print('REstarting container: ', id)
+    dockercli.restart(id)
+    return 'running'
+
+@app.route('/containers/pause/<id>')
+def pauseContainer(id):
+    print('pausing container: ', id)
+    dockercli.pause(id)
+    return 'running'
+
+@app.route('/containers/unpause/<id>')
+def unpauseContainer(id):
+    print('pausing container: ', id)
+    dockercli.unpause(id)
+    return 'running'
+
+@app.route('/', methods=['GET'])
+def loginscreen():
+    return render_template('signin.html')
+
+@app.route('/login', methods=['POST'])
+def login():
+    params = request.form;
+    if(len(params) > 0):
+        # authenticate
+        username = params.get('username')
+        password = params.get('password')
+
+        exists = authenticate(username, password)
+        if(exists):
+            
+            # retrieve user's containers' ids from database
+            # save that data on session.
+            return main()
+        else:
+            return 'User doesnt exists.'
+    else:
+        return render_template('signin.html')
+
+    return 'Failed to authentiate'
+
+def authenticate(username, password):
+    allusers = User.query.all()
+    for user in allusers:
+        if(user.username == username and user.password == password):
+            print('it does exists biatch')
+            # save the username on the flask session
+            session['username'] = username
+            return True
+
+    print('it does not exists biatch')
+    return False
 
 # API
 
@@ -186,8 +378,10 @@ def getForwardHeaders(request):
 
 
 def getSilo(headers):
+    print "GETSILO METHOD~~~~~~~~~~~~~~~~~~~~~~~"
     try:
-        url = images['name'] + "/" + images['endpoint']
+        print "Trying to get Images..........."
+        url = images['name'] + images['endpoint']
         res = requests.get(url, headers=headers, timeout=3.0)
     except:
         res = None

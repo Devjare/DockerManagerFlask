@@ -7,6 +7,6 @@ json2html
 simplejson
 gevent
 flask-restful
-sqlalchemy
 Flask-SQLAlchemy
+sqlalchemy
 docker
