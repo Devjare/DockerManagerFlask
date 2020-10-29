@@ -154,7 +154,7 @@ def loadDatabase():
     allcontainers = client.containers.list(all=True)
     
     for c in allcontainers:
-        container = Container.query.get('123')
+        container = Container.query.all()
         if(container != None):
             # pending see how to update if value already exists while loading full database
             # altough it shouldn't be really necesary, since this function specifically
@@ -176,6 +176,7 @@ def testdb():
 
     for x in data:
         print('Container: {}, of: {}'.format(x.Container.name, x.User.username))
+
     return 'aqui ta'
 
 # Raiz
@@ -254,10 +255,18 @@ def getContainers():
 
     return {'containers': containers}
 
+def isUserContainer(container):
+    return container.Id in session['usercontainers']
+
 @app.route('/containers')
 def listContainers():
     # list containers only of the given user.
-    containerslist = dockercli.containers(all=True);
+    containerslist = dockercli.containers(all=True)
+
+    print('UNNNNN filtered containers: ', containerslist)
+    containerslist = filter(lambda c: c['Id'] in session['usercontainers'], containerslist)
+    print('filtered containers: ', containerslist)
+
     # allcontainers = client.containers.list(all=True);
     # formattedContainers = map(containerToJson, allcontainers)
     jsonArray = { "containers": containerslist }
@@ -317,10 +326,16 @@ def login():
         password = params.get('password')
 
         exists = authenticate(username, password)
-        if(exists):
-            
-            # retrieve user's containers' ids from database
-            # save that data on session.
+        if(exists): 
+            userContainers = db.session.query(Container, User).filter(
+                    UsersContainers.container_id == Container.id,
+                    UsersContainers.user_id == User.uid,
+                    User.username == username).order_by(UsersContainers.user_id).all()
+            session['usercontainers'] = []
+            for x in userContainers:
+                print('Container: {}, of: {}'.format(x.Container.name, x.User.username))
+                session['usercontainers'].append(x.Container.id)
+
             return main()
         else:
             return 'User doesnt exists.'
@@ -336,6 +351,7 @@ def authenticate(username, password):
             print('it does exists biatch')
             # save the username on the flask session
             session['username'] = username
+            session['userid'] = user.uid
             return True
 
     print('it does not exists biatch')
