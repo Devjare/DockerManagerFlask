@@ -34,6 +34,9 @@ images = {
     "children": []
 }
 
+USERCONTAINERS = 'usercontainers'
+USERNAME = 'username'
+
 ##### MODELS #####
 class Service(db.Model):
     __tablename__ = 'services'
@@ -65,14 +68,13 @@ class Piece(db.Model):
 
 class User(db.Model):
     __tablename__ = 'users'
-    uid = db.Column(db.Integer, primary_key=True)
+    uid = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(255))
     password = db.Column(db.String(255))
 
     containers = db.relationship('Container', secondary='users_containers')
 
-    def __init__(self, uid, username, password):
-        self.uid = uid
+    def __init__(self, username, password):
         self.username = username
         self.password = password
 
@@ -247,25 +249,21 @@ def coupling():
 
 @app.route('/containers/json')
 def getContainers():
-    print('on session: ', session['username'])
-    args = request.args
-    allContainers = args.get('all') == 'True'
+    containers = dockercli.containers(all=True)
     
-    containers = dockercli.containers(all=(allContainers))
-
+    print('UNNNNN filtered containers: ', containers)
+    containers = filter(lambda c: c['Id'] in session[USERCONTAINERS], containers)
+    print('filtered containers: ', containers)
+    
     return {'containers': containers}
 
 def isUserContainer(container):
-    return container.Id in session['usercontainers']
+    return container.Id in session[USERCONTAINERS]
 
 @app.route('/containers')
 def listContainers():
     # list containers only of the given user.
-    containerslist = dockercli.containers(all=True)
-
-    print('UNNNNN filtered containers: ', containerslist)
-    containerslist = filter(lambda c: c['Id'] in session['usercontainers'], containerslist)
-    print('filtered containers: ', containerslist)
+    containerslist = getContainers()['containers']
 
     # allcontainers = client.containers.list(all=True);
     # formattedContainers = map(containerToJson, allcontainers)
@@ -327,14 +325,15 @@ def login():
 
         exists = authenticate(username, password)
         if(exists): 
+            session[USERNAME] = username
+
             userContainers = db.session.query(Container, User).filter(
                     UsersContainers.container_id == Container.id,
                     UsersContainers.user_id == User.uid,
                     User.username == username).order_by(UsersContainers.user_id).all()
-            session['usercontainers'] = []
+            session[USERCONTAINERS] = []
             for x in userContainers:
-                print('Container: {}, of: {}'.format(x.Container.name, x.User.username))
-                session['usercontainers'].append(x.Container.id)
+                session[USERCONTAINERS].append(x.Container.id)
 
             return main()
         else:
@@ -348,14 +347,29 @@ def authenticate(username, password):
     allusers = User.query.all()
     for user in allusers:
         if(user.username == username and user.password == password):
-            print('it does exists biatch')
-            # save the username on the flask session
-            session['username'] = username
-            session['userid'] = user.uid
             return True
-
-    print('it does not exists biatch')
+    
     return False
+
+@app.route('/signup', methods=['POST'])
+def signup():
+    params = request.form;
+    if(len(params) > 0):
+        username = params.get('username')
+        password = params.get('password')
+
+        exists = authenticate(username, password)
+
+        if(exists):
+            return { 'error': 'User already exists, login instead'}
+        else:
+            session[USERNAME] = username
+            # insert to db user, and login
+            user = User(username, password)
+            
+            db.session.add(user)
+            db.session.commit()
+            return main()
 
 # API
 

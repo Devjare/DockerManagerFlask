@@ -11,6 +11,10 @@
 // TODO: Add detailed screen for containers/images.
 // TODO: Add images screen(Just like the containers one)
 // TODO: ADD DELETE OPTION FOR CONTAINERS/IMAGES
+// TODO: ADD LOADING OPTION, WHEN STARTING/STOPPING/PAUSING/UNPAUSING A CONTAINER
+// ON THE MODAL, IT WON'T CLOSE UNTIL THE ACTION IS DONE. OR MAYBE
+// SHOW AN ICON ON THE ROW/CARD OF THE CONTAINER SHOWING THAT THE ACTION IS STILL
+// ON PROGRESS
 
 // global vars
 var xhr = new XMLHttpRequest();
@@ -211,7 +215,7 @@ function loadFlaskVars(vars) {
 }
 
 function refresh() {
-    xhr.open('GET', `http://localhost:8000/containers/json?all=True`, true);
+    xhr.open('GET', `http://localhost:8000/containers/json`, true);
     xhr.onreadystatechange = (e) => {
         if(xhr.readyState == 4) {
             if(xhr.status == 200) {
@@ -277,3 +281,5 @@ function clearContainersPanel() {
     document.querySelector('#containersGrid > .card-columns').innerHTML = '';
     document.querySelector('.table-body').innerHTML = '';
 }
+
+
