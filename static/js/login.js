@@ -1,4 +1,5 @@
 
+var xhr = new XMLHttpRequest();
 // -------------        SIGNIN/SIGNUP PAGE BEHAVIOURS        ---------------
 
 loginFormTemplate = `<form action="/login" method="POST">
@@ -28,6 +29,43 @@ registerFormTemplate = `<form action="/signup" method="POST">
 function switchForm(to) {
     document.getElementById('form-type').innerHTML = to == "signup" ? registerFormTemplate : loginFormTemplate;
 } 
+
+function sendRequest(url, pararms) { 
+}
+
+function validate(field) {
+    return field.length > 0;
+}
+
+function login() { 
+
+    username = document.getElementById('username');
+    password = document.getElementById('username');
+
+    if(validate(username) && validate(password)) {
+        // if not empty
+        xhr.open('POST', `http://localhost:8000/login`, true);
+        xhr.onreadystatechange = (e) => {
+            if(xhr.readyState == 4) {
+                if(xhr.status == 200) {
+                    console.log('login successfull!')
+                    alert('login successfull!')
+                    // redirtec to main
+                }
+                else
+                    dump("Error procesing petition");
+            }
+        };
+        xhr.send({ 'username': username, 'pasword': password });
+    } else {
+        alert(`don't leave empty fields`);
+    }
+
+}
+
+function signup() {
+
+}
 
 // TODO: CONFIRM THAT THE PASSWORD IS THE SAME WHEN USING SIGN UP FORM
 // TODO: PUT ERROR COLORS WHEN NOT PASSWORD/USERNAME GIVEN
