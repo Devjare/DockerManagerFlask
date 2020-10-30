@@ -23,13 +23,15 @@ ma = Marshmallow(app)
 app.secret_key = os.urandom(24)
 
 # 192.168.1.148:2375 <-- original IP
-LOCALIP = "unix://var/run/docker.sock"
+# disys0.tamps.cinvestav.mx:2375 <-- IP Servidor
+LOCALIP = "disys0.tamps.cinvestav.mx:2375"
+#LOCALIP = "unix://var/run/docker.sock"
 # client = docker.DockerClient(base_url='http://192.168.1.87:2375/')
 client = docker.DockerClient(base_url=LOCALIP + "/")
 # lowlevel client.
-dockercli = docker.APIClient(base_url="unix://var/run/docker.sock")
+dockercli = docker.APIClient(base_url=LOCALIP)
 images = {
-    "name": "http://localhost:5000",
+    "name": "http://disys0.tamps.cinvestav.mx:5000",
     "endpoint": "/v2/_catalog",
     "children": []
 }
@@ -408,9 +410,9 @@ def getForwardHeaders(request):
 
 
 def getSilo(headers):
-    print "GETSILO METHOD~~~~~~~~~~~~~~~~~~~~~~~"
+    print('GETSILO METHOD~~~~~~~~~~~~~~~~~~~~~~~')
     try:
-        print "Trying to get Images..........."
+        print('Trying to get Images...........')
         url = images['name'] + images['endpoint']
         res = requests.get(url, headers=headers, timeout=3.0)
     except:
@@ -508,9 +510,9 @@ def get_uc():
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        print "usage: %s port" % (sys.argv[0])
+        print("usage: %s port" % (sys.argv[0]))
         sys.exit(-1)
 
     p = int(sys.argv[1])
-    print "start at port %s" % (p)
+    print("start at port %s" % (p))
     app.run(host='0.0.0.0', port=p, debug=True, threaded=True)
