@@ -4,8 +4,8 @@ services:
         build: .
         restart: always
         ports:
-            - 45000:45000
+            - 46000:46000
         volumes:
             - ./manager:/app/
         tty: true
-        command: python run.py 45000
+        command: python run.py 46000
