@@ -1,0 +1,11 @@
+version: "2"
+services: 
+    app:
+        build: .
+        restart: always
+        ports:
+            - 45000:45000
+        volumes:
+            - ./manager:/app/
+        tty: true
+        command: python run.py 45000
