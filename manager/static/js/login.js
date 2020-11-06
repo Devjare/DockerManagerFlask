@@ -3,7 +3,7 @@ var xhr = new XMLHttpRequest();
 // -------------        SIGNIN/SIGNUP PAGE BEHAVIOURS        ---------------
 
 loginFormTemplate = `<form action="/login" method="POST">
-<h1 class="h3 mb-3 font-weight-normal">Log in Please</h1>
+<h1 class="h3 mb-3 font-weight-normal d-flex justify-content-center">Log in Please</h1>
 <label class="sr-only" for="inputEmail">Email address</label>
 <input name="username" id="inputEmail" class="form-control m-1" type="text" placeholder="Username">
 <label class="sr-only" for="inputPassword">Password</label>
@@ -14,7 +14,7 @@ loginFormTemplate = `<form action="/login" method="POST">
 </div></div></form>`;
 
 registerFormTemplate = `<form action="/signup" method="POST">
-<h1 class="h3 mb-3 font-weight-normal">Log in Please</h1>
+<h1 class="h3 mb-3 font-weight-normal d-flex justify-content-center">Sign up!</h1>
 <label class="sr-only" for="inputEmail">Email address</label>
 <input name="username" id="inputEmail" class="form-control m-1" type="text" placeholder="Username">
 <label class="sr-only" for="inputPassword">Password</label>

@@ -24,14 +24,14 @@ app.secret_key = os.urandom(24)
 
 # 192.168.1.148:2375 <-- original IP
 # disys0.tamps.cinvestav.mx:2375 <-- IP Servidor
-LOCALIP = "disys0.tamps.cinvestav.mx:2375"
+LOCALIP = "192.168.1.148:2375"
 #LOCALIP = "unix://var/run/docker.sock"
 # client = docker.DockerClient(base_url='http://192.168.1.87:2375/')
 client = docker.DockerClient(base_url=LOCALIP + "/")
 # lowlevel client.
 dockercli = docker.APIClient(base_url=LOCALIP)
 images = {
-    "name": "http://disys0.tamps.cinvestav.mx:5000",
+    "name": "http://localhost:5000",
     "endpoint": "/v2/_catalog",
     "children": []
 }
@@ -249,14 +249,32 @@ def coupling():
     return render_template(
         'planificacion.html')
 
+@app.route('/images/json')
+def getAllImages():
+    params = request.args
+    images = dockercli.images(all=True)
+    return { 'images': images }
+
+@app.route('/rep/<repname>/<id>')
+def getImagesFromRepo(repname, id):
+    pass
+
+@app.route('/rep/search/<repname>/<text>')
+def searchOnRepo(repname, text):
+    pass
+
+@app.route('/rep/<repname>/pull/<id>')
+def pullFromRepo(repname, id):
+    pass
+
+@app.route('/rep/<repname>/push/<id>')
+def pushToRepo(repname, id):
+    pass
+
 @app.route('/containers/json')
 def getContainers():
     containers = dockercli.containers(all=True)
-    
-    print('UNNNNN filtered containers: ', containers)
     containers = filter(lambda c: c['Id'] in session[USERCONTAINERS], containers)
-    print('filtered containers: ', containers)
-    
     return {'containers': containers}
 
 def isUserContainer(container):
@@ -271,6 +289,10 @@ def listContainers():
     # formattedContainers = map(containerToJson, allcontainers)
     jsonArray = { "containers": containerslist }
     return render_template('containers.html', containers=json.dumps(jsonArray))
+
+@app.route('/images')
+def listImages():
+    return render_template('images.html')
 
 # Function to map Containers objet to json, in order to use themo on JS
 def containerToJson(container):

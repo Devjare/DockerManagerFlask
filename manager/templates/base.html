@@ -19,6 +19,7 @@
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt"
                                                                                               crossorigin="anonymous">
         <link rel="stylesheet" href="{{url_for('static', filename='css/global.css')}}">
+        <link rel="stylesheet" href="{{url_for('static', filename='css/images.css')}}">
         <link rel="stylesheet" href="{{url_for('static', filename='css/base.css')}}">
         {% endblock %}
     </head>
@@ -174,7 +175,9 @@
                     </script>
 
                     <!-- Custom JS Files -->
+                    <script src="{{url_for('static', filename='js/utils.js')}}"></script>
                     <script src="{{url_for('static', filename='js/containers.js')}}"></script>
+                    <script src="{{url_for('static', filename='js/images.js')}}"></script>
                     <script src="{{url_for('static', filename='js/base.js')}}"></script>
                     <script>loadFlaskVars({{containers | safe}})</script>
 

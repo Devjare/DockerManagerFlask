@@ -1,0 +1,126 @@
+{% extends 'base.html' %} {% block title %} Definición {% endblock %} {% block head %} {{ super() }} {% endblock %} {%
+block content %}
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4 position-relative">
+    <div class="site-content">
+        <!-- CONTAINER LIST PANEL *** START ***-->
+        <div class="content m-0">
+            <div class="row titlebar p-3">
+                <div class="d-flex p-2 justify-content-between align-items-center">
+                    <h4 class="m-2">Image List</h4>
+                </div>
+                <div class="options">
+                    <div class="searchbar">
+                        <input oninput="searchImages()" type="text" id="searchImagesText" placeholder="Search">
+                    </div>
+                    <div class="view-format">
+                        <span onclick="refresh()" data-feather="refresh-cw"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="data-content">
+
+                <div id="imagesPanel" class="row">
+                    <div id="imagesGrid" class="images-grid images">
+                        <div class="card-columns"></div>
+                    </div>
+                    <div id="imagesList" class="images-list images">
+                        <div class="list-group">
+                            <table class="table table-bordered table-stripped table-responsive-sm table-hover">
+                                <thead class="thead-dark"><tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Image ID</th>
+                                        <th scope="col">Image Tags</th>
+                                        <th scope="col">Created</th>
+                                        <th scope="col">Size</th>
+                                        <th scope="col">More</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="images-table" class="table-body">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div id="tabs" class="my-0 px-1 d-flex justify-content-between align-items-center">
+                    <!-- REVIEW: CONSIDER USING DYNAMIC TABS FOR MULTIPLE PRIVATE REPOSITORIES -->
+                    <h4>Repository</h4>
+                    <div class="options">
+                        <div class="form-group mx-3 mt-3">
+                            <select class="form-control" id="registrySearchType" onchange="searchOn()">
+                                <option value="registry">Private Repository</option>
+                                <option value="dockerhub">Search on dockerhub</option>
+                            </select>
+                        </div>
+                        <div class="searchbar">
+                            <input oninput="searchRegistry()" type="text" id="searchRegistryText" placeholder="Search">
+                        </div>
+                        <div class="view-format">
+                            <span onclick="refresh()" data-feather="refresh-cw"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="repositories">
+                    <div id="rep-1-tab">
+                        <!-- TODO: ADD PULL FROM REGISTRY(DOCKERHUB) AND PUSH TO LOCAL REGISTRY ACTION -->
+                        <!-- CONTENT EXAMPLE, CHANGE WITH JS-->
+                        <table class="table table-bordered table-stripped table-responsive-sm table-hover">
+                            <thead class="thead-dark"><tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Tags</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rep-1-table" class="table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="rep-dockerhub">
+                        <table class="table table-bordered table-stripped table-responsive-sm table-hover">
+                            <thead class="thead-dark"><tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Description</th>
+                                    <th scope="col">Stars</th>
+                                    <th scope="col">Official</th>
+                                    <th scope="col">Automated</th>
+                                    <th scope="col"><a href="#">Pull</a></th>
+                                </tr>
+                            </thead>
+                            <tbody id="dockerhub-search-table" class="table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-dark text-white">
+                        <h5 id="modalTitle" class="modal-title">Modal title</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div id="modalBody" class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row"><strong>ID:&nbsp;</strong><p id="container-id"></p></div>
+                            <div class="row"><strong>Name: &nbsp;</strong><p id="container-name"></p></div>
+                            <div class="row"><strong>IP/Ports: &nbsp;</strong><p id="container-ipport"></p></div>
+                            <div class="row"><strong>State: &nbsp;</strong><p id="container-state"></p></div>
+                            <div class="row"><strong>Status: &nbsp;</strong><p id="container-status"></p></div>
+                            <div class="row"><strong>Image: &nbsp;</strong><a href="#" id="container-image"></a></div>
+                            <div class="row"><strong>Created: &nbsp;</strong><p id="container-created"></p></div>
+                        </div>
+                    </div>
+                    <div id="modalFooter" class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- CONTAINER LIST PANEL ***  END  ***-->
+    </div>
+</main>
+{% endblock %} {% block footer %} {{ super() }} {% endblock %}

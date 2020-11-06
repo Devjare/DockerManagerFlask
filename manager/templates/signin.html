@@ -1,40 +1,45 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
     <head>
         <meta charset="UTF-8">
         <title>Container Manager</title>
-        <link rel="stylesheet" href="{{url_for("static", filename="css/bootstrap.min.css")}}">
-        <link rel="stylesheet" href="{{url_for("static", filename="css/signin.css")}}">
+        <link rel="stylesheet" href="{{url_for("static", filename="css/bootstrap.min.css")}}">         
+        <link rel="stylesheet" href="{{url_for("static", filename="css/signin.css")}}">     
     </head>
     <body class="d-flex justify-content-center align-items-center">
         <div>
             <div class="signin-form">
                 <div class="d-flex justify-content-center"></div>
                 <div class="d-flex justify-content-center"></div>
-                <form class="form-signin" action="/login" method="POST">
-                    <div class="images d-flex justify-content-center">
-                        <img class="mb-4" src="{{url_for("static", filename="images/cinveslogo.png")}}" alt="Cinvestav Tamaulipas Logo" width="200px" height=90px">
-                        <img class="mb-4" src="{{url_for("static", filename="images/dockerlogo.png")}}" alt="Docker Logo" width="100px" height="90px">
+                <div>
+                    <div class="images d-flex justify-content-center">                         
+                        <img class="mb-4" src="{{url_for("static", filename="images/cinveslogo.png")}}" alt="Cinvestav Tamaulipas Logo" width="200px" height=90px">                                        <img class="mb-4" src="{{url_for("static", filename="images/dockerlogo.png")}}" alt="Docker Logo" width="100px" height="90px">
                     </div>
-                    <h1 class="h3 mb-3 font-weight-normal">Sign in Please</h1>
-                    <label class="sr-only" for="inputEmail">Email address</label>
-                    <input name="username" id="inputEmail" class="form-control m-1" type="text" placeholder="Username">
-                    <label class="sr-only" for="inputPassword">Password</label>
-                    <input name="password" id="inputPassword" class="form-control m-1" type="password">
-                    <div class="p-2 m-3">
-                        <button class="btn btn-lg btn-primary btn-block m-1" type="submit">Sign in</button>
-                        <div class="checkbox mb-3 d-flex justify-content-center">
-                            <a href="#">Don't have an account?, sign up here!</a>
-                        </div>
+                    <div id="form-type">
+                        <form action="/login" method="POST">
+                            <h1 class="h3 mb-3 font-weight-normal d-flex justify-content-center">Sign in Please</h1>
+                            <label class="sr-only" for="inputEmail">Email address</label>                            
+                            <input name="username" id="inputEmail" class="form-control m-1" type="text" placeholder="Username">                             
+                            <label class="sr-only" for="inputPassword">Password</label>                             
+                            <input name="password" id="inputPassword" class="form-control m-1" type="password" placeholder="Password">                             
+                            <div class="p-2 m-3">
+                                <button class="btn btn-lg btn-primary btn-block m-1" type="submit">Sign in</button>                                 
+                                <div class="checkbox mb-3 d-flex justify-content-center">                                     
+                                    <small>                                         
+                                        <a onclick="switchForm('signup')" href="#">Don't have an account?, sign up here!</a>                                     
+                                    </small>                                 
+                                </div>
+                            </div>
+                        </form>
                     </div>
                     <div class="signin-footer d-flex justify-content-center">
                         <p class="mt-5 mb-3 text-muted">@ 2020 - 2020</p>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
-    <script>
-        console.log('signin script');
-    </script>
+        <script src="{{ url_for('static', filename='js/login.js') }}"></script>     
     </body>
 </html>
+
+

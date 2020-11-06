@@ -1,0 +1,43 @@
+.data-content {
+    display: flex;
+    flex-direction: column;
+    height: 90vh;
+}
+
+#imagesPanel {
+    overflow: auto;
+    height: 50%;
+    box-shadow: 0 0 5px 0 darkgray;
+    margin: 5px;
+}
+
+.repositories {
+    box-shadow: 0 0 5px 0 darkgray;
+    margin: 5px;
+    height: 50%;
+}
+
+.images-grid {
+    display: none!important;
+}
+
+.images-list {
+    display: flex;
+}
+
+.images {
+    display: flex;
+    flex-wrap: wrap;
+    overflow: auto;
+    width: 100%;
+}
+
+/* TABS */
+#tabs {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+#rep-dockerhub {
+    display: none;
+}

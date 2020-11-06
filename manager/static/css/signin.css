@@ -1,0 +1,10 @@
+body, html {
+    width: 100%;
+    height: 100%;
+}
+
+.signin-form {
+    padding: 20px;
+    box-shadow: 0 0 5px 0 darkgray;
+}
+
