@@ -7,8 +7,6 @@ TODO: IMAGES CAN BE PRUNED
 TODO: IMAGES CAN BE BUILD FROM DOCKER FILE
 
 
-
-
 //////// USE THIS //////////////
 GET IMAGE TAGS FROM DOCKERHUB >>> x = requests.get('https://registry.hub.docker.com/v1/repositories/ubuntu/tags') 
 

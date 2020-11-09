@@ -18,7 +18,6 @@ block content %}
                 </div>
             </div>
             <div class="data-content">
-
                 <div id="imagesPanel" class="row">
                     <div id="imagesGrid" class="images-grid images">
                         <div class="card-columns"></div>
@@ -46,13 +45,13 @@ block content %}
                     <h4>Repository</h4>
                     <div class="options">
                         <div class="form-group mx-3 mt-3">
-                            <select class="form-control" id="registrySearchType" onchange="searchOn()">
+                            <select class="form-control" id="registrySearchType" onchange="searchOn()" autocomplete="off">
                                 <option value="registry">Private Repository</option>
                                 <option value="dockerhub">Search on dockerhub</option>
                             </select>
                         </div>
                         <div class="searchbar">
-                            <input oninput="searchRegistry()" type="text" id="searchRegistryText" placeholder="Search">
+                            <input oninput="searchRegistry()" type="text" id="searchRegistryText" placeholder="Search" autocomplete="off">
                         </div>
                         <div class="view-format">
                             <span onclick="refresh()" data-feather="refresh-cw"></span>
@@ -84,10 +83,10 @@ block content %}
                                     <th scope="col">Stars</th>
                                     <th scope="col">Official</th>
                                     <th scope="col">Automated</th>
-                                    <th scope="col"><a href="#">Pull</a></th>
+                                    <th scope="col">Action</th>
                                 </tr>
                             </thead>
-                            <tbody id="dockerhub-search-table" class="table-body">
+                            <tbody id="dockerhubRepsTable" class="table-body">
                             </tbody>
                         </table>
                     </div>
@@ -99,7 +98,7 @@ block content %}
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header bg-dark text-white">
-                        <h5 id="modalTitle" class="modal-title">Modal title</h5>
+                        <h5 id="modalTitle" class="modal-title">Pull image from <p id="pullSource></p></h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
