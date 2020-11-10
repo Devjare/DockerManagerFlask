@@ -250,6 +250,15 @@ def coupling():
         'planificacion.html')
 
 # ************* IMAGES ********************
+
+@app.route('/image_builder')
+def showImageBuilder():
+    return render_template('image_builder.html')
+
+@app.route('/image_details')
+def showImageDetails():
+    return render_template('image_details.html')
+
 @app.route('/images/json')
 def getAllImages():
     params = request.args
@@ -329,6 +338,15 @@ def listImages():
 
 
 # ************* CONTAINERS ********************
+
+@app.route('/container_creation')
+def showContainerCreation():
+    return render_template('container_creation.html')
+
+@app.route('/container_details')
+def showContainerDetails():
+    return render_template('container_details.html')
+
 @app.route('/containers/json')
 def getContainers():
     containers = dockercli.containers(all=True)
