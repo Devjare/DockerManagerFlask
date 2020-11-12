@@ -1,0 +1,11 @@
+requests
+flask
+flask_json
+json2html
+simplejson
+flask-restful
+Flask-SQLAlchemy
+sqlalchemy
+docker
+flask_marshmallow
+flask-cors
