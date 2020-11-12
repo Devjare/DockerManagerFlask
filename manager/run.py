@@ -9,8 +9,10 @@ from flask import Flask, request, jsonify, abort, render_template, session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey
 from flask_marshmallow import Marshmallow
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db/manager.db'
 app.config.update(
     DEBUG=True,
@@ -334,14 +336,28 @@ def listImages():
     return render_template('images.html')
 
 
-# look on dockerhub
-
 
 # ************* CONTAINERS ********************
 
 @app.route('/container_creation')
 def showContainerCreation():
     return render_template('container_creation.html')
+
+@app.route('/containers/create', methods=['POST'])
+def createContainer():
+    data = request.json
+    ports = data['ports'].split(':')
+    ports = {ports[0]: ports[1]}
+    
+    print('enable tty: ', data['tty'])
+    container = {}
+    if(data['run']):
+        container = client.containers.create(image=data['image'],name=data['name'],ports=ports,command=data['command'], tty=data['tty'])
+        container.start()
+    else:
+        container = client.containers.create(image=data['image'],name=data['name'],ports=ports,command=data['command'], tty=data['tty'])
+
+    return container.short_id
 
 @app.route('/container_details')
 def showContainerDetails():

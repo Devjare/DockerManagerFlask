@@ -24,14 +24,15 @@ block content %}
                     </div>
                     <div id="imagesList" class="images-list images">
                         <div class="list-group">
-                            <table class="table table-bordered table-stripped table-responsive-sm table-hover">
-                                <thead class="thead-dark"><tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Image ID</th>
-                                        <th scope="col">Image Tags</th>
-                                        <th scope="col">Created</th>
-                                        <th scope="col">Size</th>
-                                        <th scope="col">More</th>
+                            <table class="table table-bordered table-stripped table-responsive table-hover">
+                                <thead class="thead-dark">
+                                    <tr class="d-flex">
+                                        <th class="col-s-1" scope="col">#</th>
+                                        <th class="col-5" scope="col">Image ID</th>
+                                        <th class="col-3" scope="col">Image Tags</th>
+                                        <th class="col-1" scope="col">Created</th>
+                                        <th class="col-1" scope="col">Size</th>
+                                        <th class="col-2" scope="col">More</th>
                                     </tr>
                                 </thead>
                                 <tbody id="images-table" class="table-body">
@@ -63,14 +64,15 @@ block content %}
                         <!-- TODO: ADD PULL FROM REGISTRY(DOCKERHUB) AND PUSH TO LOCAL REGISTRY ACTION -->
                         <!-- CONTENT EXAMPLE, CHANGE WITH JS-->
                         <table class="table table-bordered table-stripped table-responsive-sm table-hover">
-                            <thead class="thead-dark"><tr>
+                            <thead class="thead-dark">
+                                <tr>
                                     <th scope="col">#</th>
                                     <th scope="col">Name</th>
                                     <th scope="col">Tags</th>
                                     <th scope="col">Action</th>
                                 </tr>
                             </thead>
-                            <tbody id="rep-1-table" class="table-body">
+                            <tbody id="rep-1-table" class="table-body d-flex">
                             </tbody>
                         </table>
                     </div>
@@ -98,21 +100,12 @@ block content %}
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header bg-dark text-white">
-                        <h5 id="modalTitle" class="modal-title">Pull image from <p id="pullSource></p></h5>
+                        <h5 id="modalTitle" class="modal-title"></h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div id="modalBody" class="modal-body">
-                        <div class="container-fluid">
-                            <div class="row"><strong>ID:&nbsp;</strong><p id="container-id"></p></div>
-                            <div class="row"><strong>Name: &nbsp;</strong><p id="container-name"></p></div>
-                            <div class="row"><strong>IP/Ports: &nbsp;</strong><p id="container-ipport"></p></div>
-                            <div class="row"><strong>State: &nbsp;</strong><p id="container-state"></p></div>
-                            <div class="row"><strong>Status: &nbsp;</strong><p id="container-status"></p></div>
-                            <div class="row"><strong>Image: &nbsp;</strong><a href="#" id="container-image"></a></div>
-                            <div class="row"><strong>Created: &nbsp;</strong><p id="container-created"></p></div>
-                        </div>
                     </div>
                     <div id="modalFooter" class="modal-footer">
                     </div>
