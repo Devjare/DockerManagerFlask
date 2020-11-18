@@ -1,6 +1,3 @@
-
-// ********************* UTILS ********************* 
-
 function portsArrayToString(portsArray) {
     str = "";
     portsArray.forEach(port => { 
@@ -22,4 +19,12 @@ function timeConverter(UNIX_timestamp){
     var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
     return time;
 }
-// ********************* END UTILS ********************* 
+
+// collapse cards
+function collapseCards(elementId, collapse) {
+   if(collapse) {
+       // collapse 
+   } else {
+       // expand
+   }
+}

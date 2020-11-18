@@ -1,0 +1,28 @@
+.page {
+    
+}
+
+.page-body-title {
+    max-width: 600px;
+}
+
+.card {
+    min-width: 300px!important; 
+    max-width: 1000px!important; 
+    margin: 10px!important;
+}
+
+.card-header {
+    cursor: pointer;
+}
+
+.card-body {
+    overflow: auto!important;
+}
+
+.basics, .resources {
+}
+
+.page-footer {
+    z-index: 0;
+}

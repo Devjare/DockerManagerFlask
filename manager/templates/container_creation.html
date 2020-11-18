@@ -1,8 +1,299 @@
 {% extends 'base.html' %} {% block title %} Container Creation {% endblock %} {% block head %} {{ super() }} {% endblock %} {%
 block content %}
+<link href="{{url_for('static', filename='css/container_creator.css')}}" rel="stylesheet"> 
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4 position-relative">
     <!-- CONTAINER CREATION TOOL TEMPLATE -->
-    <div class="site-content">
+    <div class="page d-flex flex-column p-3">
+        <div class="page-header">
+            <h5>Create container</h5>
+        </div>
+        <div class="page-body d-flex flex-column p-2">
+            <div class="page-body-title form-group">
+                <label for="selectImage">Select base image</label>
+                <select id="selectImage" class="form-control">
+                    <option>Image 1</option>
+                </select>
+            </div>
+            <div class="container-options d-flex flex-wrap pb-3">
+                <!-- BASICS CARD -->
+                <div class="card basics">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <strong>Basics</strong>
+                        <span data-feather="chevron-down"></span>
+                    </div>
+                    <div class="card-body p-1 d-flex flex-wrap">
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <label for="containerName">Container name:</label>
+                            <input id="containerName" type"text" placeholder="Container Name" class="form-control">
+                        </div>
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <!-- Could be a list -->
+                            <label for="command">Command to run:</label>
+                            <input id="command" type"text" placeholder="Container command" class="form-control">
+                        </div>
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <label for="ports">Ports binds:</label>
+                            <input id="ports" type"text" placeholder="Port" class="form-control">
+                        </div>
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <label for="hostname">Host name:</label>
+                            <input id="hostname" type"text" placeholder="Host Name" class="form-control">
+                        </div>
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <label for="version">API Version:</label>
+                            <input id="version" type"text" placeholder="1.35,1.40" class="form-control">
+                        </div>
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <!-- Could be a list -->
+                            <label for="entrypoint">Entrypoint:</label>
+                            <input id="entrypoint" type"text" placeholder="Entrypoint" class="form-control">
+                        </div>
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <label for="workingdir">Working Dir:</label>
+                            <input id="workingdir" type"text" placeholder="Working Dir" class="form-control">
+                        </div>
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <label for="restartPolicy">Restart Policy:</label>
+                            <select>
+                                <option value="no">no</option>>
+                                <option value="always">always</option>>
+                                <option value="on-failure">on-failure</option>>
+                                <option value="unless-stopped">unless-stopped</option>>
+                            </select>
+                            <input id="maxRetryCount" type"text" placeholder="Maximum Retry Count" class="form-control"> 
+                        </div>
+                        <div class="input-group-sm m-2">
+                            <label for="labels">Labels:</label>
+                            <div class="labels">
+                                <div class="labelInput">
+                                    <button class="btn btn-sm btn-primary">New label</button>
+                                    <input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
+                            <input id="chkTty" type="checkbox">
+                            <label for="chkTty" class="ml-1 mb-0 mr-2">Enable tty?</label>
+                            <span data-feather="help-circle"></span>
+                        </div>
+                        <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
+                            <input id="chkAutoremove" type="checkbox">
+                            <label for="chkAutoremove" class="ml-1 mb-0 mr-2">Autoremove?</label>
+                            <span data-feather="help-circle"></span>
+                        </div>
+                        <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
+                            <input id="chkDetach" type="checkbox">
+                            <label for="chkDetach" class="ml-1 mb-0 mr-2">Detach?</label>
+                            <span data-feather="help-circle"></span>
+                        </div>
+                        <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
+                            <input id="chkRemove" type="checkbox">
+                            <label for="chkRemove" class="ml-1 mb-0 mr-2">Remove?</label>
+                            <span data-feather="help-circle"></span>
+                        </div>
+                        <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
+                            <input id="chkPublishAll" type="checkbox">
+                            <label for="chkPublishAll" class="ml-1 mb-0 mr-2">Publish all ports?</label>
+                            <span data-feather="help-circle"></span>
+                        </div>
+                        <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
+                            <input id="chkReadOnly" type="checkbox">
+                            <label for="chkReadOnly" class="ml-1 mb-0 mr-2">Read only?</label>
+                            <span data-feather="help-circle"></span>
+                        </div>
+                        <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
+                            <input id="chkPrivileged" type="checkbox">
+                            <label for="chkPrivileged" class="ml-1 mb-0 mr-2">Privileged?</label>
+                            <span data-feather="help-circle"></span>
+                        </div>
+                    </div>
+                </div>
+                <!-- RESOURCES CARD -->
+                <div class="card resources">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <strong>Resources</strong>
+                        <span data-feather="chevron-down"></span>
+                    </div>
+                    <div class="card-body p-1 d-flex flex-wrap">
+                        <!-- CPU -->
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <label for="cgroupParent">CGroup Parent:</label>
+                            <input id="cgroupParent" type"text" placeholder="CGroup Parent" class="form-control">
+                        </div>
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <label for="cpuCount">CPU Count:</label>
+                            <input id="cpuCount" type="number" placeholder="CPU Count(Windows Only)" class="form-control">
+                        </div>
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <label for="cpuPercent">CPU Percent:</label>
+                            <input id="cpuPercent" type="number" placeholder="CPU Percent(Windows Only)" class="form-control">
+                        </div>
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <label for="cpuPeriod">CPU Perid:</label>
+                            <input id="cpuPeriod" type="number" placeholder="CPU Period" class="form-control">
+                        </div>
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <label for="cpuQuota">CPU Quota:</label>
+                            <input id="cpuQuota" type="number" placeholder="CPU Quota" class="form-control">
+                        </div>
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <label for="cpuRtPeriod">CPU Real Time Period:</label>
+                            <input id="cpuRtPeriod" type="number" placeholder="CPU RT Period" class="form-control">
+                        </div>
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <label for="cpuRtRuntime">CPU Real Time Runtime:</label>
+                            <input id="cpuRtRuntime" type="number" placeholder="CPU RT Runtime" class="form-control">
+                        </div>
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <label for="cpuShares">CPU Shares:</label>
+                            <input id="cpuShares" type="number" placeholder="CPU Shares" class="form-control">
+                        </div>
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <label for="nanoCpus">Nano CPUs:</label>
+                            <input id="nanoCpus" type="number" placeholder="Nano CPUs" class="form-control">
+                        </div>
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <label for="cpusetMems">Set MEMS:</label>
+                            <input id="cpusetMems" type="text" placeholder="--cpuset_mems" class="form-control">
+                        </div>
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <label for="cpusetCpus">Set CPUs:</label>
+                            <input id="cpusetCpus" type="text" placeholder="Set CPUs to use" class="form-control">
+                        </div>
+                        <!-- MEMORY -->
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <label for="memLimit">Memory Limit:</label>
+                            <input id="memLimit" type="text" placeholder="Set maximum memory to use" class="form-control">
+                        </div>
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <label for="memReservation">Memory Reservation:</label>
+                            <input id="memReservation" type="text" placeholder="Set memory to reserve" class="form-control">
+                        </div>
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <label for="memSwappiness">Set memory swappiness: </label>
+                            <input id="memSwappiness" type="text" placeholder="Set memory swappiness" class="form-control">
+                        </div>
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <label for="memSwapLimit">Set Memory Swap Limit:</label>
+                            <input id="memSwapLimit" type="text" placeholder="Set memory swap limit" class="form-control">
+                        </div>
+                        <!-- IO -->
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <label for="blkioWeight">Set BLKIO Weight:</label>
+                            <input id="blkioWeight" type="text" placeholder="blkio_weight" class="form-control">
+                        </div>
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <label for="blkioWeightDevice">BLKIO Weight Device:</label>
+                            <input id="blkioWeightDevice" type="text" placeholder="blkio_weight_device" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <!-- NETWORKS SECTION -->
+                <div class="card networks">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <strong>Networks</strong>
+                        <span data-feather="chevron-down"></span>
+                    </div>
+                    <div class="card-body">
+                        <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
+                            <input id="chkNetworkDisabled" type="checkbox">
+                            <label for="chkNetworkDisabled" class="ml-1 mb-0 mr-2">Disabled Network?</label>
+                            <span data-feather="help-circle"></span>
+                        </div>
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <!-- USE A SELECT -->
+                            <label for="network">Network: </label>
+                            <input id="network" type="text" placeholder="Network to use" class="form-control">
+                        </div>
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <label for="networkMode">Network Mode:</label>
+                            <select id="networkMode">
+                                <option value="bridge">bridge</option>
+                                <option value="none">none</option>
+                                <option value="host">host</option>
+                                <option value="container">container</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <!-- VOLUMES SECTION -->
+                <div class="card volumes">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <strong>Volumes / Binds</strong>
+                        <span data-feather="chevron-down"></span>
+                    </div>
+                    <div class="card-body">
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <label for="volumeDriver">Volume Driver: </label>
+                            <input id="volumeDriver" type="text" placeholder="Volume Driver" class="form-control">
+                        </div>
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <!-- DICT OR LIST --> 
+                            <label for="volumes">Volumes: </label>
+                            <input id="volumes" type="text" placeholder="Volumes" class="form-control">
+                        </div>
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <label for="volumesFrom">Volumes From: </label>
+                            <input id="volumesFrom" type="text" placeholder="volumes list" class="form-control">
+                        </div>
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <label for="mounts">Mounts: </label>
+                            <input id="mounts" type="text" placeholder="mounts list" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <!-- ADVANCED SECTION -->
+                <div class="advanced-options card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <strong>ADVANCED</strong>
+                        <span data-feather="chevron-down"></span>
+                    </div>
+                    <div class="card-body p-1 d-flex flex-wrap">
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <!-- ARRAYS OF JSONS -->
+                            <label for="deviceReadBps">Device Read BPS: </label>
+                            <input id="deviceReadBps" type="text" placeholder="[{'Path': '/dev/sda1'}, 'Rate': '50Mb']" class="form-control">
+                        </div>
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <!-- ARRAYS OF JSONS -->
+                            <label for="deviceReadIops">Device Read IO Per Second: </label>
+                            <input id="deviceReadIops" type="text" placeholder="[{'Path': '/dev/sda1'}, 'Rate': '50Mb']" class="form-control">
+                        </div>
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <!-- ARRAYS OF JSONS -->
+                            <label for="deviceWriteBps">Device Write BPS: </label>
+                            <input id="deviceWriteBps" type="text" placeholder="[{'Path': '/dev/sda1'}, 'Rate': '50Mb']" class="form-control">
+                        </div>
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <!-- ARRAYS OF JSONS -->
+                            <label for="deviceWriteIops">Device Write IO Per Second: </label>
+                            <input id="deviceWriteIops" type="text" placeholder="[{'Path': '/dev/sda1'}, 'Rate': '50Mb']" class="form-control">
+                        </div>
+                    
+                        <!-- LISTS OR STR -->
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <label for="volumesFrom">Volumes From: </label>
+                            <input id="volumesFrom" type="text" placeholder="volumes list" class="form-control">
+                        </div>
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <label for="volumesFrom">Volumes From: </label>
+                            <input id="volumesFrom" type="text" placeholder="volumes list" class="form-control">
+                        </div>
+                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                            <label for="volumesFrom">Volumes From: </label>
+                            <input id="volumesFrom" type="text" placeholder="volumes list" class="form-control">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="fixed-bottom bg-primary w-100 text-white page-footer d-flex flex-row justify-content-around align-items-center">
+            <div class="form-group m-1 d-flex justify-content-center align-items-center">
+                <input id="chkRun" type="checkbox">
+                <label for="chkRun" class="ml-1 mb-0">Run after create?</label>
+            </div>
+            <button class="btn btn-sm btn-success m-1">Create</button>
+        </div>
     </div>
 </main>
 {% endblock %} {% block footer %} {{ super() }} {% endblock %}

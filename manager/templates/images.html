@@ -32,7 +32,7 @@ block content %}
                                         <th class="col-3" scope="col">Image Tags</th>
                                         <th class="col-1" scope="col">Created</th>
                                         <th class="col-1" scope="col">Size</th>
-                                        <th class="col-2" scope="col">More</th>
+                                        <th class="col-3" scope="col">More</th>
                                     </tr>
                                 </thead>
                                 <tbody id="images-table" class="table-body">
@@ -65,27 +65,28 @@ block content %}
                         <!-- CONTENT EXAMPLE, CHANGE WITH JS-->
                         <table class="table table-bordered table-stripped table-responsive-sm table-hover">
                             <thead class="thead-dark">
-                                <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Tags</th>
-                                    <th scope="col">Action</th>
+                                <tr class="d-flex">
+                                    <th class="col-s-2" scope="col">#</th>
+                                    <th class="col-5" scope="col">Name</th>
+                                    <th class="col-5" scope="col">Tags</th>
+                                    <th class="col-2" scope="col">Action</th>
                                 </tr>
                             </thead>
-                            <tbody id="rep-1-table" class="table-body d-flex">
+                            <tbody id="rep-1-table" class="table-body">
                             </tbody>
                         </table>
                     </div>
                     <div id="rep-dockerhub">
                         <table class="table table-bordered table-stripped table-responsive-sm table-hover">
-                            <thead class="thead-dark"><tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Description</th>
-                                    <th scope="col">Stars</th>
-                                    <th scope="col">Official</th>
-                                    <th scope="col">Automated</th>
-                                    <th scope="col">Action</th>
+                            <thead class="thead-dark">
+                                <tr class="d-flex">
+                                    <th class="col-s-2" scope="col">#</th>
+                                    <th class="col-3" scope="col">Name</th>
+                                    <th class="col-4" scope="col">Description</th>
+                                    <th class="col-1" scope="col">Stars</th>
+                                    <th class="col-1" scope="col">Official</th>
+                                    <th class="col-1" scope="col">Automated</th>
+                                    <th class="col-2" scope="col">Action</th>
                                 </tr>
                             </thead>
                             <tbody id="dockerhubRepsTable" class="table-body">

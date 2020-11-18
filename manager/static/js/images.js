@@ -37,8 +37,12 @@ function loadImages(imagesArr) {
 
 // function to validate format of various input texts
 function validateField(field) {
+    let invalidChars = [' ', '.', '#', '$', '^', `'`, '!', '@', '%', '&', '*', ')', '(', '=', '+'];
     if(field == 'name') {
-        
+        let value = $(`#${field}`).value;
+        if(value.includes(' ')) {
+            
+        }
     }
 }
 function showImageModal(imageid, action) {
@@ -178,10 +182,10 @@ function buildImageTableTemplate(index, image) {
         <td class="col-3 text-truncate">${tagsStr}</td>
         <td class="col-1">${created}</td>
         <td class="col-1">${sizeOnMb} MB</td>
-        <td class="col-2">
-        <a onclick="showImageModal('${image["Id"]}', 'tag_image')" href="#">Tag Image</a> |
+        <td class="col-3">
+        <a onclick="showImageModal('${image["Id"]}', 'tag_image')">Tag Image</a> |
         <a onclick="showImageModal('${image["Id"]}', 'create_container')" href="#">Create Container</a> |
-        <a onclick="showImageModal('${image["Id"]}', 'save_image')" href="#">Save Image</a>
+        <a onclick="showImageModal('${image["Id"]}', 'save_image')">Save Image</a>
         </td>
     </tr>`
     return template;
@@ -225,6 +229,10 @@ function showPullImageModal(source) {
     }
 }
 
+function pullImage() {
+    
+}
+
 function loadRegistryRepositories(repositories) {
     console.log('repositories: ', repositories);
     let index = 0;
@@ -233,14 +241,14 @@ function loadRegistryRepositories(repositories) {
     // of opening a modal to select a tag" TO QUICK PULL ANCHOR TAG
     for(let rep in repositories) {
         let template = `
-        <tr>
-            <td>${index}</td>
-            <td>${rep}</td>
-            <td>${repositories[rep].toString()}</td>
-            <td class="d-flex justify-content-center">
+        <tr class="d-flex">
+            <td class="col-s-1">${index}</td>
+            <td class="col-5">${rep}</td>
+            <td class="col-5">${repositories[rep].toString()}</td>
+            <td class="col-2 d-flex justify-content-center">
                 <ul>
                     <li><a href="#" onclick="pullImage('${rep}', 'latest', 'registry')">Pull 'latest'</a></li>
-                    <li><a href="#" onclick="showPullImageModal('registry')">pull</a></li>
+                    <!-- <li><a href="#" onclick="showPullImageModal('registry')">pull</a></li> -->
                 </ul>
                 </td>
         </tr>`;
@@ -255,22 +263,20 @@ function loadDockerhubRepositories(repositories) {
     let index = 0;
     let table = $('#dockerhubRepsTable');
     table.empty();
-    // TODO: ADD POPOVER THAT SAYS "Quick pull, pulls the latest tag of that image, instead 
-    // of opening a modal to select a tag" TO QUICK PULL ANCHOR TAG
     for(let repName in repositories) {
-        console.log('rep: ', repName);
         let template = `
-        <tr>
-            <td>${index}</td>
-            <td>${repositories[repName]['name']}</td>
-            <td>${repositories[repName]['description']}</td>
-            <td>${repositories[repName]['stars']}</td>
-            <td>${repositories[repName]['official']}</td>
-            <td>${repositories[repName]['automated']}</td>
-            <td class="d-flex justify-content-center">
+        <tr class="d-flex">
+            <td class="col-s-1">${index}</td>
+            <td class="col-3">${repositories[repName]['name']}</td>
+            <td class="col-4">${repositories[repName]['description']}</td>
+            <td class="col-1">${repositories[repName]['stars']}</td>
+            <td class="col-1">${repositories[repName]['official']}</td>
+            <td class="col-1">${repositories[repName]['automated']}</td>
+            <td class="col-2 d-flex justify-content-center">
                 <ul>
+                    <!-- 
                     <li><a href="#" onclick="pullImage('${repName}', 'latest', 'registry')">Pull 'latest'</a></li>
-                    <li><a href="#" onclick="showPullImageModal('registry')">Pull</a></li>
+                    <li><a href="#" onclick="showPullImageModal('registry')">Pull</a></li> -->
                 </ul>
                 </td>
         </tr>`;

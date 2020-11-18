@@ -1,15 +1,9 @@
 // TODO: ADD builder.html
 // TODO: USE GENERATORS FOR docker stats() STREAM FROM FLASK
-// TODO: GENERATE USER DATA ON SQLITE DATABASE FOR AUTH
 // TODO: TRY TO IMPLEMENT LIVE RELOAD TO CONTAINERS, LEAVING OUT THE REFRESH BUTTON.
 // TODO: DESING CONTAINER/IMAGE DETAILS SCREEN(THIS IS GONNA USE GRAPHICS).
 // TODO: Search while in a filtered section, not working, solve.
-// TODO: Add sign up screen
-// TODO: Allow to create new users.
 // TODO: Maybe make an admin account, who can see every container.
-// TODO: Show only containers of the logged in user.
-// TODO: Add detailed screen for containers/images.
-// TODO: Add images screen(Just like the containers one)
 // TODO: ADD DELETE OPTION FOR CONTAINERS/IMAGES
 // TODO: ADD LOADING OPTION, WHEN STARTING/STOPPING/PAUSING/UNPAUSING A CONTAINER
 // ON THE MODAL, IT WON'T CLOSE UNTIL THE ACTION IS DONE. OR MAYBE
@@ -258,4 +252,5 @@ function clearContainersPanel() {
     document.querySelector('.table-body').innerHTML = '';
 }
 
+// ***************************** CREATION SECTION *****************************
 
