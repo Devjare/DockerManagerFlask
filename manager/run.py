@@ -40,6 +40,7 @@ images = {
 
 USERCONTAINERS = 'usercontainers'
 USERNAME = 'username'
+USERID = 'userid'
 
 ##### MODELS #####
 class Service(db.Model):
@@ -103,6 +104,10 @@ class UsersContainers(db.Model):
     container_id = db.Column(db.String(255),
             ForeignKey('users.uid'),
             primary_key=True)
+
+    def __init__(self, user_id, container_id):
+        self.user_id = user_id
+        self.container_id = container_id
 
 
 ##### SCHEMAS #####
@@ -347,6 +352,12 @@ def listImages():
     return render_template('images.html')
 
 
+def addContainerToUser(idcontainer):
+    print('adding: ', idcontainer)
+    print('to user: ', session[USERNAME])
+    userContainer = UsersContainers(session[USERID], idcontainer)
+    db.session.add(userContainer)
+    db.session.commit()
 
 # ************* CONTAINERS ********************
 
@@ -359,13 +370,16 @@ def createContainer():
     data = request.json
     ports = data['ports'].split(':')
     ports = {ports[0]: ports[1]}
+    volume = data['volume']
     
     container = {}
     if(data['run']):
         container = client.containers.create(image=data['image'],name=data['name'],ports=ports,command=data['command'], tty=data['tty'])
+        addContainerToUser(container.id)
         container.start()
     else:
         container = client.containers.create(image=data['image'],name=data['name'],ports=ports,command=data['command'], tty=data['tty'])
+        addContainerToUser(container.id)
 
     return container.short_id
 
@@ -378,9 +392,6 @@ def getContainers():
     containers = dockercli.containers(all=True)
     containers = filter(lambda c: c['Id'] in session[USERCONTAINERS], containers)
     return {'containers': containers}
-
-def isUserContainer(container):
-    return container.Id in session[USERCONTAINERS]
 
 @app.route('/containers')
 def listContainers():
@@ -463,6 +474,7 @@ def authenticate(username, password):
     allusers = User.query.all()
     for user in allusers:
         if(user.username == username and user.password == password):
+            session[USERID] = user.uid
             return True
     
     return False

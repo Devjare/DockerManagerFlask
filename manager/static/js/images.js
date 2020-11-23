@@ -77,6 +77,10 @@ function showImageModal(imageid, action) {
                 <input id="ports" class="form-control" type="text" placeholder="<container_port>:<host_port>" onchange="validateField('ports')">
             </div>
             <div class="m-2 form-group">
+                <label for="volume">Volume</label>
+                <input id="volume" class="form-control" type="text" placeholder="<host_path>:<bind>:<mode> (e.g. /data/:/:ro)" onchange="validateField('volume')">
+            </div>
+            <div class="m-2 form-group">
                 <label for="command">Command</label>
                 <input id="command" class="form-control" type="text" placeholder="Command to run in container">
             </div>
@@ -132,6 +136,7 @@ function createContainerFrom(imageid) {
             'image': $('#selectTag')[0].value.toString(),
             'name': $('#containername')[0].value.toString(),
             'ports': $('#ports')[0].value.toString(),
+            'volume': $('#volume')[0].value.toString(),
             'command': $('#command')[0].value.toString(),
             'tty': $('#chkTty')[0].checked,
             'run': createAndRun
