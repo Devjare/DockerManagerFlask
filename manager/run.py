@@ -180,9 +180,6 @@ def testdb():
             UsersContainers.container_id == Container.id,
             UsersContainers.user_id == User.uid).order_by(UsersContainers.user_id).all();
 
-    for x in data:
-        print('Container: {}, of: {}'.format(x.Container.name, x.User.username))
-
     return 'aqui ta'
 
 # Raiz
@@ -273,7 +270,6 @@ def getTagsOf(repname, source):
     if(source == 'dockerhub'):
         # FROM DOCKERHUB, TAGS CAN BE OBTAINED WITH THE FOLLOW INSTRUCTION:
         url = 'https://registry.hub.docker.com/v1/repositories/{}/tags'.format(repname)
-        print('tags url: ', url)
         data = requests.get(url).json()
         for t in data:
             tags.append(t['name'])
@@ -283,7 +279,6 @@ def getTagsOf(repname, source):
         data = requests.get(url).json();
         tags = data['tags']
 
-    print('tags: ', tags)
     # Return only the array of tags
     return tags
 
@@ -300,7 +295,6 @@ def getImagesFromRegistry():
     repsWithTags = dict()
     for rep in repositories:
         if(source == 'dockerhub'):
-            print('dockerhub rep: ', rep)
             repsWithTags[rep['name']] = { 
                     'automated': rep['is_automated'],
                     'official': rep['is_official'],
@@ -314,17 +308,34 @@ def getImagesFromRegistry():
 
     return { "repositories": repsWithTags }
 
-@app.route('/rep/<repname>/<id>')
-def getImagesFromRepo(repname, id):
-    pass
+@app.route('/images/delete', methods=["GET"])
+def deleteImage():
+    image = request.args.get('imagerepo')
+    force = request.args.get('force') == 'true'
+    noprune = request.args.get('noprune') == 'true' 
+    msg = 'deleted'
+    try: 
+        client.images.remove(image=image, force=force, noprune=noprune) 
+    except:
+        msg = 'error'
+    return msg
 
-@app.route('/rep/search/<repname>/<text>')
-def searchOnRepo(repname, text):
-    pass
+@app.route('/images/pull', methods=["GET"])
+def pullImageFrom():
+    repname = request.args.get('repname')
+    source = request.args.get('source')
+    image = client.images.pull(repname)
 
-@app.route('/rep/<repname>/pull/<id>')
-def pullFromRepo(repname, id):
-    pass
+    imageid = ''
+
+    if(source == 'dockerhub'):
+        imageid = image.id
+    else:
+        imageid = image.id
+ 
+    print('image id: ', imageid)
+    return { 'id': imageid }
+
 
 @app.route('/rep/<repname>/push/<id>')
 def pushToRepo(repname, id):
@@ -349,7 +360,6 @@ def createContainer():
     ports = data['ports'].split(':')
     ports = {ports[0]: ports[1]}
     
-    print('enable tty: ', data['tty'])
     container = {}
     if(data['run']):
         container = client.containers.create(image=data['image'],name=data['name'],ports=ports,command=data['command'], tty=data['tty'])
@@ -390,36 +400,30 @@ def containerToJson(container):
 
 @app.route('/containers/<id>')
 def getContainerInfo(id):
-    print('id of container info: ', id)
     return {"contaienrinfo": 'Hello {id}'}
 
 @app.route('/containers/start/<id>')
 def startContainer(id):
-    print('starting container: ', id)
     dockercli.start(id)
     return 'running'
 
 @app.route('/containers/stop/<id>')
 def stopContainer(id):
-    print('stopping container: ', id)
     dockercli.stop(id)
     return 'running'
 
 @app.route('/containers/restart/<id>')
 def restartContainer(id):
-    print('REstarting container: ', id)
     dockercli.restart(id)
     return 'running'
 
 @app.route('/containers/pause/<id>')
 def pauseContainer(id):
-    print('pausing container: ', id)
     dockercli.pause(id)
     return 'running'
 
 @app.route('/containers/unpause/<id>')
 def unpauseContainer(id):
-    print('pausing container: ', id)
     dockercli.unpause(id)
     return 'running'
 
@@ -514,15 +518,12 @@ def getForwardHeaders(request):
         val = request.headers.get(ihdr)
         if val is not None:
             headers[ihdr] = val
-            #print "incoming: "+ihdr+":"+val
 
     return headers
 
 
 def getSilo(headers):
-    print('GETSILO METHOD~~~~~~~~~~~~~~~~~~~~~~~')
     try:
-        print('Trying to get Images...........')
         url = images['name'] + images['endpoint']
         res = requests.get(url, headers=headers, timeout=3.0)
     except:

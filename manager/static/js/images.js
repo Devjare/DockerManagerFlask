@@ -1,26 +1,26 @@
 var xhr = new XMLHttpRequest();
 
 $('.site-content').ready((e) => {
-    console.log('loading images');
     loadAllImages();
     loadRegistry();
 });
 
 var images = [];
+var repositories = [];
+var dockerhubRepositories = [];
 
 function loadAllImages() {
-    console.log('inside loadAllImages() method');
     xhr.open('GET', `http://localhost:8000/images/json?all=True`, false);
     xhr.onreadystatechange = (e) => {
         if(xhr.readyState == 4) {
             if(xhr.status == 200) {
-                console.log('loading all images: ', xhr.responseText);
                 images = JSON.parse(xhr.responseText).images;
                 loadImages(JSON.parse(xhr.responseText).images);
+                feather.replace()
             }
-            else
+            else { 
                 dump("Error procesing petition.");
-
+            }
         }
     };
     xhr.send(null);
@@ -35,8 +35,13 @@ function loadImages(imagesArr) {
     });
 }
 
+function refreshImageTable() {
+    $('#images-table').empty();
+    loadAllImages(); 
+}
+
 // function to validate format of various input texts
-function validateField(field) {
+function validatseField(field) {
     let invalidChars = [' ', '.', '#', '$', '^', `'`, '!', '@', '%', '&', '*', ')', '(', '=', '+'];
     if(field == 'name') {
         let value = $(`#${field}`).value;
@@ -94,7 +99,6 @@ function showImageModal(imageid, action) {
         `;
         $('#modalBody').ready(e => {
             // Add tags when the modal loads.
-            console.log('images: ', images);
             images.find(img => img.Id == imageid).RepoTags.forEach(tag => {
                 $('#selectTag').append(new Option(tag, tag));
             });
@@ -139,7 +143,6 @@ function createContainerFrom(imageid) {
             xhr.onreadystatechange = (e) => {
                 if(xhr.readyState == 4) {
                     if(xhr.status == 200) {
-                        console.log('container created: ', xhr.responseText);
                         $('#modal').modal('hide');
                     }
                     else dump("Error procesing petition.");
@@ -152,7 +155,6 @@ function createContainerFrom(imageid) {
             xhr.onreadystatechange = (e) => {
                 if(xhr.readyState == 4) {
                     if(xhr.status == 200) {
-                        console.log('container created: ', xhr.responseText);
                         $('#modal').modal('hide');
                     }
                     else dump("Error procesing petition.");
@@ -177,14 +179,17 @@ function buildImageTableTemplate(index, image) {
     let created = timeConverter(image['Created']);
     let template = `
     <tr class="d-flex">
-        <th class="col-s-1" scope="row">${index}</td>
-        <td class="col-5 text-truncate">${image['Id']}</td>
-        <td class="col-3 text-truncate">${tagsStr}</td>
-        <td class="col-1">${created}</td>
-        <td class="col-1">${sizeOnMb} MB</td>
-        <td class="col-3">
+        <td class="col-s-1 d-flex align-items-center" scope="row">${index}</td>
+        <td class="col-s-1 d-flex align-items-center" scope="row">
+            <span class="icon" onclick="showDeleteImageModal('${image.Id}')" data-feather="trash"></span>
+        </td>
+        <td class="col-5 d-flex align-items-center text-truncate">${image['Id']}</td>
+        <td class="col-3 text-truncate d-flex align-items-center">${tagsStr}</td>
+        <td class="col-1 d-flex align-items-center">${created}</td>
+        <td class="col-1 d-flex align-items-center">${sizeOnMb} MB</td>
+        <td class="col-3 d-flex align-items-center">
         <a onclick="showImageModal('${image["Id"]}', 'tag_image')">Tag Image</a> |
-        <a onclick="showImageModal('${image["Id"]}', 'create_container')" href="#">Create Container</a> |
+        <a onclick="showImageModal('${image["Id"]}', 'create_container')" href="#"> Create Container </a> |
         <a onclick="showImageModal('${image["Id"]}', 'save_image')">Save Image</a>
         </td>
     </tr>`
@@ -221,41 +226,119 @@ function searchRegistry() {
     }
 }
 
-function showPullImageModal(source) {
-    if(source == 'dockerhub') {
-    } else {
-        // from registry
-        
-    }
+function deleteImage() {
+    let toDelete = $('#imageTag')[0].value;
+    let noPrune = $('#chkNoPrune')[0].checked;
+    let force = $('#chkForce')[0].checked;
+    console.log('image to delete: ', toDelete);
+
+    xhr.open('GET', `http://localhost:8000/images/delete?imagerepo=${toDelete}&noprune=${noPrune}&force=${force}`, true);
+    xhr.onreadystatechange = (e) => {
+        if(xhr.readyState == 4) {
+            if(xhr.status == 200) {
+                if(xhr.responseText == 'deleted') {
+                    showAlert('Image deleted successfully!', 'success');
+                    refreshImageTable();
+                }
+                else 
+                    showAlert('An error ocurred while deleting image', 'danger');
+            }
+            else dump("Error procesing petition.");
+        }
+    };
+    xhr.send(null);
 }
 
-function pullImage() {
+function showDeleteImageModal(imageid) {
+    // from registry
+    $('#modal').modal('show'); 
+    $('#modalTitle').empty();
+    $('#modalBody').empty();
+    $('#modalFooter').empty();
+
+    let body = `<h5>Select tag to delete: </h5><select id="imageTag">`;
+    console.log('images: ', images);
+    images.find(i => i.Id == imageid).RepoTags.forEach(t => body += `<option value="${t}">${t}</option>`);
+    body += `</select>
+    <div class="form-check">
+        <input type="checkbox" class="form-check-input" id="chkNoPrune">
+        <label class="form-check-label mt-1" for="chkNoPrune">Delete untagged parents?</label>
+    </div>
+    <div class="form-check">
+        <input type="checkbox" class="form-check-input" id="chkForce">
+        <label class="form-check-label mt-1" for="chkForce">Force removal?</label>
+    </div>`;
     
+    let footer = `
+        <button onclick="deleteImage()" class="btn btn-primary" data-dismiss="modal">Delete</button>
+         <button class="btn btn-secondary" data-dismiss="modal">Cancel</button>`;   
+
+    $('#modalTitle').text('Delete image');
+    $('#modalBody').append(body);
+    $('#modalFooter').append(footer);
+}
+
+function showPullImageModal(imageName, source) {
+    // from registry
+    $('#modal').modal('show'); 
+    $('#modalTitle').empty();
+    $('#modalBody').empty();
+    $('#modalFooter').empty();
+
+    let body = '';
+    if(source == 'dockerhub') {
+        body += `
+        <div class="input-form">
+        ${imageName}: 
+        <select id="imageTag">`;
+        dockerhubRepositories[imageName].tags.forEach(t => body += `<option value="${t}">${t}</option>`);
+        body += '</select></div>'
+    } else {
+        body += `
+        <div class="input-form">${imageName}: <select id="imageTag">`;
+        repositories[imageName].forEach(t => body += `<option value="${t}">${t}</option>`);
+        body += '</select></div>'
+    }
+    
+    let footer = `
+        <button onclick="pullImage('${imageName}', '${source}')" class="btn btn-primary" data-dismiss="modal">Pull</button>
+         <button class="btn btn-secondary" data-dismiss="modal">Cancel</button>`;   
+
+    $('#modalTitle').text('Pull image');
+    $('#modalBody').append(body);
+    $('#modalFooter').append(footer);
+}
+
+function pullImage(imageRep, source) {
+    // rep + tag = imageToPull
+    let imageToPull = `${source=='registry'?'localhost:5000/':''}${imageRep}:${$('#imageTag')[0].value}`;
+    xhr.open('GET', `http://localhost:8000/images/pull?repname=${imageToPull}&source=${source}`, true);
+    xhr.onreadystatechange = (e) => {
+        if(xhr.readyState == 4) {
+            if(xhr.status == 200) {
+                refreshImageTable();
+            }
+            else dump("Error procesing petition.");
+        }
+    };
+    xhr.send(null);
 }
 
 function loadRegistryRepositories(repositories) {
-    console.log('repositories: ', repositories);
     let index = 0;
     let table = $('#rep-1-table');
-    // TODO: ADD POPOVER THAT SAYS "Quick pull, pulls the latest tag of that image, instead 
-    // of opening a modal to select a tag" TO QUICK PULL ANCHOR TAG
     for(let rep in repositories) {
         let template = `
         <tr class="d-flex">
             <td class="col-s-1">${index}</td>
             <td class="col-5">${rep}</td>
-            <td class="col-5">${repositories[rep].toString()}</td>
+e           <td class="col-5">${repositories[rep].toString()}</td>
             <td class="col-2 d-flex justify-content-center">
-                <ul>
-                    <li><a href="#" onclick="pullImage('${rep}', 'latest', 'registry')">Pull 'latest'</a></li>
-                    <!-- <li><a href="#" onclick="showPullImageModal('registry')">pull</a></li> -->
-                </ul>
-                </td>
+                <a href="#" onclick="showPullImageModal('${rep}', 'registry')">pull</a>
+            </td>
         </tr>`;
-
         table.append(template);
-        index++;
-        
+        index++; 
     }
 }
 
@@ -273,17 +356,12 @@ function loadDockerhubRepositories(repositories) {
             <td class="col-1">${repositories[repName]['official']}</td>
             <td class="col-1">${repositories[repName]['automated']}</td>
             <td class="col-2 d-flex justify-content-center">
-                <ul>
-                    <!-- 
-                    <li><a href="#" onclick="pullImage('${repName}', 'latest', 'registry')">Pull 'latest'</a></li>
-                    <li><a href="#" onclick="showPullImageModal('registry')">Pull</a></li> -->
-                </ul>
-                </td>
+                <a href="#" onclick="showPullImageModal('${repName}', 'dockerhub')">Pull</a>
+            </td>
         </tr>`;
 
         table.append(template);
-        index++;
-        
+        index++; 
     }
 }
 
@@ -292,7 +370,8 @@ function loadRegistry() {
     xhr.onreadystatechange = (e) => {
         if(xhr.readyState == 4) {
             if(xhr.status == 200) {
-                loadRegistryRepositories(JSON.parse(xhr.responseText).repositories);
+                repositories = JSON.parse(xhr.responseText).repositories;
+                loadRegistryRepositories(repositories);
             }
             else dump("Error procesing petition.");
         }
@@ -305,12 +384,11 @@ function searchOnDockerhub(text) {
     xhr.onreadystatechange = (e) => {
         if(xhr.readyState == 4) {
             if(xhr.status == 200) {
-                console.log('found on dockerhub: ', xhr.responseText)
-                loadDockerhubRepositories(JSON.parse(xhr.responseText).repositories);
+                dockerhubRepositories = JSON.parse(xhr.responseText).repositories;
+                loadDockerhubRepositories(dockerhubRepositories);
             }
             else dump("Error procesing petition.");
         }
     };
     xhr.send(null);
-
 }

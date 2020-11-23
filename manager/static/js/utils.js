@@ -28,3 +28,14 @@ function collapseCards(elementId, collapse) {
        // expand
    }
 }
+
+function showAlert(msg, type) { 
+    let alertEl = `<div class="alert alert-${type} position-absolute d-flex justify-content-between p-2 w-25" 
+    style="z-index: 100!important;top: 80px;right: 50px" role="alert">${msg}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span></button></div>`
+    $('body').append(alertEl);
+    setTimeout(() => {
+        $('.alert').alert('close');
+    }, 5000);
+}

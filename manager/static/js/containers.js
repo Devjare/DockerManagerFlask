@@ -38,7 +38,6 @@ function triggerContainerAction(id, action) {
     xhr.onreadystatechange = (e) => {
         if(xhr.readyState == 4) {
             if(xhr.status == 200) {
-                console.log(`${action}ing container: ${id}`);
                 dump(xhr.responseText)
                 refresh();
             }
@@ -92,7 +91,6 @@ function showModal(container) {
 function showContainerDetails(id) {
     // showmodal
     let container = containers.find(c => c.Id == id);
-    console.log('container with id: ', id, ', found: ', container);
     showModal(container);
     $('#modal').ready(() => {
         $('#modalFooter > #btnLaunchContainer').click((e) => {
@@ -112,7 +110,6 @@ function buildContainerTableRow(container, index) {
     if(container.Ports.length > 0) {
         let p = container.Ports[0];
         ipport = `${p.IP}:${p.PublicPort}->${p.PrivatePort}/${p.Type}`;
-        console.log('port: ', ipport);
     }
 
     if(state == 'running') color = 'success';
@@ -221,7 +218,6 @@ function filterContainersBy(state) {
     else 
         filtered = containers.filter(c => c.State == state);
 
-    console.log(`filtered containers by: ${state}`, filtered)
     return filtered;
 }
 
