@@ -22,7 +22,7 @@ app.config.update(
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
-app.secret_key = os.urandom(24)
+app.secret_key = '\xa8\xe8\xa4\xd0\x1f\xab-\xd5%\x0e\x0f/\xff\xddp\x08\x81 \xb60$\xe7NE'
 
 # 192.168.1.148:2375 <-- original IP
 # disys0.tamps.cinvestav.mx:2375 <-- IP Servidor
@@ -165,17 +165,11 @@ def loadDatabase():
     allcontainers = client.containers.list(all=True)
     
     for c in allcontainers:
-        container = Container.query.all()
-        if(container != None):
-            # pending see how to update if value already exists while loading full database
-            # altough it shouldn't be really necesary, since this function specifically
-            # should be called once and only once to fill just ONCE the database with
-            # the current containers.
-            db.session.query(Containers)
-        else:
-            new_container = Container(c.id, c.name, c.image.id)
-            db.session.add(new_container)
-            db.session.commit()
+        print('container: ', c)
+        containers = Container.query.all()
+        new_container = Container(c.id, c.name, c.image.id)
+        db.session.add(new_container)
+        db.session.commit()
 
     return 'Containers loaded into DB!'
 
@@ -185,8 +179,7 @@ def testdb():
             UsersContainers.container_id == Container.id,
             UsersContainers.user_id == User.uid).order_by(UsersContainers.user_id).all();
 
-    return 'aqui ta'
-
+    return {'data': data} 
 # Raiz
 
 @app.route('/home')
@@ -381,6 +374,16 @@ def createContainer():
         container = client.containers.create(image=data['image'],name=data['name'],ports=ports,command=data['command'], tty=data['tty'])
         addContainerToUser(container.id)
 
+    # Add container info to database
+    new_container = Container(container.id, container.name, container.image.id)
+    db.session.add(new_container)
+    db.session.commit()
+
+    print('session containers BEFORE: ', session[USERCONTAINERS])
+    # add recently created container to user session containers array.
+    session[USERCONTAINERS].append(container.id)
+    print('session containers AFTER: ', session[USERCONTAINERS])
+
     return container.short_id
 
 @app.route('/container_details')
@@ -390,7 +393,14 @@ def showContainerDetails():
 @app.route('/containers/json')
 def getContainers():
     containers = dockercli.containers(all=True)
-    containers = filter(lambda c: c['Id'] in session[USERCONTAINERS], containers)
+    print(' ////////////////////////// ALL CONTAIENRS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ ')
+    print(map(lambda c: c['Id'], containers))
+    print(' ////////////////////////// ALL CONTAIENRS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ ')
+    
+    print(' ////////////////////////// USERS CONTAIENRS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ ')
+    containers = filter(lambda c: c['Id'] in session[USERCONTAINERS], containers) 
+    print(map(lambda c: c['Id'], containers))
+    print(' ////////////////////////// USERS CONTAIENRS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ ')
     return {'containers': containers}
 
 @app.route('/containers')
@@ -456,8 +466,7 @@ def login():
 
             userContainers = db.session.query(Container, User).filter(
                     UsersContainers.container_id == Container.id,
-                    UsersContainers.user_id == User.uid,
-                    User.username == username).order_by(UsersContainers.user_id).all()
+                    UsersContainers.user_id == User.uid).order_by(UsersContainers.user_id).all()
             session[USERCONTAINERS] = []
             for x in userContainers:
                 session[USERCONTAINERS].append(x.Container.id)

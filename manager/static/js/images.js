@@ -1,5 +1,3 @@
-var xhr = new XMLHttpRequest();
-
 $('.site-content').ready((e) => {
     loadAllImages();
     loadRegistry();
@@ -10,20 +8,19 @@ var repositories = [];
 var dockerhubRepositories = [];
 
 function loadAllImages() {
-    xhr.open('GET', `http://localhost:8000/images/json?all=True`, false);
-    xhr.onreadystatechange = (e) => {
-        if(xhr.readyState == 4) {
-            if(xhr.status == 200) {
-                images = JSON.parse(xhr.responseText).images;
-                loadImages(JSON.parse(xhr.responseText).images);
-                feather.replace()
-            }
-            else { 
-                dump("Error procesing petition.");
-            }
-        }
+    let reqObj = {
+        'type': 'GET',
+        'url': `http://localhost:8000/images/json?all=True`,
+        'isAsync': false,
+        'params': null
     };
-    xhr.send(null);
+    sendRequest(reqObj, 
+        (response) => {
+            images = JSON.parse(response).images;
+            loadImages(JSON.parse(response).images);
+            feather.replace();
+        },
+        (error) => console.log('error: ', error));
 }
 
 function loadImages(imagesArr) {
@@ -130,8 +127,6 @@ function createContainerFrom(imageid) {
 
     $('#modalConfirm .btn-primary').click((e) => { 
     
-        let createAndRun = $('#chkRun')[0].checked;
-
         let data = {
             'image': $('#selectTag')[0].value.toString(),
             'name': $('#containername')[0].value.toString(),
@@ -139,34 +134,20 @@ function createContainerFrom(imageid) {
             'volume': $('#volume')[0].value.toString(),
             'command': $('#command')[0].value.toString(),
             'tty': $('#chkTty')[0].checked,
-            'run': createAndRun
+            'run': $('#chkRun')[0].checked
         };
 
-        if(createAndRun) {
-            xhr.open('POST', '/containers/create', true);
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.onreadystatechange = (e) => {
-                if(xhr.readyState == 4) {
-                    if(xhr.status == 200) {
-                        $('#modal').modal('hide');
-                    }
-                    else dump("Error procesing petition.");
-                }
-            };
-            xhr.send(JSON.stringify(data));
-        } else {
-            xhr.open('POST', '/containers/create', true);
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.onreadystatechange = (e) => {
-                if(xhr.readyState == 4) {
-                    if(xhr.status == 200) {
-                        $('#modal').modal('hide');
-                    }
-                    else dump("Error procesing petition.");
-                }
-            };
-            xhr.send(JSON.stringify(data));
-        }
+        let reqObj = {
+            'type': 'POST',
+            'url': `/containers/create`,
+            'isAsync': true,
+            'params': JSON.stringify(data),
+            'requestHeaders': { 'Content-Type': 'application/json' }
+        };
+
+        sendRequest(reqObj, 
+            (response) => $('#modal').modal('hide'),
+            (error) => console.log('error: ', error));
 
         $('#modalConfirm').modal('hide');
         $('#modal').css({'z-index': ''});
@@ -235,23 +216,20 @@ function deleteImage() {
     let toDelete = $('#imageTag')[0].value;
     let noPrune = $('#chkNoPrune')[0].checked;
     let force = $('#chkForce')[0].checked;
-    console.log('image to delete: ', toDelete);
 
-    xhr.open('GET', `http://localhost:8000/images/delete?imagerepo=${toDelete}&noprune=${noPrune}&force=${force}`, true);
-    xhr.onreadystatechange = (e) => {
-        if(xhr.readyState == 4) {
-            if(xhr.status == 200) {
-                if(xhr.responseText == 'deleted') {
-                    showAlert('Image deleted successfully!', 'success');
-                    refreshImageTable();
-                }
-                else 
-                    showAlert('An error ocurred while deleting image', 'danger');
-            }
-            else dump("Error procesing petition.");
-        }
+    let reqObj = {
+        'type': 'GET',
+        'url': `http://localhost:8000/images/delete?imagerepo=${toDelete}&noprune=${noPrune}&force=${force}`,
+        'isAsync': true,
+        'params': null
     };
-    xhr.send(null);
+
+    sendRequest(reqObj, 
+        (response) => {
+            showAlert('Image deleted successfully!', 'success');
+            refreshImageTable();
+        },
+        (error) => console.log('error: ', error));
 }
 
 function showDeleteImageModal(imageid) {
@@ -317,16 +295,18 @@ function showPullImageModal(imageName, source) {
 function pullImage(imageRep, source) {
     // rep + tag = imageToPull
     let imageToPull = `${source=='registry'?'localhost:5000/':''}${imageRep}:${$('#imageTag')[0].value}`;
-    xhr.open('GET', `http://localhost:8000/images/pull?repname=${imageToPull}&source=${source}`, true);
-    xhr.onreadystatechange = (e) => {
-        if(xhr.readyState == 4) {
-            if(xhr.status == 200) {
-                refreshImageTable();
-            }
-            else dump("Error procesing petition.");
-        }
+
+    
+    let reqObj = {
+        'type': 'GET',
+        'url': `http://localhost:8000/images/pull?repname=${imageToPull}&source=${source}`,
+        'isAsync': true,
+        'params': null
     };
-    xhr.send(null);
+
+    sendRequest(reqObj, 
+        (response) => refreshImageTable() ,
+        (error) => console.log('error: ', error));
 }
 
 function loadRegistryRepositories(repositories) {
@@ -371,29 +351,33 @@ function loadDockerhubRepositories(repositories) {
 }
 
 function loadRegistry() {
-    xhr.open('GET', 'http://localhost:8000/registry?source=registry', false);
-    xhr.onreadystatechange = (e) => {
-        if(xhr.readyState == 4) {
-            if(xhr.status == 200) {
-                repositories = JSON.parse(xhr.responseText).repositories;
-                loadRegistryRepositories(repositories);
-            }
-            else dump("Error procesing petition.");
-        }
+    let reqObj = {
+        'type': 'GET',
+        'url': 'http://localhost:8000/registry?source=registry',
+        'isAsync': false,
+        'params': null
     };
-    xhr.send(null);
+
+    sendRequest(reqObj, 
+        (response) => {
+            repositories = JSON.parse(response).repositories;
+            loadRegistryRepositories(repositories);
+        },
+        (error) => console.log('error: ', error));
 }
 
 function searchOnDockerhub(text) {
-    xhr.open('GET', `http://localhost:8000/registry?source=dockerhub&text=${text}`, true);
-    xhr.onreadystatechange = (e) => {
-        if(xhr.readyState == 4) {
-            if(xhr.status == 200) {
-                dockerhubRepositories = JSON.parse(xhr.responseText).repositories;
-                loadDockerhubRepositories(dockerhubRepositories);
-            }
-            else dump("Error procesing petition.");
-        }
+    let reqObj = {
+        'type': 'GET',
+        'url': `http://localhost:8000/registry?source=dockerhub&text=${text}`,
+        'isAsync': true,
+        'params': null
     };
-    xhr.send(null);
+
+    sendRequest(reqObj, 
+        (response) => {
+            dockerhubRepositories = JSON.parse(response).repositories;
+            loadDockerhubRepositories(dockerhubRepositories);
+        },
+        (error) => console.log('error: ', error));    
 }

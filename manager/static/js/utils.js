@@ -39,3 +39,20 @@ function showAlert(msg, type) {
         $('.alert').alert('close');
     }, 5000);
 }
+
+// GLOBAL XHR OBJECT
+var xhr = new XMLHttpRequest();
+function sendRequest(reqObj, onSuccess, onError) {
+    xhr.open(reqObj.type, reqObj.url, reqObj.isAsync);
+    if('requestHeaders' in reqObj) {
+        for(header in reqObj.requestHeaders) {
+            // adding every requet header indicated
+            xhr.setRequestHeader(header, reqObj.requestHeaders[header]);
+        }
+    }
+    xhr.onreadystatechange = (e) => {
+        if(xhr.readyState == 4) onSuccess(xhr.responseText);
+        else onError(xhr.responseText);
+    }
+    xhr.send(reqObj.params);
+}

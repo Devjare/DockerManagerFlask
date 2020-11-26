@@ -11,7 +11,6 @@
 // ON PROGRESS
 
 // global vars
-var xhr = new XMLHttpRequest();
 var currentFilter = 'all';
 var currentView = 'list';
 
@@ -34,18 +33,15 @@ $(document).on({
 }, ".popover-item");
 
 function triggerContainerAction(id, action) {
-    xhr.open('GET', `http://localhost:8000/containers/${action}/${id}`, true);
-    xhr.onreadystatechange = (e) => {
-        if(xhr.readyState == 4) {
-            if(xhr.status == 200) {
-                dump(xhr.responseText)
-                refresh();
-            }
-            else
-                dump("Error procesing petition");
-        }
+    let reqObj = {
+        'type': 'GET',
+        'url': `http://localhost:8000/containers/${action}/${id}`,
+        'isAsync': true,
+        'params': null
     };
-    xhr.send(null);
+    sendRequest(reqObj,
+        (response) => refresh(),
+        (error) => dump(`Error procesing petition, error: ${error}`));
 }
 
 
@@ -118,6 +114,7 @@ function buildContainerTableRow(container, index) {
     else if(state == 'restarting') color = 'warning';
     let template = `<tr class="table-${color}">
       <th scope="row">${index}</th>
+      <td scope="row"><span class="icon" onclick="showDeleteContainerModal('${container.Id}')" data-feather="trash"></span></td>
       <td>${container.Id}</td>
       <td>${container.Names[0]}</td>
       <td>${container.State}</td>
@@ -150,6 +147,7 @@ function buildContainerHtmlTemplate(container) {
     </div></div>`
     return containerHtmlTemplate;
 }
+
 function loadContainers(containers, filter) {
     clearContainersPanel();
     let filtered;
@@ -182,19 +180,18 @@ function loadFlaskVars(vars) {
 }
 
 function refresh() {
-    xhr.open('GET', `http://localhost:8000/containers/json`, true);
-    xhr.onreadystatechange = (e) => {
-        if(xhr.readyState == 4) {
-            if(xhr.status == 200) {
-                containers = JSON.parse(xhr.responseText)['containers'];
-                loadContainers(containers, currentFilter);
-                dump(xhr.responseText)
-            }
-            else
-                dump("Error procesing petition");
-        }
+    let reqObj = {
+        'type': 'GET',
+        'url': `http://localhost:8000/containers/json`,
+        'isAsync': true,
+        'params': null
     };
-    xhr.send(null);
+    sendRequest(reqObj,
+        (response) => {
+            containers = JSON.parse(response)['containers'];
+            loadContainers(containers, currentFilter);
+        },
+        (error) => dump(`Error procesing petition, error: ${error}`));
 }
 
 function formatView(format) {
