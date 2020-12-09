@@ -10,6 +10,8 @@
 // SHOW AN ICON ON THE ROW/CARD OF THE CONTAINER SHOWING THAT THE ACTION IS STILL
 // ON PROGRESS
 
+
+
 // global vars
 var currentFilter = 'all';
 var currentView = 'list';
@@ -45,22 +47,25 @@ function triggerContainerAction(id, action) {
 }
 
 
-function showModal(container) {
+function showCModal(container) {
     let state = container.State;
     let id = container.Id;
-    let modalFooter = '';
+    
+    let title = 'Container action';
 
-    $('#modal').modal('show');
-    $('#container-id').text(id);
-    $('#container-name').text(container.Names);
-    $('#container-ipport').text(portsArrayToString(container.Ports));
-    $('#container-status').text(container.Status);
-    $('#container-state').text(state);
-    $('#container-created').text(timeConverter(container.Created));
-    $('#container-image').text(container.Image);
+    let body = `<div class="container-fluid">
+    <div class="row"><strong>ID: ${id}</strong><p id="container-id">&nbsp;</p></div>
+    <div class="row"><strong>Name: ${container.Names}</strong><p id="container-name">&nbsp;</p></div>
+    <div class="row"><strong>IP/Ports: ${portsArrayToString(container.Ports)}</strong><p id="container-ipport">&nbsp;</p></div>
+    <div class="row"><strong>State: ${state}</strong><p id="container-state">&nbsp;</p></div>
+    <div class="row"><strong>Status: ${container.Status}</strong><p id="container-status">&nbsp;</p></div>
+    <div class="row"><strong>Image: ${container.Image}</strong><a href="#" id="container-image"></a></div>
+    &nbsp;<div class="row"><strong>Created: ${timeConverter(container.Created)}</strong><p id="container-created">&nbsp;</p></div>
+    </div>`;
 
+    let footer = '';
     if(state == 'exited' || state == 'created') {
-        modalFooter += `<div class="form-check">
+        footer += `<div class="form-check">
      <input class="form-check-input" type="checkbox" value="" id="chkLaunchOptions">
      <label class="form-check-label" for="chkLaunchOptions">
          Add arguments to launch?
@@ -69,17 +74,17 @@ function showModal(container) {
     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
     <button onclick="triggerContainerAction('${id}','start')" type="button" class="btn btn-primary" data-dismiss="modal">Start</button>`
     } else if(state == 'paused') {
-        modalFooter += `<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        footer += `<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         <button onclick="triggerContainerAction('${id}','unpause')" type="button" class="btn btn-info" data-dismiss="modal">Unpause</button>
         <button onclick="triggerContainerAction('${id}','stop')" type="button" class="btn btn-danger" data-dismiss="modal">Stop</button>`
     } else if(state == 'running') {
-        modalFooter += `<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        footer += `<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         <button onclick="triggerContainerAction('${id}','restart')" type="button" class="btn btn-warning" data-dismiss="modal">Restart</button>
         <button onclick="triggerContainerAction('${id}','pause')" type="button" class="btn btn-info" data-dismiss="modal">Pause</button>
         <button onclick="triggerContainerAction('${id}','stop')" type="button" class="btn btn-danger" data-dismiss="modal">Stop</button>`
     }
 
-    $('#modalFooter').html(modalFooter);
+    showModal(title, body, footer);
 }
 
 // containers actions
@@ -87,7 +92,7 @@ function showModal(container) {
 function showContainerDetails(id) {
     // showmodal
     let container = containers.find(c => c.Id == id);
-    showModal(container);
+    showCModal(container);
     $('#modal').ready(() => {
         $('#modalFooter > #btnLaunchContainer').click((e) => {
             triggerContainerAction(id, 'start');
@@ -149,6 +154,7 @@ function buildContainerHtmlTemplate(container) {
 }
 
 function loadContainers(containers, filter) {
+    console.log('contgainer loaded: ', containers);
     clearContainersPanel();
     let filtered;
     
@@ -174,20 +180,18 @@ function loadContainers(containers, filter) {
         feather.replace();
     });
 }
-function loadFlaskVars(vars) {
-    containers = vars['containers'];
-    loadContainers(containers, currentFilter);
-}
 
 function refresh() {
+    console.log('refreshing');
     let reqObj = {
         'type': 'GET',
         'url': `http://localhost:8000/containers/json`,
-        'isAsync': true,
+        'isAsync': false,
         'params': null
     };
     sendRequest(reqObj,
         (response) => {
+            console.log('getting response of containers');
             containers = JSON.parse(response)['containers'];
             loadContainers(containers, currentFilter);
         },
@@ -245,5 +249,7 @@ function clearContainersPanel() {
     document.querySelector('.table-body').innerHTML = '';
 }
 
-// ***************************** CREATION SECTION *****************************
-
+$('.site-content').ready((e) => {
+    console.log('containers ready');
+    refresh();
+});

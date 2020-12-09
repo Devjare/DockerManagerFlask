@@ -13,14 +13,20 @@
 
         <!-- Bootstrap core CSS -->
         <link href="http://getbootstrap.com/docs/4.1/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
 
         <!-- Custom styles for this template -->
         <link href="http://getbootstrap.com/docs/4.1/examples/dashboard/dashboard.css" rel="stylesheet"> 
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt"
-                                                                                              crossorigin="anonymous">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+
         <link rel="stylesheet" href="{{url_for('static', filename='css/global.css')}}">
         <link rel="stylesheet" href="{{url_for('static', filename='css/images.css')}}">
         <link rel="stylesheet" href="{{url_for('static', filename='css/base.css')}}">
+
+        <!-- Placed at the end of the document so the pages load faster -->
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
         {% endblock %}
     </head>
 
@@ -189,91 +195,71 @@
                     <div class="modal-dialog modal-dialog-centered" role="document">
                         <div class="modal-content">
                             <div class="modal-header bg-dark text-white">
-                                <h4 class="modal-title">Confirm action</h4>
+                                <h5 class="modal-title">Confirm action</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
-                            <div class="modal-body">
+                            <div id="modalConfirmBody" class="modal-body">
                             </div>
                             <div class="modal-footer">
-                                <button class="btn btn-sm btn-primary">Continue</button>
-                                <button class="btn btn-sm btn-secondary">Cancel</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- COMMON MODAL -->
-                <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header bg-dark text-white">
-                                <h5 id="modalTitle" class="modal-title"></h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div id="modalBody" class="modal-body">
-                            </div>
-                            <div id="modalFooter" class="modal-footer">
+                                <button id="btnConfirm" class="btn btn-sm btn-primary">Confirm</button>
+                                <button id="btnCancel" class="btn btn-sm btn-secondary">Cancel</button>
                             </div>
                         </div>
                     </div>
                 </div>
                 <!-- Bootstrap core JavaScript
                     ================================================== -->
-                    <!-- Placed at the end of the document so the pages load faster -->
-                    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-                                                                                   crossorigin="anonymous"></script>
                     <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
-                    <script src="http://getbootstrap.com/docs/4.1/assets/js/vendor/popper.min.js"></script>
-                    <script src="http://getbootstrap.com/docs/4.1/dist/js/bootstrap.min.js"></script>
+                    <!-- <script src="http://getbootstrap.com/docs/4.1/assets/js/vendor/popper.min.js"></script>
+                    <script src="http://getbootstrap.com/docs/4.1/dist/js/bootstrap.min.js"></script> -->
+
 
                     <!-- Icons -->
-                    <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+                    <!-- <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
                     <script>
                         feather.replace()
-                    </script>
+                    </script> -->
 
                     <!-- Custom JS Files -->
                     <script src="{{url_for('static', filename='js/utils.js')}}"></script>
-                    <script src="{{url_for('static', filename='js/containers.js')}}"></script>
-                    <script src="{{url_for('static', filename='js/images.js')}}"></script>
                     <script src="{{url_for('static', filename='js/base.js')}}"></script>
-                    <script>loadFlaskVars({{containers | safe}})</script>
 
-                    <!-- Graphs -->
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.7.1/Chart.min.js"></script>
+                    <!-- Graphs
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.0.0/Chart.min.js" 
+                        integrity="sha512-oPvxMUC37WigeVCeZVcU9IoRJjR3xg5/XQaautxFc0rCWJZgQ625mTEPz2nfp7/papNkImutg4thPHf6ok/Fwg==" crossorigin="anonymous">
+                    </script> -->
                     <script>
-                        var ctx = document.getElementById("myChart");
-var myChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-        datasets: [{
-            data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
-            lineTension: 0,
-            backgroundColor: 'transparent',
-            borderColor: '#007bff',
-            borderWidth: 4,
-            pointBackgroundColor: '#007bff'
-        }]
-    },
-    options: {
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero: false
-                }
-            }]
-        },
-        legend: {
-            display: false,
-        }
-    }
-});
-                    </script> {% endblock %}
-    
+                       //  var ctx = document.getElementById("myChart");
+                       //  var myChart = new Chart(ctx, {
+                       //      type: 'line',
+                       //      data: {
+                       //          labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+                       //          datasets: [{
+                       //              data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
+                       //              lineTension: 0,
+                       //              backgroundColor: 'transparent',
+                       //              borderColor: '#007bff',
+                       //              borderWidth: 4,
+                       //              pointBackgroundColor: '#007bff'
+                       //          }]
+                       //      },
+                       //      options: {
+                       //          scales: {
+                       //              yAxes: [{
+                       //                  ticks: {
+                       //                      beginAtZero: false
+                       //                  }
+                       //              }]
+                       //          },
+                       //          legend: {
+                       //              display: false,
+                       //          }
+                       //      }
+                       //  });
+                    </script> 
+                    {% endblock %} 
     </body>
 
 </html>

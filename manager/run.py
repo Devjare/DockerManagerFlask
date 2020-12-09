@@ -356,7 +356,8 @@ def addContainerToUser(idcontainer):
 
 @app.route('/container_creation')
 def showContainerCreation():
-    return render_template('container_creation.html')
+    images = getAllImages()
+    return render_template('container_creation.html', images=images['images'])
 
 @app.route('/containers/create', methods=['POST'])
 def createContainer():
@@ -371,18 +372,49 @@ def createContainer():
         addContainerToUser(container.id)
         container.start()
     else:
+        # if only create and not run is selected, then the following parameters stdout, stderr, and remove, will not be available.
         container = client.containers.create(image=data['image'],name=data['name'],ports=ports,command=data['command'], tty=data['tty'])
+       
+        # ABOVE IS THE FULL VERSION OF THE CREATE METHOD, WHEN ADVANCED CREATION IS USED
+        # container = client.containers.create(
+        #       image=data['image'], name=data['name'], ports=ports, command=data['command'],           # ------- BASIC SECTION -------
+        #       tty=data['tty'], hostname='', version='', entrypoint='', working_dir='',                # BASIC SECTION OF ARGUMENTS
+        #       restart_policy={}, labels={}, environment={}, detach=False,                  # FOR ADVANCED CONTAINER CREATION 
+        #       auto_remove=False, read_only=False, privileged=False, publish_all_ports=False,          # -------- END BASIC ----------
+        
+        #       cgroup_parent=0, cpu_count=0, cpu_percent=0, cpu_period=0, cpu_quota=0,                 # ------ resources section ------
+        #       cpu_rt_period=0, cpu_rt_runtimie=0, cpu_shares=0, nano_cpus=0, cpuset_cpu="", 
+        #       cpuset_mems="",  mem_limit="0mb", mem_reservation="0mb", mem_swappiness=0,
+        #       memswap_limit="0mb", blkio_weight_device=[{}], blkio_weight=10-100,                     # --- end resources section ----
+   
+        #                                                                                               # ------ networks section ------
+        #       netword_disabled=false, network="", network_mode="", cpu_period=0, cpu_quota=0,         # ------ ------------------ ------
+        #                                                                                               # ------ end networks section ------
+
+        #                                                                                               # ------ volumes section ------
+        #       volume_driver="", volumes={}, volumes_from=[], mounts=[]                                # ------ ------------------ ------
+        #                                                                                               # ------ end volumes section ------
+        
+        #       device_read_bps=[{}], device_read_iops=[{}], device_write_bps=[{}],                     # ------- ADVANCED SECTION -------
+        #       device_write_iops=[{}], cap_add=[], cap_drop=[], domainname=[], init_path=""
+        #       ipc_mode="", isolation="", kernel_memory="", mac_address="", pid_mode="",                # ADVANCED SECTION OF ARGUMENTS
+        #       platform="", runtime="", shm_size="", stop_signal="", userns_mode="",                  # FOR ADVANCED CONTAINER CREATION 
+        #       uts_mode="", device_cgroup_rules=[], devices=[], device_requests=[],                   # FOR ADVANCED CONTAINER CREATION 
+        #       dns=[], dns_opt=[], dns_search=[], group_add=[], security_opt=[],ulimits=[]                  # FOR ADVANCED CONTAINER CREATION 
+        #       lxc_conf={}, healthcheck={}, extra_hosts={}, links={}, log_config=LogConfig,                  # FOR ADVANCED CONTAINER CREATION 
+        #       storage_opt={}, sysctl={}, tmpfs={}, oom_kill_disable=False, init=False,                  # FOR ADVANCED CONTAINER CREATION 
+        #       stdin_open=False, stdout=True, stderr=False, stream=False, use_config_proxy=False,                  # FOR ADVANCED CONTAINER CREATION 
+        #       oom_score_adj=0, pids_limit=0                                                         # -------- END BASIC ----------
+
+        # )
         addContainerToUser(container.id)
 
     # Add container info to database
     new_container = Container(container.id, container.name, container.image.id)
     db.session.add(new_container)
     db.session.commit()
-
-    print('session containers BEFORE: ', session[USERCONTAINERS])
     # add recently created container to user session containers array.
     session[USERCONTAINERS].append(container.id)
-    print('session containers AFTER: ', session[USERCONTAINERS])
 
     return container.short_id
 
@@ -393,14 +425,7 @@ def showContainerDetails():
 @app.route('/containers/json')
 def getContainers():
     containers = dockercli.containers(all=True)
-    print(' ////////////////////////// ALL CONTAIENRS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ ')
-    print(map(lambda c: c['Id'], containers))
-    print(' ////////////////////////// ALL CONTAIENRS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ ')
-    
-    print(' ////////////////////////// USERS CONTAIENRS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ ')
     containers = filter(lambda c: c['Id'] in session[USERCONTAINERS], containers) 
-    print(map(lambda c: c['Id'], containers))
-    print(' ////////////////////////// USERS CONTAIENRS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ ')
     return {'containers': containers}
 
 @app.route('/containers')

@@ -48,18 +48,15 @@ function validatseField(field) {
     }
 }
 function showImageModal(imageid, action) {
-    $('#modalTitle').empty(); 
-    $('#modalBody').empty();
-    $('#modalFooter').empty();
-  
-    let modalBody = '';
-    let modalFooter = '';
-    let modalTitle = '';
+    let body = '';
+    let footer = '';
+    let title = '';
+
     if(action == 'tag_image') {
-        modalTitle = 'Tag image';
+        title = 'Tag image';
     } else if(action == 'create_container') {
-        modalTitle = 'Create container'
-        modalBody = `
+        title = 'Create container'
+        body = `
             <div class="m-2 form-group">
                 <label for="selectTag"> Select Tag</label>
                 <select id="selectTag">
@@ -86,18 +83,19 @@ function showImageModal(imageid, action) {
                 <label class="form-check-label mt-1" for="chkRun">Entable TTY?</label>
             </div>
         `;
-        modalFooter = `
+        footer = `
             <div class="d-flex justify-content-between w-100">
              <div class="form-check">
                 <input type="checkbox" class="form-check-input" id="chkRun">
                 <label class="form-check-label mt-1" for="chkRun">Create and Run?</label>
             </div>
             <div>
-                <a href="/container_creation">Advance Creation</a>
+                <a href="/container_creation">Advanced Creation</a>
                 <button onclick="createContainerFrom('${imageid}')" class="btn btn-sm btn-primary">Create Container</button>
             </div>
             </div>
         `;
+        
         $('#modalBody').ready(e => {
             // Add tags when the modal loads.
             images.find(img => img.Id == imageid).RepoTags.forEach(tag => {
@@ -105,58 +103,44 @@ function showImageModal(imageid, action) {
             });
         });
     } else {
-        modalTitle = 'Save image';
+        title = 'Save image';
     }
-     
-    $('#modalTitle').text(modalTitle); 
-    $('#modalBody').append(modalBody);
-    $('#modalFooter').append(modalFooter);
-    $('#modal').modal('show');
+    
+    showModal(title, body, footer);
 }
 
 function createContainerFrom(imageid) {
     // get all image data.
-    $('#modalConfirm').modal('show');
-    $('#modalConfirm .modal-body').empty();
-    $('#modalConfirm .modal-body').append('<h5>If a field is left empty, container will be created anyway but without that argument. Do you want to continue?</h5>');
-    $('#modal').css({'z-index': '0'});
-    
-    $('#modalConfirm').on('hidden.bs.modal', (e) => {
-        $('#modal').css({'z-index': ''});
-    });
+    showConfirmationModal(
+        '<h5>If a field is left empty, container will be created anyway but without that argument. Do you want to continue?</h5>',
+        (e) => { 
+            let data = {
+                'image': $('#selectTag')[0].value.toString(),
+                'name': $('#containername')[0].value.toString(),
+                'ports': $('#ports')[0].value.toString(),
+                'volume': $('#volume')[0].value.toString(),
+                'command': $('#command')[0].value.toString(),
+                'tty': $('#chkTty')[0].checked,
+                'run': $('#chkRun')[0].checked
+            };
 
-    $('#modalConfirm .btn-primary').click((e) => { 
-    
-        let data = {
-            'image': $('#selectTag')[0].value.toString(),
-            'name': $('#containername')[0].value.toString(),
-            'ports': $('#ports')[0].value.toString(),
-            'volume': $('#volume')[0].value.toString(),
-            'command': $('#command')[0].value.toString(),
-            'tty': $('#chkTty')[0].checked,
-            'run': $('#chkRun')[0].checked
-        };
+            let reqObj = {
+                'type': 'POST',
+                'url': `/containers/create`,
+                'isAsync': true,
+                'params': JSON.stringify(data),
+                'requestHeaders': { 'Content-Type': 'application/json' }
+            };
 
-        let reqObj = {
-            'type': 'POST',
-            'url': `/containers/create`,
-            'isAsync': true,
-            'params': JSON.stringify(data),
-            'requestHeaders': { 'Content-Type': 'application/json' }
-        };
-
-        sendRequest(reqObj, 
-            (response) => $('#modal').modal('hide'),
-            (error) => console.log('error: ', error));
-
-        $('#modalConfirm').modal('hide');
-        $('#modal').css({'z-index': ''});
-    });
-    
-    $('#modalConfirm .btn-secondary').click((e) => {
-        $('#modalConfirm').modal('hide');
-        $('#modal').css({'z-index': ''});
-    });
+            sendRequest(reqObj, 
+                (response) => $('#modal').modal('hide'),
+                (error) => console.log('error: ', error));
+            hideConfirmationModal();
+            hideModal();
+        }, 
+        (e) => {
+            hideConfirmationModal();
+        });
 }
 
 function buildImageTableTemplate(index, image) {
@@ -233,14 +217,9 @@ function deleteImage() {
 }
 
 function showDeleteImageModal(imageid) {
-    // from registry
-    $('#modal').modal('show'); 
-    $('#modalTitle').empty();
-    $('#modalBody').empty();
-    $('#modalFooter').empty();
-
+    let title = 'Delete image';
+    
     let body = `<h5>Select tag to delete: </h5><select id="imageTag">`;
-    console.log('images: ', images);
     images.find(i => i.Id == imageid).RepoTags.forEach(t => body += `<option value="${t}">${t}</option>`);
     body += `</select>
     <div class="form-check">
@@ -255,18 +234,12 @@ function showDeleteImageModal(imageid) {
     let footer = `
         <button onclick="deleteImage()" class="btn btn-primary" data-dismiss="modal">Delete</button>
          <button class="btn btn-secondary" data-dismiss="modal">Cancel</button>`;   
-
-    $('#modalTitle').text('Delete image');
-    $('#modalBody').append(body);
-    $('#modalFooter').append(footer);
+    
+    showModal(title, body, footer);
 }
 
 function showPullImageModal(imageName, source) {
-    // from registry
-    $('#modal').modal('show'); 
-    $('#modalTitle').empty();
-    $('#modalBody').empty();
-    $('#modalFooter').empty();
+    let title = 'Pull image';
 
     let body = '';
     if(source == 'dockerhub') {
@@ -287,10 +260,8 @@ function showPullImageModal(imageName, source) {
         <button onclick="pullImage('${imageName}', '${source}')" class="btn btn-primary" data-dismiss="modal">Pull</button>
          <button class="btn btn-secondary" data-dismiss="modal">Cancel</button>`;   
 
-    $('#modalTitle').text('Pull image');
-    $('#modalBody').append(body);
-    $('#modalFooter').append(footer);
-}
+    showModal(title, body, footer);
+} 
 
 function pullImage(imageRep, source) {
     // rep + tag = imageToPull

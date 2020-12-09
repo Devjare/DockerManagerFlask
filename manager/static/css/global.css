@@ -209,10 +209,24 @@ li {
 
 /* BOOTSTRAP SPECIFIC MODIFICATIONS */
 .card {
-	max-width: 450px!important;
-        min-width: 250px!important;
-        max-height: 350px!important;
+    max-width: 450px!important;
+    min-width: 250px!important;
+    max-height: 350px!important;
+    
+    transition: height 500ms;
 }
 
-/* SIGNIN / SIGNUP STYLES */
+/* 
+ * COLLAPSABLE CARDS CLASSESS 
+ * The default value for card-header heights, is 1.50 for padding(bottom and top)
+ * plus the .875 of the font. with border-box sizing, it makes a total of 2.375rem
+ * units of card-header height.
+ * */
 
+.collapsed { 
+    height: 2.835rem;
+}
+
+.hide {
+    display: none!important;
+}
