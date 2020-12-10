@@ -362,53 +362,209 @@ def showContainerCreation():
 @app.route('/containers/create', methods=['POST'])
 def createContainer():
     data = request.json
-    ports = data['ports'].split(':')
-    ports = {ports[0]: ports[1]}
-    volume = data['volume']
-    
     container = {}
-    if(data['run']):
-        container = client.containers.create(image=data['image'],name=data['name'],ports=ports,command=data['command'], tty=data['tty'])
-        addContainerToUser(container.id)
-        container.start()
-    else:
-        # if only create and not run is selected, then the following parameters stdout, stderr, and remove, will not be available.
-        container = client.containers.create(image=data['image'],name=data['name'],ports=ports,command=data['command'], tty=data['tty'])
-       
-        # ABOVE IS THE FULL VERSION OF THE CREATE METHOD, WHEN ADVANCED CREATION IS USED
-        # container = client.containers.create(
-        #       image=data['image'], name=data['name'], ports=ports, command=data['command'],           # ------- BASIC SECTION -------
-        #       tty=data['tty'], hostname='', version='', entrypoint='', working_dir='',                # BASIC SECTION OF ARGUMENTS
-        #       restart_policy={}, labels={}, environment={}, detach=False,                  # FOR ADVANCED CONTAINER CREATION 
-        #       auto_remove=False, read_only=False, privileged=False, publish_all_ports=False,          # -------- END BASIC ----------
-        
-        #       cgroup_parent=0, cpu_count=0, cpu_percent=0, cpu_period=0, cpu_quota=0,                 # ------ resources section ------
-        #       cpu_rt_period=0, cpu_rt_runtimie=0, cpu_shares=0, nano_cpus=0, cpuset_cpu="", 
-        #       cpuset_mems="",  mem_limit="0mb", mem_reservation="0mb", mem_swappiness=0,
-        #       memswap_limit="0mb", blkio_weight_device=[{}], blkio_weight=10-100,                     # --- end resources section ----
    
-        #                                                                                               # ------ networks section ------
-        #       netword_disabled=false, network="", network_mode="", cpu_period=0, cpu_quota=0,         # ------ ------------------ ------
-        #                                                                                               # ------ end networks section ------
+    if('advancedCreation' in data):
+        print('showing advanced parameters: ')
+        ports = data['ports']
+        if(not data['run']):
+            container = client.containers.create(
+                image = data['image'], 
+                name = data['name'], 
+                ports = data['ports'], 
+                command = data['command'],
+                tty = data['tty'], 
+                hostname = data['hostname'],
+                version = data['version'], 
+                entrypoint = data['entrypoint'],
+                working_dir = data['working_dir'],
+                restart_policy = data['restart_policy'],
+                labels = data['labels'],
+                environment = data['environment'],
+                detach = data['detach'],
+                auto_remove = data['auto_remove'],
+                read_only = data['read_only'],
+                privileged = data['privileged'],
+                publish_all_ports = data['publish_all_ports'],
 
-        #                                                                                               # ------ volumes section ------
-        #       volume_driver="", volumes={}, volumes_from=[], mounts=[]                                # ------ ------------------ ------
-        #                                                                                               # ------ end volumes section ------
-        
-        #       device_read_bps=[{}], device_read_iops=[{}], device_write_bps=[{}],                     # ------- ADVANCED SECTION -------
-        #       device_write_iops=[{}], cap_add=[], cap_drop=[], domainname=[], init_path=""
-        #       ipc_mode="", isolation="", kernel_memory="", mac_address="", pid_mode="",                # ADVANCED SECTION OF ARGUMENTS
-        #       platform="", runtime="", shm_size="", stop_signal="", userns_mode="",                  # FOR ADVANCED CONTAINER CREATION 
-        #       uts_mode="", device_cgroup_rules=[], devices=[], device_requests=[],                   # FOR ADVANCED CONTAINER CREATION 
-        #       dns=[], dns_opt=[], dns_search=[], group_add=[], security_opt=[],ulimits=[]                  # FOR ADVANCED CONTAINER CREATION 
-        #       lxc_conf={}, healthcheck={}, extra_hosts={}, links={}, log_config=LogConfig,                  # FOR ADVANCED CONTAINER CREATION 
-        #       storage_opt={}, sysctl={}, tmpfs={}, oom_kill_disable=False, init=False,                  # FOR ADVANCED CONTAINER CREATION 
-        #       stdin_open=False, stdout=True, stderr=False, stream=False, use_config_proxy=False,                  # FOR ADVANCED CONTAINER CREATION 
-        #       oom_score_adj=0, pids_limit=0                                                         # -------- END BASIC ----------
+                cgroup_parent = data['cgroup_parent'],
+                cpu_count = data['cpu_count'],
+                cpu_percent = data['cpu_percent'],
+                cpu_period = data['cpu_period'],
+                cpu_quota = data['cpu_quota'],
+                cpu_rt_period = data['cpu_rt_period'],
+                cpu_rt_runtime = data['cpu_rt_runtime'],
+                cpu_shares = data['cpu_shares'],
+                nano_cpus = data['nano_cpus'],
+                cpuset_cpus = data['cpuset_cpus'],
+                cpuset_mems = data['cpuset_mems'],
+                mem_limit = data['mem_limit'],
+                mem_reservation = data['mem_reservation'],
+                mem_swappiness = data['mem_swappiness'],
+                memswap_limit = data['memswap_limit'],
+                blkio_weight_device = data['blkio_weight_device'],
+                blkio_weight = data['blkio_weight'],
+                network_disabled = data['network_disabled'],
+                network = data['network'],
+                network_mode = data['network_mode'],
+                volume_driver = data['volume_driver'],
+                volumes = data['volumes'],
+                volumes_from = data['volumes_from'],
+                mounts = data['mounts'],
+                device_read_bps = data['device_read_bps'],
+                device_read_iops = data['device_read_iops'],
+                device_write_bps = data['device_write_bps'],
+                device_write_iops = data['device_write_iops'],
+                cap_add = data['cap_add'],
+                cap_drop = data['cap_drop'],
+                domainname = data['domainname'],
+                init_path = data['init_path'],
+                ipc_mode = data['ipc_mode'],
+                isolation = data['isolation'],
+                kernel_memory = data['kernel_memory'],
+                mac_address = data['mac_address'],
+                pid_mode = data['pid_mode'],
+                # platform = data['platform'], apparently platform, and source are not valid paramters
+                # maybe the version of python or docker is causing the problem.
+                runtime = data['runtime'],
+                shm_size = data['shm_size'],
+                stop_signal = data['stop_signal'],
+                userns_mode = data['userns_mode'],
+                uts_mode = data['uts_mode'],
+                device_cgroup_rules = data['device_cgroup_rules'],
+                devices = data['devices'],
+                device_requests = data['device_requests'],
+                dns = data['dns'],
+                dns_opt = data['dns_opt'],
+                dns_search = data['dns_search'],
+                group_add = data['group_add'],
+                security_opt = data['security_opt'],
+                ulimits = data['ulimits'],
+                lxc_conf = data['lxc_conf'],
+                healthcheck = data['healthcheck'],
+                extra_hosts = data['extra_hosts'],
+                links = data['links'],
+                log_config = data['log_config'],
+                storage_opt = data['storage_opt'],
+                sysctls = data['sysctls'],
+                tmpfs = data['tmpfs'],
+                oom_kill_disable = data['oom_kill_disable'],
+                init = data['init'],
+                stdin_open = data['stdin_open'],
+                # stream = data['stream'],
+                use_config_proxy = data['use_config_proxy'],
+                oom_score_adj = data['oom_score_adj'],
+                pids_limit = data['pids_limit']
+            )
+            addContainerToUser(container.id)
+        else:        
+            container = client.containers.run(
+                image = data['image'], 
+                name = data['name'], 
+                ports = data['ports'], 
+                command = data['command'],
+                tty = data['tty'], 
+                hostname = data['hostname'],
+                version = data['version'], 
+                entrypoint = data['entrypoint'],
+                working_dir = data['working_dir'],
+                restart_policy = data['restart_policy'],
+                labels = data['labels'],
+                environment = data['environment'],
+                detach = data['detach'],
+                auto_remove = data['auto_remove'],
+                read_only = data['read_only'],
+                privileged = data['privileged'],
+                publish_all_ports = data['publish_all_ports'],
+                remove = data['remove'],
+                cgroup_parent = data['cgroup_parent'],
+                cpu_count = data['cpu_count'],
+                cpu_percent = data['cpu_percent'],
+                cpu_period = data['cpu_period'],
+                cpu_quota = data['cpu_quota'],
+                cpu_rt_period = data['cpu_rt_period'],
+                cpu_rt_runtime = data['cpu_rt_runtime'],
+                cpu_shares = data['cpu_shares'],
+                nano_cpus = data['nano_cpus'],
+                cpuset_cpus = data['cpuset_cpus'],
+                cpuset_mems = data['cpuset_mems'],
+                mem_limit = data['mem_limit'],
+                mem_reservation = data['mem_reservation'],
+                mem_swappiness = ['mem_swappiness'],
+                memswap_limit = data['memswap_limit'],
+                blkio_weight_device = data['blkio_weight_device'],
+                blkio_weight = data['blkio_weight'],
+                network_disabled = data['network_disabled'],
+                network = data['network'],
+                network_mode = data['network_mode'],
+                volume_driver = data['volume_driver'],
+                volumes = data['volumes'],
+                volumes_from = data['volumes_from'],
+                mounts = data['mounts'],
+                device_read_bps = data['device_read_bps'],
+                device_read_iops = data['device_read_iops'],
+                device_write_bps = data['device_write_bps'],
+                device_write_iops = data['device_write_iops'],
+                cap_add = data['cap_add'],
+                cap_drop = data['cap_drop'],
+                domainname = data['domainname'],
+                init_path = data['init_path'],
+                ipc_mode = data['ipc_mode'],
+                isolation = data['isolation'],
+                kernel_memory = data['kernel_memory'],
+                mac_address = data['mac_address'],
+                pid_mode = data['pid_mode'],
+                platform = data['platform'],
+                runtime = data['runtime'],
+                shm_size = data['shm_size'],
+                stop_signal = data['stop_signal'],
+                userns_mode = data['userns_mode'],
+                uts_mode = data['uts_mode'],
+                device_cgroup_rules = data['device_cgroup_rules'],
+                devices = data['devices'],
+                device_requests = data['device_requests'],
+                dns = data['dns'],
+                dns_opt = data['dns_opt'],
+                dns_search = data['dns_search'],
+                group_add = data['group_add'],
+                security_opt = data['security_opt'],
+                ulimits = data['ulimits'],
+                lxc_conf = data['lxc_conf'],
+                healthcheck = data['healthcheck'],
+                extra_hosts = data['extra_hosts'],
+                links = data['links'],
+                log_config = data['log_config'],
+                storage_opt = data['storage_opt'],
+                sysctls = data['sysctls'],
+                tmpfs = data['tmpfs'],
+                oom_kill_disable = data['oom_kill_disable'],
+                init = data['init'],
+                stdin_open = data['stdin_open'],
+                stdout = data['stdout'],
+                stderr = data['stderr'],
+                stream = data['stream'],
+                use_config_proxy = data['use_config_proxy'],
+                oom_score_adj = data['oom_score_adj'],
+                pids_limit = data['pids_limit']
+            )
+            print('running container: ', container)
+            addContainerToUser(container.id)
+    else:
+        volumeData = data['volume'].split(':')
+        volume = {}
+        volume[volumeData[0]] = {
+            'bind': volumeData[1],
+            'mode': volumeData[2] if volumeData[2] != None else ''
+        }
+        ports = data['ports'].split(':')
+        ports = { ports[0]: ports[1] }
 
-        # )
+        container = client.containers.create(image=data['image'],name=data['name'],ports=ports,command=data['command'], tty=data['tty'], volumes=volume)
         addContainerToUser(container.id)
-
+    
+    # if run after create is marked, start the container
+    if(data['run']):
+        container.start()
     # Add container info to database
     new_container = Container(container.id, container.name, container.image.id)
     db.session.add(new_container)

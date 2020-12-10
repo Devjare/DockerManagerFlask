@@ -2,16 +2,12 @@ let dictionaries = {
     'labels': {},
     'environment': {},
     'ports': {},
-    'restart_policy': {
-        'Name': '',
-        'MaximumRetryCount': 0 
-    },
-    'lxcConf': {},
+    'lxc_conf': {},
     'healthcheck': {},
-    'extraHosts': {},
+    'extra_hosts': {},
     'links': {},
-    'logConfig': {},
-    'storageOpt': {},
+    'log_config': {},
+    'storage_opt': {},
     'sysctls': {},
     'tmpfs': {}
 }
@@ -246,12 +242,19 @@ function createContainer() {
     cpu_shares = Number(cpu_shares);
     nano_cpus = Number(nano_cpus); 
 
-
     let cpuset_mems = $('#cpusetMems')[0].value;
     let cpuset_cpus = $('#cpusetCpus')[0].value;
     let mem_limit = $('#memLimit')[0].value;
     let mem_reservation = $('#memReservation')[0].value;
+    
+    // TODO: CHECK FOR ALL FIELDS, BUT IF NOT MEMORY SWAPINESS IS SET
+    // YOUT CAN PUT IT AS None IN PYTHON AND IT WILL BE THE SAME AS IF
+    // THE containers.create() METHOD BE CALLED WITHOUT THAT ARGUMMENT
+    // CHECK THAT FOR THE REST OF ARGUMENTS, BUT MOST LIKELY WORKS THE SAME
     let mem_swappiness = $('#memSwappiness')[0].value;
+    if(mem_swappiness == '') mem_swappiness = 0;
+    else mem_swappiness = Number(mem_swappiness);
+
     let mem_swap_limit = $('#memSwapLimit')[0].value;
     let blkio_weight = $('#blkioWeight')[0].value;
     let blkio_weight_device = $('#blkioWeightDevice')[0].value;
@@ -266,7 +269,7 @@ function createContainer() {
     // volumes should be a dictionary 
     let volumes = $('#volumes')[0].value;
     // volumes_from is a list comma separated
-    let volumes_from = $('#volumeFrom')[0].value;
+    let volumes_from = $('#volumesFrom')[0].value;
     
     // is a list, comma separated
     let mounts = $('#mounts')[0].value;
@@ -290,10 +293,11 @@ function createContainer() {
     let shmSize = $('#shmSize')[0].value;
     let stopSignal = $('#stopSignal')[0].value;
     let usernsMode = $('#usernsMode')[0].value;
+    let user = $('#user')[0].value;
     let utsMode = $('#utsMode')[0].value;
     let deviceCgroupRule = $('#deviceCgroupRule')[0].value;
     let devices = $('#devices')[0].value;
-    let devicesRequests = $('#devicesRequests')[0].value;
+    let deviceRequests = $('#deviceRequests')[0].value;
     let dns = $('#dns')[0].value;
     let dnsOpt = $('#dnsOpt')[0].value;
     let dnsSearch = $('#dnsSearch')[0].value;
@@ -303,9 +307,20 @@ function createContainer() {
 
     let oomKill = $('#chkOomKill')[0].checked;
     let init = $('#chkInit')[0].checked;
+    let stdout = $('#chkStdout')[0].checked;
+    let stdin_open = $('#chkStdinOpen')[0].checked;
     let stderr = $('#chkStderr')[0].checked;
     let stream = $('#chkStream')[0].checked;
     let useConfigProxy = $('#chkUseConfigProxy')[0].checked;
+
+    let extra_hosts = dictionaries['extra_hosts'];
+    let healthcheck = dictionaries['healthcheck'];
+    let lxc_conf = dictionaries['lxc_conf'];
+    let links = dictionaries['links'];
+    let log_config = dictionaries['log_config'];
+    let storage_opt = dictionaries['storage_opt'];
+    let sysctls = dictionaries['sysctls'];
+    let tmpsf = dictionaries['tmpfs'];
 
     let oomScoreAdj = $('#oomScoreAdj')[0].value;
     let pidsLimit = $('#pidsLimit')[0].value;
@@ -317,24 +332,25 @@ function createContainer() {
     // to process and create the container.
     //
     params = {
-        'runAfterCreate': runAfterCreate,
+        'advancedCreation': true,
+        'run': runAfterCreate,
         'image': image,
         'name': name,
         'command': command,
         'ports': ports,
         'hostname': hostname,
-        'api_version': api_version,
+        'version': api_version,
         'entrypoint': entrypoint,
         'working_dir': working_dir,
         'restart_policy': restart_policy,
         'environment': environment,
         'labels': labels,
         'tty': tty,
-        'autoremove': autoremove,
+        'auto_remove': autoremove,
         'detach': detach,
         'remove': remove,
-        'publishAll': publishAll,
-        'readOnly': readOnly,
+        'publish_all_ports': publishAll,
+        'read_only': readOnly,
         'privileged': privileged,
         'cgroup_parent': cgroup_parent,
         'cpu_count': cpu_count,
@@ -350,7 +366,7 @@ function createContainer() {
         'mem_limit': mem_limit,
         'mem_reservation': mem_reservation,
         'mem_swappiness': mem_swappiness,
-        'mem_swap_limit': mem_swap_limit,
+        'memswap_limit': mem_swap_limit,
         'blkio_weight': blkio_weight,
         'blkio_weight_device': blkio_weight_device,
         'network_disabled': network_disabled,
@@ -360,51 +376,70 @@ function createContainer() {
         'volumes': volumes,
         'volumes_from': volumes_from,
         'mounts': mounts,
-        'deviceReadBps': deviceReadBps,
-        'deviceReadIops': deviceReadIops,
-        'deviceWriteBps': deviceWriteBps,
-        'deviceWriteIops': deviceWriteIops,
-        'capAdd': capAdd,
-        'capDrop': capDrop,
-        'domainName': domainName,
-        'initPath': initPath,
-        'ipcMode': ipcMode,
+        'device_read_bps': deviceReadBps,
+        'device_read_iops': deviceReadIops,
+        'device_write_bps': deviceWriteBps,
+        'device_write_iops': deviceWriteIops,
+        'cap_add': capAdd,
+        'cap_drop': capDrop,
+        'domainname': domainName,
+        'init_path': initPath,
+        'ipc_mode': ipcMode,
         'isolation': isolation,
-        'kernelMemory': kernelMemory,
-        'macAddress': macAddress,
-        'pidMode': pidMode,
+        'kernel_memory': kernelMemory,
+        'mac_address': macAddress,
+        'pid_mode': pidMode,
         'platform': platform,
         'runtime': runtime,
-        'shmSize': shmSize,
-        'stopSignal': stopSignal,
-        'usernsMode': usernsMode,
-        'utsMode': utsMode,
-        'deviceCgroupRule': deviceCgroupRule,
+        'shm_size': shmSize,
+        'stop_signal': stopSignal,
+        'userns_mode': usernsMode,
+        'user': user,
+        'uts_mode': utsMode,
+        'device_cgroup_rules': deviceCgroupRule,
         'devices': devices,
-        'devicesRequests': devicesRequests,
+        'device_requests': deviceRequests,
         'dns': dns,
-        'dnsOpt': dnsOpt,
-        'dnsSearch': dnsSearch,
-        'groupAdd': groupAdd,
-        'securityOpt': securityOpt,
+        'dns_opt': dnsOpt,
+        'dns_search': dnsSearch,
+        'group_add': groupAdd,
+        'security_opt': securityOpt,
         'ulimits': ulimits,
-        'oomKill': oomKill,
+        'extra_hosts': extra_hosts,
+        'healthcheck': healthcheck,
+        'lxc_conf': lxc_conf,
+        'links': links,
+        'log_config': log_config,
+        'storage_opt': storage_opt,
+        'sysctls': sysctls,
+        'tmpfs': tmpfs,
+        'oom_kill_disable': oomKill,
         'init': init,
         'stderr': stderr,
+        'stdout': stdout,
+        'stdin_open': stdin_open,
         'stream': stream,
-        'useConfigProxy': useConfigProxy,
-        'oomScoreAdj': oomScoreAdj,
-        'pidsLimit': pidsLimit
+        'use_config_proxy': useConfigProxy,
+        'oom_score_adj': oomScoreAdj,
+        'pids_limit': pidsLimit
     };
-
 
     let reqObj = {
-        'type': 'GET',
-        'url': `http://localhost:8000/containers/${action}/${id}`,
+        'type': 'POST',
+        'url': 'http://localhost:8000/containers/create',
         'isAsync': true,
-        'params': null
+        'params': JSON.stringify(params),
+        'requestHeaders': { 'Content-Type': 'application/json' }
     };
+
     sendRequest(reqObj,
-        (response) => refresh(),
-        (error) => dump(`Error procesing petition, error: ${error}`));
+        (response) => {
+            showAlert('Container created succesfully', 'success');
+            console.log('response for container creation: ', response);
+        },
+        (error) => {
+            showAlert('Container failed to create', 'danger');
+            console.log('error for container creation: ', error);
+
+        });
 }
