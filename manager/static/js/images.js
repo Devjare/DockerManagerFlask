@@ -37,16 +37,6 @@ function refreshImageTable() {
     loadAllImages(); 
 }
 
-// function to validate format of various input texts
-function validatseField(field) {
-    let invalidChars = [' ', '.', '#', '$', '^', `'`, '!', '@', '%', '&', '*', ')', '(', '=', '+'];
-    if(field == 'name') {
-        let value = $(`#${field}`).value;
-        if(value.includes(' ')) {
-            
-        }
-    }
-}
 function showImageModal(imageid, action) {
     let body = '';
     let footer = '';

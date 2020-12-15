@@ -1,3 +1,9 @@
+// TODO: ADD ONE MESSAGE FOR EVERY TEXT/NUMBER INPUT FIELD
+let fieldsMessages = {
+    'containerName': 'Invalid name: only letters, numbers, underscore and hyphen',
+    'entrypoint': 'Invalid string: Enter a path-formatted text(letters, numbers, underscore, hyphen, dot, slash and backslashes)'
+};
+
 let dictionaries = {
     'labels': {},
     'environment': {},
@@ -10,6 +16,26 @@ let dictionaries = {
     'storage_opt': {},
     'sysctls': {},
     'tmpfs': {}
+}
+
+let lists = {
+    'command': [],
+    'entrypoint': [],
+    'volumes': [],
+    'volumes_from': [],
+    'mounts': [],
+    'cap_add': [],
+    'cap_drop': [],
+    'domainname': [],
+    'device_cgroup_rules': [],
+    'devices': [],
+    'device_requests': [],
+    'dns': [],
+    'dns_opt': [],
+    'dns_search': [],
+    'group_add': [],
+    'security_opt': [],
+    'ulimits': []
 }
 
 function dataUpdated(dictName) {
@@ -43,7 +69,6 @@ function addNewData(dictName) {
     for(let i = 0;i < rowsCount;i++) {
         key = newDataKeys[i].value;
         value = newDataValues[i].value;
-        console.log(`data at: ${i}: ${key}=${value}`);
 
         // if the key is not empty, add to dictionary with it's value
         if(key != "") dictionaries[dictName][key] = value; 
@@ -65,11 +90,105 @@ function deleteDataRow(event, dictName) {
     dataUpdated(dictName);
 }
 
+function listUpdated(listName) {
+    $(`#${listName}`)[0].value = lists[listName].toString();
+}
+
+function addNewItem(listName) {
+    let newItemData = $('.new-list-item').find('.list-item-input');
+    newItemData.each(index => {
+        let value = newItemData[index].value;
+        console.log('newItemData[', index, '] = ', value); 
+        if(value) lists[listName].push(value);
+    }) 
+
+    listUpdated(listName);
+}
+
+function addNewListItem() {
+   $('#list').append(`
+    <li class="new-list-item">
+        <input class="form-control list-item-input" type="text" placeholder="Item data">
+    </li>`); 
+}
+
+function deleteListItem(event, value, listName) {
+    let index = lists[listName].indexOf(value);
+    let liToDelete = event.target.parentNode;
+
+    if(index < lists[listName].length) {
+        lists[listName].splice(index, 1);
+        liToDelete.remove();
+    } else showAlert(`Index not on limits of array`);
+
+    listUpdated(listName);
+}
+
+function showListModal(listName) {
+    let data = lists[listName];
+
+    let counter = 0;
+    let title = `Manage ${listName} data.`;
+    
+    let body = 
+    `<div class="d-flex flex-column justify-content-center">
+    <h5>${listName} items</h5>
+        <ul id="list" class="list-group m-2">`
+   
+    for(let i = 0;i < data.length;i++) {
+    body += 
+    `<li id="${i}" class="list-group-item d-flex justify-content-between align-items-center">
+        ${data[i]}
+        <span class="icon" onclick="deleteListItem(event, '${data[i]}', '${listName}')" data-feather="trash"></span>
+    </li>`
+    }
+    body += `</ul>
+    <button class="btn btn-sm btn-primary align-self-end" onclick="addNewListItem()">new</button></div>`;
+    
+    let footer = `<div class="d-flex justify-content-end">
+    <button class="btn btn-sm btn-secondary mx-1" data-dismiss="modal">Close</button>
+    </div>`;
+
+    showModal(title, body, footer, 
+        (e) => {
+            // onHide modal
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
+            // send modal to back to show the confirmation above all;
+            let inputsToValidate = $('.new-list-item');
+            if(inputsToValidate.length > 0) {
+                if(validateInputs($('#modal input')) == false) {
+                    showConfirmationModal(
+                    `Are you sure to leave with blank fields?, if a key field is blank, it wont be added.`, 
+                        (e) => { 
+                            console.log('list name to add at: ', listName);
+                            addNewItem(listName);
+                            hideConfirmationModal();
+                            hideModal();
+                        }, 
+                        (e) => hideConfirmationModal());
+                } else {
+                    addNewItem(listName);
+                    hideModal();
+                }
+            } else hideModal();
+
+            return false;
+        }, null,
+        (e) => {
+            // on modal show load delete icon.
+            feather.replace();
+        }
+    );
+
+}
+
 function showDictionaryModal(dictName) {
     let data = dictionaries[dictName];
 
     let counter = 0;
-    let title = 'Mananage labels';
+    let title = `Mananage ${dictName} data`;
     
     let body = `<div class="d-flex flex-column">
     <table id="tableBody" class="table table-sm"> <thead class="thead-dark">
@@ -92,7 +211,7 @@ function showDictionaryModal(dictName) {
     <button class="btn btn-sm btn-secondary mx-1" data-dismiss="modal">Close</button>
     </div>`;
 
-    showModal(title, body, footer, 
+    showModal(title, body, footer,
         (e) => {
             // onHide modal
             e.preventDefault();
@@ -121,65 +240,10 @@ function showDictionaryModal(dictName) {
         });
 }
 
-function showAddLabelModal() {
-    let counter = 0;
-    let title = 'Mananage labels';
-    
-    let body = `<div class="d-flex flex-column">
-    <table id="tableBody" class="table table-sm"> <thead class="thead-dark">
-    <tr><th>Label Key</th><th>Label Value</th><th>Delete</th>
-    </tr></thead><tbody id="tableBody">`
-    for(key in labels) {
-        body += `
-        <tr>
-            <td><input class="form-control lkey-input" type="text" value="${key}" disabled></td>
-            <td><input class="form-control lvalue-input" type="text" value="${labels[key]}" onchange="updateLabelValue(event)"></td>
-            <td><a href="#" onclick="deleteLabel(event)">delete</a></td>
-        </tr
-        `;
-    }
-    body += `</tbody></table>
-    <button class="btn btn-sm btn-primary align-self-end" onclick="addNewLabelRow()">new</button>
-    </div>`;
-    
-    let footer = `<div class="d-flex justify-content-end">
-    <button class="btn btn-sm btn-secondary mx-1" data-dismiss="modal">Close</button>
-    </div>`;
-
-    showModal(title, body, footer, 
-        (e) => {
-            // onHide modal
-            e.preventDefault();
-            e.stopImmediatePropagation();
-
-            // send modal to back to show the confirmation above all;
-            let inputsToValidate = $('.new-label');
-            if(inputsToValidate.length > 0) {
-                if(validateInputs($('#modal input')) == false) {
-                    showConfirmationModal(
-                    `Are you sure to leave with blank fields?, if a key field is blank, it wont be added.
-                    if a value is blank, the key will be added with no value.`, 
-                        (e) => { 
-                            addNewLabels();
-                            hideConfirmationModal();
-                            hideModal();
-                        }, 
-                        (e) => hideConfirmationModal());
-                } else {
-                    addNewLabels();
-                    hideModal();
-                }
-            } else hideModal();
-
-            return false;
-        });
-}
-
 function validateInputs(inputs) {
     for(key in inputs) 
         if(inputs[key].value == '') 
             return false;
-    console.log('valid inputs!!!!');
     return true;
 }
 
@@ -188,13 +252,33 @@ $('#chkRun').change(() => {
     else $('#chkRemove').attr('disabled', true);
 });
 
+function invalidParamsExists() {
+    for(key in fieldsMessages) {
+        console.log('checking validity for: ', key);
+        if(!document.getElementById(key).checkValidity()) {
+            document.getElementById(key).setCustomValidity(fieldsMessages[key]);
+            document.getElementById(key).reportValidity();
+            return true;
+        }
+    }
+    return false;
+}
+
 function createContainer() {
- 
+
+    // if there are at least one invalid field(marked in red)
+    // a message will show up and cannot procceed to creation.
+    if(invalidParamsExists()) {
+        console.log('invalid params, check red marked fields!');
+        return;
+    }
+    alert('everythings fine');
     let runAfterCreate = $('#chkRun')[0].checked;
     image = $('#selectImage')[0].value; 
 
     // basics
     let name = $('#containerName')[0].value;
+    validateStrFor(name, 'noinvalidchars');
     let command = $('#command')[0].value;
     let ports = dictionaries['ports'];
     let hostname = $('#hostname')[0].value;
@@ -252,9 +336,6 @@ function createContainer() {
     // THE containers.create() METHOD BE CALLED WITHOUT THAT ARGUMMENT
     // CHECK THAT FOR THE REST OF ARGUMENTS, BUT MOST LIKELY WORKS THE SAME
     let mem_swappiness = $('#memSwappiness')[0].value;
-    if(mem_swappiness == '') mem_swappiness = 0;
-    else mem_swappiness = Number(mem_swappiness);
-
     let mem_swap_limit = $('#memSwapLimit')[0].value;
     let blkio_weight = $('#blkioWeight')[0].value;
     let blkio_weight_device = $('#blkioWeightDevice')[0].value;
@@ -269,7 +350,7 @@ function createContainer() {
     // volumes should be a dictionary 
     let volumes = $('#volumes')[0].value;
     // volumes_from is a list comma separated
-    let volumes_from = $('#volumesFrom')[0].value;
+    let volumes_from = $('#volumes_from')[0].value;
     
     // is a list, comma separated
     let mounts = $('#mounts')[0].value;
@@ -279,9 +360,9 @@ function createContainer() {
     let deviceReadIops = $('#deviceReadIops')[0].value;
     let deviceWriteBps = $('#deviceWriteBps')[0].value;
     let deviceWriteIops = $('#deviceWriteIops')[0].value;
-    let capAdd = $('#capAdd')[0].value;
-    let capDrop = $('#capDrop')[0].value;
-    let domainName = $('#domainName')[0].value;
+    let capAdd = $('#cap_add')[0].value;
+    let capDrop = $('#cap_drop')[0].value;
+    let domainName = $('#domainname')[0].value;
     let initPath = $('#initPath')[0].value;
     let ipcMode = $('#ipcMode')[0].value;
     let isolation = $('#isolation')[0].value;
@@ -295,14 +376,14 @@ function createContainer() {
     let usernsMode = $('#usernsMode')[0].value;
     let user = $('#user')[0].value;
     let utsMode = $('#utsMode')[0].value;
-    let deviceCgroupRule = $('#deviceCgroupRule')[0].value;
+    let deviceCgroupRule = $('#device_cgroup_rules')[0].value;
     let devices = $('#devices')[0].value;
-    let deviceRequests = $('#deviceRequests')[0].value;
+    let deviceRequests = $('#device_requests')[0].value;
     let dns = $('#dns')[0].value;
-    let dnsOpt = $('#dnsOpt')[0].value;
-    let dnsSearch = $('#dnsSearch')[0].value;
-    let groupAdd = $('#groupAdd')[0].value;
-    let securityOpt = $('#securityOpt')[0].value;
+    let dnsOpt = $('#dns_opt')[0].value;
+    let dnsSearch = $('#dns_search')[0].value;
+    let groupAdd = $('#group_add')[0].value;
+    let securityOpt = $('#security_opt')[0].value;
     let ulimits = $('#ulimits')[0].value;
 
     let oomKill = $('#chkOomKill')[0].checked;
@@ -325,104 +406,105 @@ function createContainer() {
     let oomScoreAdj = $('#oomScoreAdj')[0].value;
     let pidsLimit = $('#pidsLimit')[0].value;
 
-    // validation section
-
-    // assign all parameters to 'params'
-    // which is the object to be sent to the server
-    // to process and create the container.
-    //
-    params = {
+    params = { 
         'advancedCreation': true,
         'run': runAfterCreate,
-        'image': image,
-        'name': name,
-        'command': command,
-        'ports': ports,
-        'hostname': hostname,
-        'version': api_version,
-        'entrypoint': entrypoint,
-        'working_dir': working_dir,
-        'restart_policy': restart_policy,
-        'environment': environment,
-        'labels': labels,
-        'tty': tty,
-        'auto_remove': autoremove,
-        'detach': detach,
-        'remove': remove,
-        'publish_all_ports': publishAll,
-        'read_only': readOnly,
-        'privileged': privileged,
-        'cgroup_parent': cgroup_parent,
-        'cpu_count': cpu_count,
-        'cpu_percent': cpu_percent,
-        'cpu_period': cpu_period,
-        'cpu_quota': cpu_quota,
-        'cpu_rt_period': cpu_rt_period,
-        'cpu_rt_runtime': cpu_rt_runtime,
-        'cpu_shares': cpu_shares,
-        'nano_cpus': nano_cpus,
-        'cpuset_mems': cpuset_mems,
-        'cpuset_cpus': cpuset_cpus,
-        'mem_limit': mem_limit,
-        'mem_reservation': mem_reservation,
-        'mem_swappiness': mem_swappiness,
-        'memswap_limit': mem_swap_limit,
-        'blkio_weight': blkio_weight,
-        'blkio_weight_device': blkio_weight_device,
-        'network_disabled': network_disabled,
-        'network': network,
-        'network_mode': network_mode,
-        'volume_driver': volume_driver,
-        'volumes': volumes,
-        'volumes_from': volumes_from,
-        'mounts': mounts,
-        'device_read_bps': deviceReadBps,
-        'device_read_iops': deviceReadIops,
-        'device_write_bps': deviceWriteBps,
-        'device_write_iops': deviceWriteIops,
-        'cap_add': capAdd,
-        'cap_drop': capDrop,
-        'domainname': domainName,
-        'init_path': initPath,
-        'ipc_mode': ipcMode,
-        'isolation': isolation,
-        'kernel_memory': kernelMemory,
-        'mac_address': macAddress,
-        'pid_mode': pidMode,
-        'platform': platform,
-        'runtime': runtime,
-        'shm_size': shmSize,
-        'stop_signal': stopSignal,
-        'userns_mode': usernsMode,
-        'user': user,
-        'uts_mode': utsMode,
-        'device_cgroup_rules': deviceCgroupRule,
-        'devices': devices,
-        'device_requests': deviceRequests,
-        'dns': dns,
-        'dns_opt': dnsOpt,
-        'dns_search': dnsSearch,
-        'group_add': groupAdd,
-        'security_opt': securityOpt,
-        'ulimits': ulimits,
-        'extra_hosts': extra_hosts,
-        'healthcheck': healthcheck,
-        'lxc_conf': lxc_conf,
-        'links': links,
-        'log_config': log_config,
-        'storage_opt': storage_opt,
-        'sysctls': sysctls,
-        'tmpfs': tmpfs,
-        'oom_kill_disable': oomKill,
-        'init': init,
-        'stderr': stderr,
-        'stdout': stdout,
-        'stdin_open': stdin_open,
-        'stream': stream,
-        'use_config_proxy': useConfigProxy,
-        'oom_score_adj': oomScoreAdj,
-        'pids_limit': pidsLimit
+        'image': image 
     };
+    
+    if(name == '') params['name'] = name;
+    if(lists['command'].length > 0) params['command'] = lists['command'];
+    if(!isObjectEmpty(dictionaries['ports'])) params['ports'] = dictionaries['ports'];     
+    if(hostname) params['hostname'] = hostname;
+    if(api_version) params['version'] = api_version;
+    if(lists['entrypoint'].length > 0) params['entrypoint'] = lists['entrypoint'];
+    if(working_dir) params['working_dir'] = working_dir;
+    if(restart_policy) params['restart_policy'] = restart_policy;
+    if(!isObjectEmpty(dictionaries['environment'])) params['environment'] = dictionaries['environment'];    
+    if(!isObjectEmpty(dictionaries['labels'])) params['labels'] = dictionaries['labels'];    
+    params['tty'] = tty;
+    params['auto_remove'] = autoremove;
+    params['detach'] = detach;
+    params['remove'] = remove;
+    params['publish_all_ports'] = publishAll;
+    params['read_only'] = readOnly;
+    params['privileged'] = privileged;
+
+    if(cgroup_parent) params['cgroup_parent'] = cgroup_parent;
+    if(cpu_count) params['cpu_count'] = cpu_count;
+    if(cpu_percent) params['cpu_percent'] = cpu_percent;
+    if(cpu_period) params['cpu_period'] = cpu_period;
+    if(cpu_quota) params['cpu_quota'] = cpu_quota;
+    if(cpu_rt_period) params['cpu_rt_period'] = cpu_rt_period;
+    if(cpu_rt_runtime) params['cpu_rt_runtime'] = cpu_rt_runtime;
+    if(cpu_shares) params['cpu_shares'] = cpu_shares;
+    if(nano_cpus) params['nano_cpus'] = nano_cpus;
+    if(cpuset_mems) params['cpuset_mems'] = cpuset_mems;
+    if(cpuset_cpus) params['cpuset_cpus'] = cpuset_cpus;
+    if(mem_limit) params['mem_limit'] = mem_limit;
+    if(mem_reservation) params['mem_reservation'] = mem_reservation;
+    if(mem_swappiness) params['mem_swappiness'] = mem_swappiness;
+    if(mem_swap_limit) params['memswap_limit'] = mem_swap_limit;
+    if(blkio_weight) params['blkio_weight'] = blkio_weight;
+    if(blkio_weight_device) params['blkio_weight_device'] = blkio_weight_device;
+
+    params['network_disabled'] = network_disabled;
+    if(network_disabled && network) params['network'] = network;
+    if(network_mode) params['network_mode'] = network_mode;
+
+    if(volume_driver) params['volume_driver'] = volume_driver;
+    if(lists['volumes'].length > 0) params['volumes'] = lists['volumes'];
+    if(lists['volumes_from'].length > 0) params['volumes_from'] = lists['volumes_from'];
+    if(lists['mounts'].length > 0) params['mounts'] = lists['mounts'];
+
+    if(deviceReadBps) params['device_read_bps'] = deviceReadBps;
+    if(deviceReadIops) params['device_read_iops'] = deviceReadIops;
+    if(deviceWriteBps) params['device_write_bps'] = deviceWriteBps;
+    if(deviceWriteIops) params['device_write_iops'] = deviceWriteIops;
+    if(lists['cap_add'].length > 0) params['cap_add'] = lists['cap_add'];
+    if(lists['cap_drop'].length > 0) params['cap_drop'] = lists['cap_drop'];
+    if(lists['domainname'].length > 0) params['domainname'] = lists['domainname'];
+    if(initPath) params['init_path'] = initPath;
+    if(ipcMode) params['ipc_mode'] = ipcMode;
+    if(isolation) params['isolation'] = isolation;
+    if(kernelMemory) params['kernel_memory'] = kernelMemory;
+    if(macAddress) params['mac_address'] = macAddress;
+    if(pidMode) params['pid_mode'] = pidMode;
+    if(platform) params['platform'] = platform;
+    if(runtime) params['runtime'] = runtime;
+    if(shmSize) params['shm_size'] = shmSize;
+    if(stopSignal) params['stop_signal'] = stopSignal;
+    if(usernsMode) params['userns_mode'] = usernsMode;
+    if(user) params['user'] = user;
+    if(utsMode) params['uts_mode'] = utsMode;
+    if(lists['device_cgroup_rules'].length > 0) params['device_cgroup_rules'] = lists['device_cgroup_rules'];
+    if(lists['devices'].length > 0) params['devices'] = lists['devices'];
+    if(lists['device_requests'].length > 0) params['device_requests'] = lists['device_requests'];
+    if(lists['dns'].length > 0) params['dns'] = lists['dns'];
+    if(lists['dns_opt'].length > 0) params['dns_opt'] = lists['dns_opt'];
+    if(lists['dns_search'].length > 0) params['dns_search'] = lists['dns_search'];
+    if(lists['group_add'].length > 0) params['group_add'] = lists['group_add'];
+    if(lists['security_opt'].length > 0) params['security_opt'] = lists['security_opt'];
+    if(lists['ulimits'].length > 0) params['ulimits'] = lists['ulimits'];
+    if(!isObjectEmpty(dictionaries['extra_hosts'])) params['extra_hosts'] = dictionaries['extra_hosts'];    
+    if(!isObjectEmpty(dictionaries['healthcheck'])) params['healthcheck'] = dictionaries['healthcheck'];    
+    if(!isObjectEmpty(dictionaries['lxc_conf'])) params['lxc_conf'] = dictionaries['lxc_conf'];    
+    if(!isObjectEmpty(dictionaries['links'])) params['links'] = dictionaries['links'];     
+    if(!isObjectEmpty(dictionaries['log_config'])) params['log_config'] = dictionaries['log_config'];    
+    if(!isObjectEmpty(dictionaries['storage_opt'])) params['storage_opt'] = dictionaries['storage_opt'];    
+    if(!isObjectEmpty(dictionaries['sysctls'])) params['sysctls'] = dictionaries['sysctls'];    
+    if(!isObjectEmpty(dictionaries['tmpfs'])) params['tmpfs'] = dictionaries['tmpfs'];     
+    params['oom_kill_disable'] = oomKill;
+    params['init'] = init;
+    params['stderr'] = stderr;
+    params['stdout'] = stdout;
+    params['stdin_open'] = stdin_open;
+    params['stream'] = stream;
+    params['use_config_proxy'] = useConfigProxy;
+    if(oomScoreAdj) params['oom_score_adj'] = oomScoreAdj;
+    if(pidsLimit) params['pids_limit'] = pidsLimit;
+    
+    console.log('params: ', params);
 
     let reqObj = {
         'type': 'POST',
@@ -443,3 +525,15 @@ function createContainer() {
 
         });
 }
+
+$('main').ready((e) => {
+    // check if the invalidity popup should show after the
+    // content of an input changed
+    $('input[type=text]:not([readonly])').on('change', (e) => {
+        let id = e.target.id;
+        if(!document.getElementById(id).checkValidity()) {
+            document.getElementById(id).setCustomValidity(fieldsMessages[id]);
+            document.getElementById(id).reportValidity();
+        }
+    });
+});

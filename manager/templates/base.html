@@ -44,12 +44,11 @@
         <div class="container-fluid content">
             <div class="row content">
                 <nav class="col-md-2 d-none d-md-block bg-light sidebar">
-                    <div class="sidebar-sticky">
+                    <div class="sidebar-sticky d-flex flex-column justify-content-between">
                         <ul class="nav flex-column">
                             <li class="nav-item">
                                 <a class="nav-link active" href="/home">
-                                    <span data-feather="home"></span>
-                                    Panel de control
+                                    <span data-feather="home"></span>Panel de control
                                     <span class="sr-only">(current)</span>
                                 </a>
                             </li>
@@ -72,71 +71,23 @@
                                 </a>
                             </li>-->
                             <li class="nav-item">
-                                <a id="itemContainers" class="nav-link" href="#">
-                                    <span data-feather="users"></span>
-                                    Containers
-                                </a>
+                                <a id="itemContainers" class="nav-link" href="#"><span data-feather="users"></span>
+                                Containers</a>
                                 <div class="containers-item-submenu">
                                     <ul>
-                                        <li>
-                                            <a href="/containers">
-                                                <span data-feather="list"></span>
-                                                List
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <!-- <a href="/container_details">
-                                                <span data-feather="info"></span>
-                                                Details
-                                            </a> --> 
-                                            <a>
-                                                <span data-feather="info"></span>
-                                                Details
-                                            </a> 
-                                        </li>
-                                        <li>
-                                            <a href="/container_creation">
-                                                <span data-feather="info"></span>
-                                                Creation tool
-                                            </a>
-                                        </li>
+                                        <li><a href="/containers"><span data-feather="list"></span>List</a></li>
+                                        <li><a href="/container_details"><span data-feather="info"></span>Details</a></li>
+                                        <li><a href="/container_creation"><span data-feather="info"></span>Creation tool</a></li>
                                     </ul>
                                 </div>
                             </li>
                             <li class="nav-item">
-                                <a id="itemImages" class="nav-link" href="#">
-                                    <span data-feather="users"></span>
-                                    Images
-                                </a>
+                                <a id="itemImages" class="nav-link" href="#"><span data-feather="users"></span>Images</a>
                                 <div class="images-item-submenu">
                                     <ul>
-                                        <li>
-                                            <a href="/images">
-                                                <span data-feather="list"></span>
-                                                List
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a>
-                                                <span data-feather="info"></span>
-                                                Details
-                                            </a>
-                                            <!-- <a href="/image_details">
-                                                <span data-feather="info"></span>
-                                                Details
-                                            </a> -->
-                                        </li>
-                                        <li>
-                                            <!-- 
-                                            <a href="/image_builder">
-                                                <span data-feather="info"></span>
-                                                Build tool
-                                            </a> -->
-                                            <a>
-                                                <span data-feather="info"></span>
-                                                Build tool
-                                            </a>
-                                        </li>
+                                        <li><a href="/images"><span data-feather="list"></span>List</a></li>
+                                        <li><a href="/image_details"><span data-feather="info"></span>Details</a></li>
+                                        <li><a href="/image_builder"><span data-feather="info"></span>Build tool</a></li>
                                     </ul>
                                 </div>
                             </li>
@@ -153,6 +104,9 @@
                                 </a>
                                 </li> -->
                         </ul>
+                        <div class="d-flex justify-content-center">
+                            <button onclick="logout()" class="btn btn-danger w-100 h-100" style="border-radius: 0;">Log out</button>
+                        </div>
 
                         <!--<h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
                             <span>Saved reports</span>
@@ -217,10 +171,10 @@
 
 
                     <!-- Icons -->
-                    <!-- <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+                    <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
                     <script>
                         feather.replace()
-                    </script> -->
+                    </script>
 
                     <!-- Custom JS Files -->
                     <script src="{{url_for('static', filename='js/utils.js')}}"></script>

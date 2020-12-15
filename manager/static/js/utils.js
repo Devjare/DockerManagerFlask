@@ -75,6 +75,25 @@ function collapseCard(event) {
     parent[0].children[1].classList.toggle('hide');
 }
 
+// VALIDATION TYPES IDENTIFIED:
+// - NAMES: NO WHITESPACE, ONLY [A-Za-z0-9-_]
+// - PATHS: ONLY [A-Za-z0-9/_-.]
+// - STORAGE/CONSUMPTION UNIT(i.e. Giga/Mega/Kilo/ Bytes) ONLY [0-9GgMmBbK]
+
+var PERSON_NAME_REGEX = /^[A-Za-z ]+$/;
+var OBJECT_NAME_REGEX = /^[A-Za-z0-9-_]+$/;
+var PATH_REGEX = /^[A-Za-z0-9-_]+$/;
+var STORAGE_REGEX = /^[A-Za-z0-9-_]+$/;
+var EMAIL_REGEX = /^[A-Za-z0-9_@.]+$/;
+
+
+function setValidationMessage() {
+    // TODO: ADD VALIDATION pattern ON TEMPLATE FOR CONTAINRE CREATEION
+    // AND ADD WITH THE INSTRUCTION BELOW THE CUSTON MESSAGE TO SHOW
+    // WHEN THE FIELD IS INVALID
+    $('#fname')[0].setCustomValidity('Invalid');    
+}
+
 // validateOpt is an object containing options on how to validate the field
 // for example, if is an email, only _,@ and . are valid characters, the object could be
 // validateOpt = { 'allow': [ NUMBERS, LETTERS, '@', '.', '_'], 'deny': [ ' ' ]}
@@ -158,4 +177,30 @@ function hideModal() {
     $('#modal').unbind('hide.bs.modal');
     $('#modal').unbind('hidden.bs.modal');
     $('#modal').modal('hide');
+}
+
+function validateStrFor(str, type) {
+    if(str == '') return false
+    if(type == 'number') {
+        if(isNaN(Number(str))) return false;
+    } 
+    return true;
+}
+
+function strToNumber(str) {
+    if(mem_swappiness == '') return null;
+    else return Number(mem_swappiness);
+}
+
+// return null if the passed string is empty.
+function valueOrNull(str) {
+    return str == '' ? null : str;
+}
+
+// check if object is empty
+function isObjectEmpty(obj) {
+    for(var key in obj) {
+        if(obj.hasOwnProperty(key)) return false;
+    }
+    return true;
 }
