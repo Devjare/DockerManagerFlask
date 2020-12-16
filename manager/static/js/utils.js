@@ -1,3 +1,34 @@
+var fieldsMessages = {
+    'username': 'Only numbers, letters, _, and - are allowed.',
+    'password': 'No Whitespaces',
+    'confirmPassword': 'No Whitespaces',
+    'containerName': 'Invalid name: only letters, numbers, underscore and hyphen',
+    'hostname': 'Invalid name: only letters, numbers, underscore and hyphen',
+    'apiversion': 'Invalid String: Only numbers and .',
+    'working_dir': 'File format path only, e.g /folder_name/folder',
+    'maxRetryCount': 'Invalid Entry: Only numbers',
+    'cgroupParent': 'Only letters, numbers, _ and - are allowed.',
+    'cpusetMems': 'Invalid input, only numbers, - and ,.',
+    'cpusetCpus': 'Invalid input, only numbers, - and ,.',
+    'memLimit': 'Invalid input, only numbers and the unit letter(b,B,k,K,m,M,g,G)',
+    'memReservation': 'Invalid input, only numbers and the unit letter(b,B,k,K,m,M,g,G)',
+    'memSwapLimit': 'Invalid input, only numbers and the unit letter(b,B,k,K,m,M,g,G)',
+    'volumeDriver': 'Only numbers, letters, _, and - are allowed.',
+    'initPath': 'File format path only, e.g /folder_name/folder',
+    'ipcMode': 'Only numbers, letters, _, and : are allowed',
+    'isolation': 'Only numbers, letters and _ are allowed.',
+    'kernelMemory': 'Invalid input, only numbers and the unit letter(b,B,k,K,m,M,g,G)',
+    'macAddress': 'Invalid input, enter a valid mac address.',
+    'pidMode': 'Only numbers, letters and _ are allowed.',
+    'platform': 'Only numbers, letters and _ are allowed.',
+    'runtime': 'Only numbers, letters and _ are allowed.',
+    'shmSize': 'Invalid input, only numbers and the unit letter(b,B,k,K,m,M,g,G)',
+    'stopSignal': 'Only letters, -, and _ are allowed.',
+    'user': 'Only numbers, letters, _, and - are allowed.',
+    'usernsMode': 'Only numbers, letters, _, and - are allowed.',
+    'utsMode': 'Only numbers, letters, and  _ are allowed.',
+};
+
 function portsArrayToString(portsArray) {
     str = "";
     portsArray.forEach(port => { 
@@ -20,15 +51,6 @@ function timeConverter(UNIX_timestamp){
     return time;
 }
 
-// collapse cards
-function collapseCards(elementId, collapse) {
-   if(collapse) {
-       // collapse 
-   } else {
-       // expand
-   }
-}
-
 function showAlert(msg, type) { 
     let alertEl = `<div class="alert alert-${type} position-absolute d-flex justify-content-between p-2 w-25" 
     style="z-index: 100!important;top: 80px;right: 50px" role="alert">${msg}
@@ -42,17 +64,24 @@ function showAlert(msg, type) {
 
 // GLOBAL XHR OBJECT
 var xhr = new XMLHttpRequest();
-function sendRequest(reqObj, onSuccess, onError) {
+function sendRequest(reqObj, onProgress, onLoad, onError, onAbort) {
+    // set to null to prevent using previous listeners assigned
+    if(onProgress) xhr.onprogress = onProgress;
+    else xhr.onprogress = null;
+    if(onLoad) xhr.onload = onLoad;
+    else xhr.onload = null;
+    if(onError) xhr.onerror = onError;
+    else xhr.onerror = null;
+    if(onAbort) xhr.onabort = onAbort;
+    else xhr.onabort = null;
+
+    console.log('request: ', reqObj);
     xhr.open(reqObj.type, reqObj.url, reqObj.isAsync);
     if('requestHeaders' in reqObj) {
         for(header in reqObj.requestHeaders) {
             // adding every requet header indicated
             xhr.setRequestHeader(header, reqObj.requestHeaders[header]);
         }
-    }
-    xhr.onreadystatechange = (e) => {
-        if(xhr.readyState == 4) onSuccess(xhr.responseText);
-        else onError(xhr.responseText);
     }
     xhr.send(reqObj.params);
 }
@@ -73,25 +102,6 @@ function collapseCard(event) {
     parent[0].classList.toggle('collapsed');
     // hide card-body
     parent[0].children[1].classList.toggle('hide');
-}
-
-// VALIDATION TYPES IDENTIFIED:
-// - NAMES: NO WHITESPACE, ONLY [A-Za-z0-9-_]
-// - PATHS: ONLY [A-Za-z0-9/_-.]
-// - STORAGE/CONSUMPTION UNIT(i.e. Giga/Mega/Kilo/ Bytes) ONLY [0-9GgMmBbK]
-
-var PERSON_NAME_REGEX = /^[A-Za-z ]+$/;
-var OBJECT_NAME_REGEX = /^[A-Za-z0-9-_]+$/;
-var PATH_REGEX = /^[A-Za-z0-9-_]+$/;
-var STORAGE_REGEX = /^[A-Za-z0-9-_]+$/;
-var EMAIL_REGEX = /^[A-Za-z0-9_@.]+$/;
-
-
-function setValidationMessage() {
-    // TODO: ADD VALIDATION pattern ON TEMPLATE FOR CONTAINRE CREATEION
-    // AND ADD WITH THE INSTRUCTION BELOW THE CUSTON MESSAGE TO SHOW
-    // WHEN THE FIELD IS INVALID
-    $('#fname')[0].setCustomValidity('Invalid');    
 }
 
 // validateOpt is an object containing options on how to validate the field
@@ -193,8 +203,13 @@ function strToNumber(str) {
 }
 
 // return null if the passed string is empty.
-function valueOrNull(str) {
-    return str == '' ? null : str;
+function valueOrNull(str, type) {
+    if(type == 'number') {
+        if(isNaN(Number(str))) return null;
+        else return Number(str);
+    } else {
+        return str == '' ? null : str;
+    }
 }
 
 // check if object is empty

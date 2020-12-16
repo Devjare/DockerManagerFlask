@@ -5,6 +5,8 @@
         <title>Container Manager</title>
         <link rel="stylesheet" href="{{url_for("static", filename="css/bootstrap.min.css")}}">         
         <link rel="stylesheet" href="{{url_for("static", filename="css/signin.css")}}">     
+        
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     </head>
     <body class="d-flex justify-content-center align-items-center">
         <div>
@@ -16,21 +18,21 @@
                         <img class="mb-4" src="{{url_for("static", filename="images/cinveslogo.png")}}" alt="Cinvestav Tamaulipas Logo" width="200px" height=90px">                                        <img class="mb-4" src="{{url_for("static", filename="images/dockerlogo.png")}}" alt="Docker Logo" width="100px" height="90px">
                     </div>
                     <div id="form-type">
-                        <form action="/login" method="POST">
+                        <div>
                             <h1 class="h3 mb-3 font-weight-normal d-flex justify-content-center">Sign in Please</h1>
-                            <label class="sr-only" for="username">Email address</label>                            
-                            <input name="username" id="username" class="form-control m-1" type="text" placeholder="Username" onchange="validateField('username')"> 
+                            <label class="sr-only" for="username">Username: </label>                            
+                            <input name="username" id="username" class="form-control m-1" type="text" placeholder="Username" pattern="\w+$" oninput="setCustomValidity('')"> 
                             <label class="sr-only" for="password">Password</label> 
-                            <input name="password" id="password" class="form-control m-1" type="password" placeholder="Password" onchange="validateField('password')">
+                            <input name="password" id="password" class="form-control m-1" type="password" placeholder="Password" pattern="[^\s\\]+$" oninput="setCustomValidity('')">
                             <div class="p-2 m-3">
-                                <button class="btn btn-lg btn-primary btn-block m-1" type="submit">Sign in</button>                                 
+                                <button class="btn btn-lg btn-primary btn-block m-1" onclick="login()">Sign in</button>                                 
                                 <div class="checkbox mb-3 d-flex justify-content-center">                                     
                                     <small>                                         
                                         <a onclick="switchForm('signup')" href="#">Don't have an account?, sign up here!</a>
                                     </small>                                 
                                 </div>
                             </div>
-                        </form>
+                        </div>
                     </div>
                     <div class="signin-footer d-flex justify-content-center">
                         <p class="mt-5 mb-3 text-muted">@ 2020 - 2020</p>
@@ -38,7 +40,8 @@
                 </div>
             </div>
         </div>
-        <script src="{{ url_for('static', filename='js/login.js') }}"></script>     
+        <script src="{{ url_for('static', filename='js/utils.js') }}"></script> 
+        <script src="{{ url_for('static', filename='js/login.js') }}"></script> 
     </body>
 </html>
 

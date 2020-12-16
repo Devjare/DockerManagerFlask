@@ -346,199 +346,218 @@ def createContainer():
     # if the parameters is not on the data from client object
     # then it's gonna be passed as None(null for docker)
     if('advancedCreation' in data):
-        ports = data['ports']
+        print('data: ', data);
         if(not data['run']):
-            container = client.containers.create(
-                image = data['image'], 
-                name = data['name'] if 'name' in data else None, 
-                ports = data['ports'] if 'ports' in data else None, 
-                command = data['command'] if 'command' in data else None,
-                tty = data['tty'] if 'tty' in data else None, 
-                hostname = data['hostname'] if 'hostname' in data else None,
-                version = data['version'] if 'version' in data else None, 
-                entrypoint = data['entrypoint'] if 'entrypoint' in data else None,
-                working_dir = data['working_dir'] if 'working_dir' in data else None,
-                restart_policy = data['restart_policy'] if 'restart_policy' in data else None,
-                labels = data['labels'] if 'labels' in data else None,
-                environment = data['environment'] if 'environment' in data else None,
-                detach = data['detach'] if 'detach' in data else None,
-                auto_remove = data['auto_remove'] if 'auto_remove' in data else None,
-                read_only = data['read_only'] if 'read_only' in data else None,
-                privileged = data['privileged'] if 'privileged' in data else None,
-                publish_all_ports = data['publish_all_ports'] if 'publish_all_ports' in data else None,
+            try:
+                container = client.containers.create(
+                    image = data['image'], 
+                    name = data['name'] if 'name' in data else None, 
+                    ports = data['ports'] if 'ports' in data else None, 
+                    command = data['command'] if 'command' in data else None,
+                    tty = data['tty'] if 'tty' in data else None, 
+                    hostname = data['hostname'] if 'hostname' in data else None,
+                    version = data['version'] if 'version' in data else None, 
+                    entrypoint = data['entrypoint'] if 'entrypoint' in data else None,
+                    working_dir = data['working_dir'] if 'working_dir' in data else None,
+                    restart_policy = data['restart_policy'] if 'restart_policy' in data else None,
+                    labels = data['labels'] if 'labels' in data else None,
+                    environment = data['environment'] if 'environment' in data else None,
+                    detach = data['detach'] if 'detach' in data else None,
+                    auto_remove = data['auto_remove'] if 'auto_remove' in data else None,
+                    read_only = data['read_only'] if 'read_only' in data else None,
+                    privileged = data['privileged'] if 'privileged' in data else None,
+                    publish_all_ports = data['publish_all_ports'] if 'publish_all_ports' in data else None,
 
-                cgroup_parent = data['cgroup_parent'] if 'cgroup_parent' in data else None,
-                cpu_count = int(data['cpu_count']) if 'cpu_count' in data else None,
-                cpu_percent = int(data['cpu_percent']) if 'cpu_percent' in data else None,
-                cpu_period = int(data['cpu_period']) if 'cpu_period' in data else None,
-                cpu_quota = int(data['cpu_quota']) if 'cpu_quota' in data else None,
-                cpu_rt_period = int(data['cpu_rt_period']) if 'cpu_rt_period' in data else None,
-                cpu_rt_runtime = int(data['cpu_rt_runtime']) if 'cpu_rt_runtime' in data else None,
-                cpu_shares = int(data['cpu_shares']) if 'cpu_shares' in data else None,
-                nano_cpus = int(data['nano_cpus']) if 'nano_cpus' in data else None,
-                cpuset_cpus = int(data['cpuset_cpus']) if 'cpuset_cpus' in data else None,
-                cpuset_mems = data['cpuset_mems'] if 'cpuset_mems' in data else None,
-                mem_limit = data['mem_limit'] if 'mem_limit' in data else None,
-                mem_reservation = data['mem_reservation'] if 'mem_reservation' in data else None,
-                mem_swappiness = int(data['mem_swappiness']) if 'mem_swappiness' in data else None,
-                memswap_limit = data['memswap_limit'] if 'memswap_limit' in data else None,
-                blkio_weight_device = data['blkio_weight_device'] if 'blkio_weight_device' in data else None,
-                blkio_weight = data['blkio_weight'] if 'blkio_weight' in data else None,
-                network_disabled = data['network_disabled'] if 'network_disabled' in data else None,
-                network = data['network'] if 'network' in data else None,
-                network_mode = data['network_mode'] if 'network_mode' in data else None,
-                volume_driver = data['volume_driver'] if 'volume_driver' in data else None,
-                volumes = data['volumes'] if 'volumes' in data else None,
-                volumes_from = data['volumes_from'] if 'volumes_from' in data else None,
-                mounts = data['mounts'] if 'mounts' in data else None,
-                device_read_bps = data['device_read_bps'] if 'device_read_bps' in data else None,
-                device_read_iops = data['device_read_iops'] if 'device_read_iops' in data else None,
-                device_write_bps = data['device_write_bps'] if 'device_write_bps' in data else None,
-                device_write_iops = data['device_write_iops'] if 'device_write_iops' in data else None,
-                cap_add = data['cap_add'] if 'cap_add' in data else None,
-                cap_drop = data['cap_drop'] if 'cap_drop' in data else None,
-                domainname = data['domainname'] if 'domainname' in data else None,
-                init_path = data['init_path'] if 'init_path' in data else None,
-                ipc_mode = data['ipc_mode'] if 'ipc_mode' in data else None,
-                isolation = data['isolation'] if 'isolation' in data else None,
-                kernel_memory = data['kernel_memory'] if 'kernel_memory' in data else None,
-                mac_address = data['mac_address'] if 'mac_address' in data else None,
-                pid_mode = data['pid_mode'] if 'pid_mode' in data else None,
-                # platform = data['platform'], apparently platform, and source are not valid paramters
-                # maybe the version of python or docker is causing the problem.
-                runtime = data['runtime'] if 'runtime' in data else None,
-                shm_size = data['shm_size'] if 'shm_size' in data else None,
-                stop_signal = data['stop_signal'] if 'stop_signal' in data else None,
-                userns_mode = data['userns_mode'] if 'userns_mode' in data else None,
-                uts_mode = data['uts_mode'] if 'uts_mode' in data else None,
-                device_cgroup_rules = data['device_cgroup_rules'] if 'device_cgroup_rules' in data else None,
-                devices = data['devices'] if 'devices' in data else None,
-                device_requests = data['device_requests'] if 'device_requests' in data else None,
-                dns = data['dns'] if 'dns' in data else None,
-                dns_opt = data['dns_opt'] if 'dns_opt' in data else None,
-                dns_search = data['dns_search'] if 'dns_search' in data else None,
-                group_add = data['group_add'] if 'group_add' in data else None,
-                security_opt = data['security_opt'] if 'security_opt' in data else None,
-                ulimits = data['ulimits'] if 'ulimits' in data else None,
-                lxc_conf = data['lxc_conf'] if 'lxc_conf' in data else None,
-                healthcheck = data['healthcheck'] if 'healthcheck' in data else None,
-                extra_hosts = data['extra_hosts'] if 'extra_hosts' in data else None,
-                links = data['links'] if 'links' in data else None,
-                log_config = data['log_config'] if 'log_config' in data else None,
-                storage_opt = data['storage_opt'] if 'storage_opt' in data else None,
-                sysctls = data['sysctls'] if 'sysctls' in data else None,
-                tmpfs = data['tmpfs'] if 'tmpfs' in data else None,
-                oom_kill_disable = data['oom_kill_disable'] if 'oom_kill_disable' in data else None,
-                init = data['init'] if 'init' in data else None,
-                stdin_open = data['stdin_open'] if 'stdin_open' in data else None,
-                # stream = data['stream'],
-                use_config_proxy = data['use_config_proxy'] if 'use_config_proxy' in data else None,
-                oom_score_adj = int(data['oom_score_adj']) if 'oom_score_adj' in data else None,
-                pids_limit = int(data['pids_limit']) if 'pids_limit' in data else None
-            )
-            addContainerToUser(container.id)
+                    cgroup_parent = data['cgroup_parent'] if 'cgroup_parent' in data else None,
+                    cpu_count = int(data['cpu_count']) if 'cpu_count' in data else None,
+                    cpu_percent = int(data['cpu_percent']) if 'cpu_percent' in data else None,
+                    cpu_period = int(data['cpu_period']) if 'cpu_period' in data else None,
+                    cpu_quota = int(data['cpu_quota']) if 'cpu_quota' in data else None,
+                    cpu_rt_period = int(data['cpu_rt_period']) if 'cpu_rt_period' in data else None,
+                    cpu_rt_runtime = int(data['cpu_rt_runtime']) if 'cpu_rt_runtime' in data else None,
+                    cpu_shares = int(data['cpu_shares']) if 'cpu_shares' in data else None,
+                    nano_cpus = int(data['nano_cpus']) if 'nano_cpus' in data else None,
+                    cpuset_cpus = data['cpuset_cpus'] if 'cpuset_cpus' in data else None,
+                    cpuset_mems = str(data['cpuset_mems']) if 'cpuset_mems' in data else None,
+                    mem_limit = data['mem_limit'] if 'mem_limit' in data else None,
+                    mem_reservation = data['mem_reservation'] if 'mem_reservation' in data else None,
+                    mem_swappiness = int(data['mem_swappiness']) if 'mem_swappiness' in data else None,
+                    memswap_limit = data['memswap_limit'] if 'memswap_limit' in data else None,
+                    blkio_weight_device = data['blkio_weight_device'] if 'blkio_weight_device' in data else None,
+                    blkio_weight = data['blkio_weight'] if 'blkio_weight' in data else None,
+                    network_disabled = data['network_disabled'] if 'network_disabled' in data else None,
+                    network = data['network'] if 'network' in data else None,
+                    network_mode = data['network_mode'] if 'network_mode' in data else None,
+                    volume_driver = data['volume_driver'] if 'volume_driver' in data else None,
+                    volumes = data['volumes'] if 'volumes' in data else None,
+                    volumes_from = data['volumes_from'] if 'volumes_from' in data else None,
+                    mounts = data['mounts'] if 'mounts' in data else None,
+                    device_read_bps = data['device_read_bps'] if 'device_read_bps' in data else None,
+                    device_read_iops = data['device_read_iops'] if 'device_read_iops' in data else None,
+                    device_write_bps = data['device_write_bps'] if 'device_write_bps' in data else None,
+                    device_write_iops = data['device_write_iops'] if 'device_write_iops' in data else None,
+                    cap_add = data['cap_add'] if 'cap_add' in data else None,
+                    cap_drop = data['cap_drop'] if 'cap_drop' in data else None,
+                    domainname = data['domainname'] if 'domainname' in data else None,
+                    init_path = data['init_path'] if 'init_path' in data else None,
+                    ipc_mode = data['ipc_mode'] if 'ipc_mode' in data else None,
+                    isolation = data['isolation'] if 'isolation' in data else None,
+                    kernel_memory = data['kernel_memory'] if 'kernel_memory' in data else None,
+                    mac_address = data['mac_address'] if 'mac_address' in data else None,
+                    pid_mode = data['pid_mode'] if 'pid_mode' in data else None,
+                    # platform = data['platform'], apparently platform, and source are not valid paramters
+                    # maybe the version of python or docker is causing the problem.
+                    runtime = data['runtime'] if 'runtime' in data else None,
+                    shm_size = data['shm_size'] if 'shm_size' in data else None,
+                    stop_signal = data['stop_signal'] if 'stop_signal' in data else None,
+                    userns_mode = data['userns_mode'] if 'userns_mode' in data else None,
+                    uts_mode = data['uts_mode'] if 'uts_mode' in data else None,
+                    device_cgroup_rules = data['device_cgroup_rules'] if 'device_cgroup_rules' in data else None,
+                    devices = data['devices'] if 'devices' in data else None,
+                    device_requests = data['device_requests'] if 'device_requests' in data else None,
+                    dns = data['dns'] if 'dns' in data else None,
+                    dns_opt = data['dns_opt'] if 'dns_opt' in data else None,
+                    dns_search = data['dns_search'] if 'dns_search' in data else None,
+                    group_add = data['group_add'] if 'group_add' in data else None,
+                    security_opt = data['security_opt'] if 'security_opt' in data else None,
+                    ulimits = data['ulimits'] if 'ulimits' in data else None,
+                    lxc_conf = data['lxc_conf'] if 'lxc_conf' in data else None,
+                    healthcheck = data['healthcheck'] if 'healthcheck' in data else None,
+                    extra_hosts = data['extra_hosts'] if 'extra_hosts' in data else None,
+                    links = data['links'] if 'links' in data else None,
+                    log_config = data['log_config'] if 'log_config' in data else None,
+                    storage_opt = data['storage_opt'] if 'storage_opt' in data else None,
+                    sysctls = data['sysctls'] if 'sysctls' in data else None,
+                    tmpfs = data['tmpfs'] if 'tmpfs' in data else None,
+                    oom_kill_disable = data['oom_kill_disable'] if 'oom_kill_disable' in data else None,
+                    init = data['init'] if 'init' in data else None,
+                    stdin_open = data['stdin_open'] if 'stdin_open' in data else None,
+                    # stream = data['stream'],
+                    use_config_proxy = data['use_config_proxy'] if 'use_config_proxy' in data else None,
+                    oom_score_adj = int(data['oom_score_adj']) if 'oom_score_adj' in data else None,
+                    pids_limit = int(data['pids_limit']) if 'pids_limit' in data else None
+                )
+                addContainerToUser(container.id)
+            except docker.errors.APIError as api_error:
+                return { 'error': True }
+            except docker.errors.ImageNotFound as error:
+                return { 'error': True }
         else:        
-            container = client.containers.run(
-                image = data['image'], 
-                name = data['name'] if 'name' in data else None, 
-                ports = data['ports'] if 'ports' in data else None, 
-                command = data['command'] if 'command' in data else None,
-                tty = data['tty'] if 'tty' in data else None, 
-                hostname = data['hostname'] if 'hostname' in data else None,
-                version = data['version'] if 'version' in data else None, 
-                entrypoint = data['entrypoint'] if 'entrypoint' in data else None,
-                working_dir = data['working_dir'] if 'working_dir' in data else None,
-                restart_policy = data['restart_policy'] if 'restart_policy' in data else None,
-                labels = data['labels'] if 'labels' in data else None,
-                environment = data['environment'] if 'environment' in data else None,
-                detach = data['detach'] if 'detach' in data else None,
-                auto_remove = data['auto_remove'] if 'auto_remove' in data else None,
-                read_only = data['read_only'] if 'read_only' in data else None,
-                privileged = data['privileged'] if 'privileged' in data else None,
-                publish_all_ports = data['publish_all_ports'] if 'publish_all_ports' in data else None,
-                remove = data['remove'] if 'remove' in data else None,
-                cgroup_parent = data['cgroup_parent'] if 'cgroup_parent' in data else None,
-                cpu_count = int(data['cpu_count']) if 'cpu_count' in data else None,
-                cpu_percent = int(data['cpu_percent']) if 'cpu_percent' in data else None,
-                cpu_period = int(data['cpu_period']) if 'cpu_period' in data else None,
-                cpu_quota = int(data['cpu_quota']) if 'cpu_quota' in data else None,
-                cpu_rt_period = int(data['cpu_rt_period']) if 'cpu_rt_period' in data else None,
-                cpu_rt_runtime = int(data['cpu_rt_runtime']) if 'cpu_rt_runtime' in data else None,
-                cpu_shares = int(data['cpu_shares']) if 'cpu_shares' in data else None,
-                nano_cpus = int(data['nano_cpus']) if 'nano_cpus' in data else None,
-                cpuset_cpus = int(data['cpuset_cpus']) if 'cpuset_cpus' in data else None,
-                cpuset_mems = data['cpuset_mems'] if 'cpuset_mems' in data else None,
-                mem_limit = data['mem_limit'] if 'mem_limit' in data else None,
-                mem_reservation = data['mem_reservation'] if 'mem_reservation' in data else None,
-                mem_swappiness = int(data['mem_swappiness']) if 'mem_swappiness' in data else None,
-                memswap_limit = data['memswap_limit'] if 'memswap_limit' in data else None,
-                blkio_weight_device = data['blkio_weight_device'] if 'blkio_weight_device' in data else None,
-                blkio_weight = data['blkio_weight'] if 'blkio_weight' in data else None,
-                network_disabled = data['network_disabled'] if 'network_disabled' in data else None,
-                network = data['network'] if 'network' in data else None,
-                network_mode = data['network_mode'] if 'network_mode' in data else None,
-                volume_driver = data['volume_driver'] if 'volume_driver' in data else None,
-                volumes = data['volumes'] if 'volumes' in data else None,
-                volumes_from = data['volumes_from'] if 'volumes_from' in data else None,
-                mounts = data['mounts'] if 'mounts' in data else None,
-                device_read_bps = data['device_read_bps'] if 'device_read_bps' in data else None,
-                device_read_iops = data['device_read_iops'] if 'device_read_iops' in data else None,
-                device_write_bps = data['device_write_bps'] if 'device_write_bps' in data else None,
-                device_write_iops = data['device_write_iops'] if 'device_write_iops' in data else None,
-                cap_add = data['cap_add'] if 'cap_add' in data else None,
-                cap_drop = data['cap_drop'] if 'cap_drop' in data else None,
-                domainname = data['domainname'] if 'domainname' in data else None,
-                init_path = data['init_path'] if 'init_path' in data else None,
-                ipc_mode = data['ipc_mode'] if 'ipc_mode' in data else None,
-                isolation = data['isolation'] if 'isolation' in data else None,
-                kernel_memory = data['kernel_memory'] if 'kernel_memory' in data else None,
-                mac_address = data['mac_address'] if 'mac_address' in data else None,
-                pid_mode = data['pid_mode'] if 'pid_mode' in data else None,
-                platform = data['platform'] if 'platform' in data else None,
-                runtime = data['runtime'] if 'runtime' in data else None,
-                shm_size = data['shm_size'] if 'shm_size' in data else None,
-                stop_signal = data['stop_signal'] if 'stop_signal' in data else None,
-                userns_mode = data['userns_mode'] if 'userns_mode' in data else None,
-                uts_mode = data['uts_mode'] if 'uts_mode' in data else None,
-                device_cgroup_rules = data['device_cgroup_rules'] if 'device_cgroup_rules' in data else None,
-                devices = data['devices'] if 'devices' in data else None,
-                device_requests = data['device_requests'] if 'device_requests' in data else None,
-                dns = data['dns'] if 'dns' in data else None,
-                dns_opt = data['dns_opt'] if 'dns_opt' in data else None,
-                dns_search = data['dns_search'] if 'dns_search' in data else None,
-                group_add = data['group_add'] if 'group_add' in data else None,
-                security_opt = data['security_opt'] if 'security_opt' in data else None,
-                ulimits = data['ulimits'] if 'ulimits' in data else None,
-                lxc_conf = data['lxc_conf'] if 'lxc_conf' in data else None,
-                healthcheck = data['healthcheck'] if 'healthcheck' in data else None,
-                extra_hosts = data['extra_hosts'] if 'extra_hosts' in data else None,
-                links = data['links'] if 'links' in data else None,
-                log_config = data['log_config'] if 'log_config' in data else None,
-                storage_opt = data['storage_opt'] if 'storage_opt' in data else None,
-                sysctls = data['sysctls'] if 'sysctls' in data else None,
-                tmpfs = data['tmpfs'] if 'tmpfs' in data else None,
-                oom_kill_disable = data['oom_kill_disable'] if 'oom_kill_disable' in data else None,
-                init = data['init'] if 'init' in data else None,
-                stdin_open = data['stdin_open'] if 'stdin_open' in data else None,
-                stdout = data['stdout'] if 'stdout' in data else None,
-                stderr = data['stderr'] if 'stderr' in data else None,
-                stream = data['stream'] if 'stream' in data else None,
-                use_config_proxy = data['use_config_proxy'] if 'use_config_proxy' in data else None,
-                oom_score_adj = int(data['oom_score_adj']) if 'oom_score_adj' in data else None,
-                pids_limit = int(data['pids_limit']) if 'pids_limit' in data else None
-            )
-            addContainerToUser(container.id)
+            try:
+                container = client.containers.run(
+                    image = data['image'], 
+                    name = data['name'] if 'name' in data else None, 
+                    ports = data['ports'] if 'ports' in data else None, 
+                    command = data['command'] if 'command' in data else None,
+                    tty = data['tty'] if 'tty' in data else None, 
+                    hostname = data['hostname'] if 'hostname' in data else None,
+                    version = data['version'] if 'version' in data else None, 
+                    entrypoint = data['entrypoint'] if 'entrypoint' in data else None,
+                    working_dir = data['working_dir'] if 'working_dir' in data else None,
+                    restart_policy = data['restart_policy'] if 'restart_policy' in data else None,
+                    labels = data['labels'] if 'labels' in data else None,
+                    environment = data['environment'] if 'environment' in data else None,
+                    detach = data['detach'] if 'detach' in data else None,
+                    auto_remove = data['auto_remove'] if 'auto_remove' in data else None,
+                    read_only = data['read_only'] if 'read_only' in data else None,
+                    privileged = data['privileged'] if 'privileged' in data else None,
+                    publish_all_ports = data['publish_all_ports'] if 'publish_all_ports' in data else None,
+                    remove = data['remove'] if 'remove' in data else None,
+                    cgroup_parent = data['cgroup_parent'] if 'cgroup_parent' in data else None,
+                    cpu_count = int(data['cpu_count']) if 'cpu_count' in data else None,
+                    cpu_percent = int(data['cpu_percent']) if 'cpu_percent' in data else None,
+                    cpu_period = int(data['cpu_period']) if 'cpu_period' in data else None,
+                    cpu_quota = int(data['cpu_quota']) if 'cpu_quota' in data else None,
+                    cpu_rt_period = int(data['cpu_rt_period']) if 'cpu_rt_period' in data else None,
+                    cpu_rt_runtime = int(data['cpu_rt_runtime']) if 'cpu_rt_runtime' in data else None,
+                    cpu_shares = int(data['cpu_shares']) if 'cpu_shares' in data else None,
+                    nano_cpus = int(data['nano_cpus']) if 'nano_cpus' in data else None,
+                    cpuset_cpus = data['cpuset_cpus'] if 'cpuset_cpus' in data else None,
+                    cpuset_mems = str(data['cpuset_mems']) if 'cpuset_mems' in data else None,
+                    mem_limit = data['mem_limit'] if 'mem_limit' in data else None,
+                    mem_reservation = data['mem_reservation'] if 'mem_reservation' in data else None,
+                    mem_swappiness = int(data['mem_swappiness']) if 'mem_swappiness' in data else None,
+                    memswap_limit = data['memswap_limit'] if 'memswap_limit' in data else None,
+                    blkio_weight_device = data['blkio_weight_device'] if 'blkio_weight_device' in data else None,
+                    blkio_weight = data['blkio_weight'] if 'blkio_weight' in data else None,
+                    network_disabled = data['network_disabled'] if 'network_disabled' in data else None,
+                    network = data['network'] if 'network' in data else None,
+                    network_mode = data['network_mode'] if 'network_mode' in data else None,
+                    volume_driver = data['volume_driver'] if 'volume_driver' in data else None,
+                    volumes = data['volumes'] if 'volumes' in data else None,
+                    volumes_from = data['volumes_from'] if 'volumes_from' in data else None,
+                    mounts = data['mounts'] if 'mounts' in data else None,
+                    device_read_bps = data['device_read_bps'] if 'device_read_bps' in data else None,
+                    device_read_iops = data['device_read_iops'] if 'device_read_iops' in data else None,
+                    device_write_bps = data['device_write_bps'] if 'device_write_bps' in data else None,
+                    device_write_iops = data['device_write_iops'] if 'device_write_iops' in data else None,
+                    cap_add = data['cap_add'] if 'cap_add' in data else None,
+                    cap_drop = data['cap_drop'] if 'cap_drop' in data else None,
+                    domainname = data['domainname'] if 'domainname' in data else None,
+                    init_path = data['init_path'] if 'init_path' in data else None,
+                    ipc_mode = data['ipc_mode'] if 'ipc_mode' in data else None,
+                    isolation = data['isolation'] if 'isolation' in data else None,
+                    kernel_memory = data['kernel_memory'] if 'kernel_memory' in data else None,
+                    mac_address = data['mac_address'] if 'mac_address' in data else None,
+                    pid_mode = data['pid_mode'] if 'pid_mode' in data else None,
+                    platform = data['platform'] if 'platform' in data else None,
+                    runtime = data['runtime'] if 'runtime' in data else None,
+                    shm_size = data['shm_size'] if 'shm_size' in data else None,
+                    stop_signal = data['stop_signal'] if 'stop_signal' in data else None,
+                    userns_mode = data['userns_mode'] if 'userns_mode' in data else None,
+                    uts_mode = data['uts_mode'] if 'uts_mode' in data else None,
+                    device_cgroup_rules = data['device_cgroup_rules'] if 'device_cgroup_rules' in data else None,
+                    devices = data['devices'] if 'devices' in data else None,
+                    device_requests = data['device_requests'] if 'device_requests' in data else None,
+                    dns = data['dns'] if 'dns' in data else None,
+                    dns_opt = data['dns_opt'] if 'dns_opt' in data else None,
+                    dns_search = data['dns_search'] if 'dns_search' in data else None,
+                    group_add = data['group_add'] if 'group_add' in data else None,
+                    security_opt = data['security_opt'] if 'security_opt' in data else None,
+                    ulimits = data['ulimits'] if 'ulimits' in data else None,
+                    lxc_conf = data['lxc_conf'] if 'lxc_conf' in data else None,
+                    healthcheck = data['healthcheck'] if 'healthcheck' in data else None,
+                    extra_hosts = data['extra_hosts'] if 'extra_hosts' in data else None,
+                    links = data['links'] if 'links' in data else None,
+                    log_config = data['log_config'] if 'log_config' in data else None,
+                    storage_opt = data['storage_opt'] if 'storage_opt' in data else None,
+                    sysctls = data['sysctls'] if 'sysctls' in data else None,
+                    tmpfs = data['tmpfs'] if 'tmpfs' in data else None,
+                    oom_kill_disable = data['oom_kill_disable'] if 'oom_kill_disable' in data else None,
+                    init = data['init'] if 'init' in data else None,
+                    stdin_open = data['stdin_open'] if 'stdin_open' in data else None,
+                    stdout = data['stdout'] if 'stdout' in data else None,
+                    stderr = data['stderr'] if 'stderr' in data else None,
+                    stream = data['stream'] if 'stream' in data else None,
+                    use_config_proxy = data['use_config_proxy'] if 'use_config_proxy' in data else None,
+                    oom_score_adj = int(data['oom_score_adj']) if 'oom_score_adj' in data else None,
+                    pids_limit = int(data['pids_limit']) if 'pids_limit' in data else None
+                )
+                addContainerToUser(container.id)
+            except docker.errors.APIError as api_error:
+                # since there's no way on knowing on client side, what caused the error
+                # just return that there was an error, hoping for the sdk to implement something
+                # for that.
+                return { 'error': True }
+            except docker.errors.ImageNotFound as error:
+                return { 'error': True }
     else:
-        volumeData = data['volume'].split(':')
-        volume = {}
-        volume[volumeData[0]] = {
-            'bind': volumeData[1],
-            'mode': volumeData[2] if volumeData[2] != None else ''
-        }
-        ports = data['ports'].split(':')
-        ports = { ports[0]: ports[1] }
+        # if not advanced
+        print('basic data: ', data)
+        volumeData = data['volume'].split(':') if 'volume' in data else None
+        volume = None
+        if(volumeData != None):
+            volume[volumeData[0]] = {
+                'bind': volumeData[1],
+                'mode': volumeData[2] if volumeData[2] != None else ''
+            }
+        
+        ports = data['ports'].split(':') if 'ports' in data else None
+        ports = { ports[0]: ports[1] } if ports != None else None
 
-        container = client.containers.create(image=data['image'],name=data['name'],ports=ports,command=data['command'], tty=data['tty'], volumes=volume)
+        command = data['command'] if 'command' in data else None
+
+        container = client.containers.create(image=data['image'],name=data['name'],ports=ports,command=command, tty=data['tty'], volumes=volume)
         addContainerToUser(container.id)
     
     # if run after create is marked, start the container
@@ -551,7 +570,22 @@ def createContainer():
     # add recently created container to user session containers array.
     session[USERCONTAINERS].append(container.id)
 
-    return container.short_id
+    return { 'containerid': container.short_id }
+
+@app.route('/containers/delete', methods=["GET"])
+def deleteContainer():
+    container = request.args.get('container')
+    volumes = request.args.get('volumes')
+    links = request.args.get('links')
+    force = request.args.get('force')
+    try:
+        client.containers.get(str(container)).remove(v=volumes, link=links, force=force)
+    except docker.errors.ImageNotFound as e: 
+        return { 'error': True }
+    except docker.errors.APIError as e: 
+        return { 'error': True }
+
+    return { 'deleted': True }
 
 @app.route('/container_details')
 def showContainerDetails():
@@ -619,7 +653,8 @@ def logout():
 
 @app.route('/login', methods=['POST'])
 def login():
-    params = request.form;
+    params = request.json;
+    
     if(len(params) > 0):
         # authenticate
         username = params.get('username')
@@ -636,13 +671,11 @@ def login():
             for x in userContainers:
                 session[USERCONTAINERS].append(x.Container.id)
 
-            return main()
+            return { 'login': True } 
         else:
-            return 'User doesnt exists.'
-    else:
-        return render_template('signin.html')
+            return { 'error': 'User does not exist' } 
 
-    return 'Failed to authentiate'
+    return { 'error': 'An error occurred, failed to authenticate.' } 
 
 def authenticate(username, password):
     allusers = User.query.all()

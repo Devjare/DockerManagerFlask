@@ -41,7 +41,7 @@ function triggerContainerAction(id, action) {
         'isAsync': true,
         'params': null
     };
-    sendRequest(reqObj,
+    sendRequest(reqObj, null,
         (response) => refresh(),
         (error) => dump(`Error procesing petition, error: ${error}`));
 }
@@ -119,7 +119,7 @@ function buildContainerTableRow(container, index) {
     else if(state == 'restarting') color = 'warning';
     let template = `<tr class="table-${color}">
       <th scope="row">${index}</th>
-      <td scope="row"><span class="icon" onclick="showDeleteContainerModal('${container.Id}')" data-feather="trash"></span></td>
+      <td scope="row"><span class="icon" onclick="showDeleteContainerModal('${container.Names[0]}')" data-feather="trash"></span></td>
       <td>${container.Id}</td>
       <td>${container.Names[0]}</td>
       <td>${container.State}</td>
@@ -154,7 +154,7 @@ function buildContainerHtmlTemplate(container) {
 }
 
 function loadContainers(containers, filter) {
-    console.log('contgainer loaded: ', containers);
+    console.log('containers loaded: ', containers);
     clearContainersPanel();
     let filtered;
     
@@ -189,11 +189,16 @@ function refresh() {
         'isAsync': false,
         'params': null
     };
-    sendRequest(reqObj,
+    sendRequest(reqObj, null,
         (response) => {
-            console.log('getting response of containers');
-            containers = JSON.parse(response)['containers'];
-            loadContainers(containers, currentFilter);
+            let res = JSON.parse(response.srcElement.response);
+            if('error' in res) showAlert('An error ocurred obtaining containers, check server logs.', 'danger');
+            else {
+                showAlert('Containers obtained successfully!, refreshing list!', 'success');
+                console.log('containers/json response: ', res);
+                containers = res['containers'];
+                loadContainers(containers, currentFilter);
+            }
         },
         (error) => dump(`Error procesing petition, error: ${error}`));
 }
@@ -249,7 +254,58 @@ function clearContainersPanel() {
     document.querySelector('.table-body').innerHTML = '';
 }
 
+
+
+function deleteContainer(container) {
+    console.log('deleting container: ', container);
+    let volumes = $('#chkVolumes')[0].checked;
+    let links = $('#chkLink')[0].checked;
+    let force = $('#chkForce')[0].checked;
+
+    let reqObj = {
+        'type': 'GET',
+        'url': `/containers/delete?container=${container}&volumes=${volumes}&links=${links}&force=${force}`,
+        'isAsync': true,
+        'params': null
+    };
+
+    sendRequest(reqObj, null,
+        (response) => {
+            let res = JSON.parse(response.srcElement.response);
+            if('error' in res) showAlert('An error ocurred deleting the container, check server logs.', 'danger');
+            else {
+                showAlert('Container deleted successfully!', 'success');
+                refresh();
+            }
+        },
+        (error) => console.log('error: ', error));
+}
+
+function showDeleteContainerModal(container) {
+    let title = 'Delete container';
+    
+    let body = `<h5>Deleting: ${container}</h5>
+    <div class="form-check">
+        <input type="checkbox" class="form-check-input" id="chkVolumes">
+        <label class="form-check-label mt-2 ml-2" for="chkVolumes">Delete Associated Volumes</label>
+    </div>
+    <div class="form-check">
+        <input type="checkbox" class="form-check-input" id="chkLink">
+        <label class="form-check-label mt-2 ml-2" for="chkLink">Delete Links</label>
+    </div>
+    <div class="form-check">
+        <input type="checkbox" class="form-check-input" id="chkForce">
+        <label class="form-check-label mt-2 ml-2" for="chkForce">Force removal(SIGKILL)?</label>
+    </div>`;
+    
+    let footer = `
+        <button onclick="deleteContainer('${container.replace('/','')}')" class="btn btn-primary" data-dismiss="modal">Delete</button>
+         <button class="btn btn-secondary" data-dismiss="modal">Cancel</button>`;   
+    
+    showModal(title, body, footer);
+}
+
 $('.site-content').ready((e) => {
-    console.log('containers ready');
+    console.log('site ready!');
     refresh();
 });

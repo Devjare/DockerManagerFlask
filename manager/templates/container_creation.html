@@ -37,22 +37,22 @@ block content %}
                                 <label class="py-0 my-0" for="command">Commands to run:</label>
                                 <button onclick="showListModal('command')" class="btn btn-sm btn-primary my-1" >add</button>
                             </div>
-                            <input autocomplete="off" id="command" type="text" placeholder="Commands" class="form-control" readonly>
+                            <input autocomplete="off" id="command" type="text" placeholder="Commands" class="form-control" readonly oninput="setCustomValidity('')">
                         </div>
                         <div class="input-group-sm m-2">
                             <div class="d-flex justify-content-between align-items-center">
                                 <label class="py-0 my-0" for="ports">Ports binds:</label>
                                 <button onclick="showDictionaryModal('ports')" class="btn btn-sm btn-primary my-1" >add</button>
                             </div>
-                            <input autocomplete="off" id="ports" type="text" placeholder="Ports" class="form-control" readonly>
+                            <input autocomplete="off" id="ports" type="text" placeholder="Ports" class="form-control" readonly oninput="setCustomValidity('')">
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <label for="hostname">Host name:</label>
-                            <input autocomplete="off" id="hostname" type="text" placeholder="Host Name" class="form-control" pattern="[\w-]+$" onchange="checkValidity(event)">
+                            <input autocomplete="off" id="hostname" type="text" placeholder="Host Name" class="form-control" pattern="[\w-]+$" onchange="checkValidity(event)" oninput="setCustomValidity('')">
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <label for="apiversion">API Version:</label>
-                            <input autocomplete="off" id="apiversion" type="text" placeholder="1.35,1.40" class="form-control" pattern="[0-9.]+$" onchange="checkValidity(event)">
+                            <input autocomplete="off" id="apiversion" type="text" placeholder="1.35,1.40" class="form-control" pattern="[0-9.]+$" onchange="checkValidity(event)" oninput="setCustomValidity('')">
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <div class="d-flex justify-content-between align-items-center">
@@ -63,7 +63,7 @@ block content %}
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <label for="working_dir">Working Dir:</label>
-                            <input autocomplete="off" id="working_dir" type="text" placeholder="Working Dir" class="form-control" pattern="[\w\\\/]+\.[A-Za-z]{1,5}$" onchange="checkValidity(event)">
+                            <input autocomplete="off" id="working_dir" type="text" placeholder="Working Dir" class="form-control" pattern="[\w\\\/\.]+$" onchange="checkValidity(event)" oninput="setCustomValidity('')">
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <label for="restartPolicy">Restart Policy:</label>
@@ -136,7 +136,7 @@ block content %}
                         <!-- CPU -->
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <label for="cgroupParent">CGroup Parent:</label>
-                            <input autocomplete="off" id="cgroupParent" type="text" placeholder="CGroup Parent" class="form-control" pattern="[\w]+$" onchange="checkValidity(event)"> 
+                            <input autocomplete="off" id="cgroupParent" type="text" placeholder="CGroup Parent" class="form-control" pattern="[\w]+$" onchange="checkValidity(event)" oninput="setCustomValidity('')">
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <label for="cpuCount">CPU Count:</label>
@@ -172,28 +172,28 @@ block content %}
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <label for="cpusetMems">Set MEMS:</label>
-                            <input autocomplete="off" id="cpusetMems" type="text" placeholder="--cpuset_mems" class="form-control" pattern="[0-9]+[GgMmKkBb]{1}$" onchange="checkValidity(event)">
+                            <input autocomplete="off" id="cpusetMems" type="text" placeholder="E.G 0-3 or 0,1,2" class="form-control" pattern="[0-9,-]+$" onchange="checkValidity(event)" oninput="setCustomValidity('')">
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <label for="cpusetCpus">Set CPUs:</label>
-                            <input autocomplete="off" id="cpusetCpus" type="text" placeholder="Set CPUs to use" class="form-control" pattern="[0-9]+[GgMmKkBb]{1}$" onchange="checkValidity(event)">
+                            <input autocomplete="off" id="cpusetCpus" type="text" placeholder="Set CPUs to use" class="form-control" pattern="[0-9,-]+$" onchange="checkValidity(event)" oninput="setCustomValidity('')">
                         </div>
                         <!-- MEMORY -->
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <label for="memLimit">Memory Limit:</label>
-                            <input autocomplete="off" id="memLimit" type="text" placeholder="Set maximum memory to use" class="form-control" pattern="[0-9]+[GgMmKkBb]{1}$" onchange="checkValidity(event)">
+                            <input autocomplete="off" id="memLimit" type="text" placeholder="Set maximum memory to use" class="form-control" pattern="[0-9]+[GgMmKkBb]{1}$" onchange="checkValidity(event)" oninput="setCustomValidity('')">
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <label for="memReservation">Memory Reservation:</label>
-                            <input autocomplete="off" id="memReservation" type="text" placeholder="Set memory to reserve" class="form-control" pattern="[0-9]+[GgMmKkBb]{1}$" onchange="checkValidity(event)">
+                            <input autocomplete="off" id="memReservation" type="text" placeholder="Set memory to reserve" class="form-control" pattern="[0-9]+[GgMmKkBb]{1}$" onchange="checkValidity(event)" oninput="setCustomValidity('')">
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <label for="memSwappiness">Set memory swappiness: </label>
-                            <input autocomplete="off" id="memSwappiness" type="text" placeholder="Set memory swappiness" class="form-control" pattern="[0-9]+[GgMmKkBb]{1}$" onchange="checkValidity(event)">
+                            <input autocomplete="off" id="memSwappiness" type="number" placeholder="Set memory swappiness" class="form-control" min="0" max="100" onchange="checkValidity(event)" oninput="setCustomValidity('')">
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <label for="memSwapLimit">Set Memory Swap Limit:</label>
-                            <input autocomplete="off" id="memSwapLimit" type="text" placeholder="Set memory swap limit" class="form-control" pattern="[0-9]+[GgMmKkBb]{1}$" onchange="checkValidity(event)">
+                            <input autocomplete="off" id="memSwapLimit" type="text" placeholder="Set memory swap limit" class="form-control" pattern="[0-9]+[GgMmKkBb]{1}$" onchange="checkValidity(event)" oninput="setCustomValidity('')">
                         </div>
                         <!-- IO -->
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
@@ -203,7 +203,7 @@ block content %}
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <!-- list of objects -->
                             <label for="blkioWeightDevice">BLKIO Weight Device:</label>
-                            <input autocomplete="off" id="blkioWeightDevice" type="text" placeholder="blkio_weight_device" class="form-control">
+                            <input autocomplete="off" id="blkioWeightDevice" type="text" placeholder="blkio_weight_device" class="form-control" oninput="setCustomValidity('')">
                         </div>
                     </div>
                 </div>
@@ -222,7 +222,7 @@ block content %}
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <!-- USE A SELECT -->
                             <label for="network">Network: </label>
-                            <input autocomplete="off" id="network" type="text" placeholder="Network to use" class="form-control pattern="[\w]$" onchange="checkValidity(event)"">
+                            <input autocomplete="off" id="network" type="text" placeholder="Network to use" class="form-control pattern="[\w]$" onchange="checkValidity(event)"" oninput="setCustomValidity('')">
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <label for="networkMode">Network Mode:</label>
@@ -244,7 +244,7 @@ block content %}
                     <div class="card-body">
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <label for="volumeDriver">Volume Driver: </label>
-                            <input autocomplete="off" id="volumeDriver" type="text" placeholder="Volume Driver" class="form-control" pattern="[\w]$" onchange="checkValidity(event)">
+                            <input autocomplete="off" id="volumeDriver" type="text" placeholder="Volume Driver" class="form-control" pattern="[\w]$" onchange="checkValidity(event)" oninput="setCustomValidity('')">
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <div class="d-flex justify-content-between align-items-center">
@@ -279,22 +279,22 @@ block content %}
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <!-- TODO: ARRAYS OF JSONS -->
                             <label for="deviceReadBps">Device Read BPS: </label>
-                            <input autocomplete="off" id="deviceReadBps" type="text" placeholder="[{'Path': '/dev/sda1'}, 'Rate': '50Mb']" class="form-control">
+                            <input autocomplete="off" id="deviceReadBps" type="text" placeholder="[{'Path': '/dev/sda1'}, 'Rate': '50Mb']" class="form-control" oninput="setCustomValidity('')">
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <!-- ARRAYS OF JSONS -->
                             <label for="deviceReadIops">Device Read IO Per Second: </label>
-                            <input autocomplete="off" id="deviceReadIops" type="text" placeholder="[{'Path': '/dev/sda1'}, 'Rate': '50Mb']" class="form-control">
+                            <input autocomplete="off" id="deviceReadIops" type="text" placeholder="[{'Path': '/dev/sda1'}, 'Rate': '50Mb']" class="form-control" oninput="setCustomValidity('')">
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <!-- ARRAYS OF JSONS -->
                             <label for="deviceWriteBps">Device Write BPS: </label>
-                            <input autocomplete="off" id="deviceWriteBps" type="text" placeholder="[{'Path': '/dev/sda1'}, 'Rate': '50Mb']" class="form-control">
+                            <input autocomplete="off" id="deviceWriteBps" type="text" placeholder="[{'Path': '/dev/sda1'}, 'Rate': '50Mb']" class="form-control" oninput="setCustomValidity('')">
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <!-- ARRAYS OF JSONS -->
                             <label for="deviceWriteIops">Device Write IO Per Second: </label>
-                            <input autocomplete="off" id="deviceWriteIops" type="text" placeholder="[{'Path': '/dev/sda1'}, 'Rate': '50Mb']" class="form-control">
+                            <input autocomplete="off" id="deviceWriteIops" type="text" placeholder="[{'Path': '/dev/sda1'}, 'Rate': '50Mb']" class="form-control" oninput="setCustomValidity('')">
                         </div>
                     
                         <!-- LISTS OR STR -->
@@ -321,55 +321,55 @@ block content %}
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <label for="initPath">Init Path: </label>
-                            <input autocomplete="off" id="initPath" type="text" placeholder="Init Path" class="form-control" pattern="[\w\\\/\.]+$" onchange="checkValidity(event)">
+                            <input autocomplete="off" id="initPath" type="text" placeholder="Init Path" class="form-control" pattern="[\w\\\/\.]+$" onchange="checkValidity(event)" oninput="setCustomValidity('')">
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <label for="ipcMode">IPC Mode: </label>
-                            <input autocomplete="off" id="ipcMode" type="text" placeholder="IPC Mode" class="form-control" pattern="[\w\:_-]+$" onchange="checkValidity(event)">
+                            <input autocomplete="off" id="ipcMode" type="text" placeholder="IPC Mode" class="form-control" pattern="[\w:_-]+$" onchange="checkValidity(event)" oninput="setCustomValidity('')">
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <label for="isolation">Isolation: </label>
-                            <input autocomplete="off" id="isolation" type="text" placeholder="Isolation" class="form-control" pattern="[\w]$" onchange="checkValidity(event)">
+                            <input autocomplete="off" id="isolation" type="text" placeholder="Isolation" class="form-control" pattern="[\w]$" onchange="checkValidity(event)" oninput="setCustomValidity('')">
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <label for="kernelMemory">Kernel Memory: </label>
-                            <input autocomplete="off" id="kernelMemory" type="text" placeholder="Kernel Memory" class="form-control" pattern="[0-9]+[GgMmKkBb]{1}$" onchange="checkValidity(event)">
+                            <input autocomplete="off" id="kernelMemory" type="text" placeholder="Kernel Memory" class="form-control" pattern="[0-9]+[GgMmKkBb]{1}$" onchange="checkValidity(event)" oninput="setCustomValidity('')">
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <label for="macAddress">Mac Address: </label>
-                            <input autocomplete="off" id="macAddress" type="text" placeholder="Mac Address" class="form-control" pattern="^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$" onchange="checkValidity(event)">
+                            <input autocomplete="off" id="macAddress" type="text" placeholder="Mac Address" class="form-control" pattern="^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$" onchange="checkValidity(event)" oninput="setCustomValidity('')">
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <label for="pidMode">PID Mode: </label>
-                            <input autocomplete="off" id="pidMode" type="text" placeholder="PID Mode" class="form-control" pattern="[\w]$" onchange="checkValidity(event)">
+                            <input autocomplete="off" id="pidMode" type="text" placeholder="PID Mode" class="form-control" pattern="[\w]+$" onchange="checkValidity(event)" oninput="setCustomValidity('')">
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <label for="platform">Platform: </label>
-                            <input autocomplete="off" id="platform" type="text" placeholder="Platform" class="form-control" pattern="[\w]$" onchange="checkValidity(event)">
+                            <input autocomplete="off" id="platform" type="text" placeholder="Platform" class="form-control" pattern="[\w]+$" onchange="checkValidity(event)" oninput="setCustomValidity('')">
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <label for="runtime">Runtime: </label>
-                            <input autocomplete="off" id="runtime" type="text" placeholder="Runtime" class="form-control" pattern="[\w]$" onchange="checkValidity(event)">
+                            <input autocomplete="off" id="runtime" type="text" placeholder="Runtime" class="form-control" pattern="[\w]+$" onchange="checkValidity(event)" oninput="setCustomValidity('')">
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <label for="shmSize">SHM Size: </label>
-                            <input autocomplete="off" id="shmSize" type="text" placeholder="SHM Size" class="form-control" pattern="[0-9]+[GgMmKkBb]{1}$" onchange="checkValidity(event)">
+                            <input autocomplete="off" id="shmSize" type="text" placeholder="SHM Size" class="form-control" pattern="[0-9]+[GgMmKkBb]{1}$" onchange="checkValidity(event)" oninput="setCustomValidity('')">
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <label for="stopSignal">STOP Signal: </label>
-                            <input autocomplete="off" id="stopSignal" type="text" placeholder="STOP Signal" class="form-control" pattern="[A-Za-z_-]+$" onchange="checkValidity(event)">
+                            <input autocomplete="off" id="stopSignal" type="text" placeholder="STOP Signal" class="form-control" pattern="[A-Za-z_-]+$" onchange="checkValidity(event)" oninput="setCustomValidity('')">
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <label for="user">User: </label>
-                            <input autocomplete="off" id="user" type="text" placeholder="User" class="form-control" pattern="[\w_-]+$" onchange="checkValidity(event)">
+                            <input autocomplete="off" id="user" type="text" placeholder="User" class="form-control" pattern="[\w_-]+$" onchange="checkValidity(event)" oninput="setCustomValidity('')">
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <label for="usernsMode">UserNS mode: </label>
-                            <input autocomplete="off" id="usernsMode" type="text" placeholder="User Namespace mode" class="form-control" pattern="[\w]+$" onchange="checkValidity(event)">
+                            <input autocomplete="off" id="usernsMode" type="text" placeholder="User Namespace mode" class="form-control" pattern="[\w]+$" onchange="checkValidity(event)" oninput="setCustomValidity('')">
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <label for="utsMode">UTS Mode: </label>
-                            <input autocomplete="off" id="utsMode" type="text" placeholder="UTS Mode" class="form-control" pattern="[\w]+$" onchange="checkValidity(event)">
+                            <input autocomplete="off" id="utsMode" type="text" placeholder="UTS Mode" class="form-control" pattern="[\w]+$" onchange="checkValidity(event)" oninput="setCustomValidity('')">
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <div class="d-flex justify-content-between align-items-center">

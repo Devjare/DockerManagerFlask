@@ -14,7 +14,7 @@ function loadAllImages() {
         'isAsync': false,
         'params': null
     };
-    sendRequest(reqObj, 
+    sendRequest(reqObj, null,
         (response) => {
             images = JSON.parse(response).images;
             loadImages(JSON.parse(response).images);
@@ -54,30 +54,34 @@ function showImageModal(imageid, action) {
             </div>
             <div class="m-2 form-group">
                 <label for="containername">Container name</label>
-                <input id="containername" class="form-control" type="text" placeholder="Container name" onchange="validateField('name')">
+                <input id="containername" class="form-control" type="text" placeholder="Container name"
+                pattern="[\\w_-]+$" oninput="setCustomValidity('')">
             </div>
             <div class="m-2 form-group">
                 <label for="ports">Ports</label>
-                <input id="ports" class="form-control" type="text" placeholder="<container_port>:<host_port>" onchange="validateField('ports')">
+                <input id="ports" class="form-control" type="text" placeholder="<container_port>:<host_port>"
+                pattern="[0-9\\/tcpudpTCPUDP]+:[0-9\\/tcpupdTCPUDP]+" oninput="setCustomValidity('')">
             </div>
             <div class="m-2 form-group">
                 <label for="volume">Volume</label>
-                <input id="volume" class="form-control" type="text" placeholder="<host_path>:<bind>:<mode> (e.g. /data/:/:ro)" onchange="validateField('volume')">
+                <input id="volume" class="form-control" type="text" placeholder="<host_path>:<bind>:<mode> (e.g. /data/:/:ro)" 
+                pattern="[\\w\\-\\\\\/]+:[\\w\\-\\\\\/]+:[row]+$" oninput="setCustomValidity('')">
             </div>
             <div class="m-2 form-group">
                 <label for="command">Command</label>
-                <input id="command" class="form-control" type="text" placeholder="Command to run in container">
+                <input id="command" class="form-control" type="text" placeholder="Command to run in container"
+                pattern="[\\w\\-\\\\\/]+:[\\w\\-\\\\\/]+:[row]+$" oninput="setCustomValidity('')">
             </div>
              <div class="form-check">
-                <input type="checkbox" class="form-check-input" id="chkTty">
-                <label class="form-check-label mt-1" for="chkRun">Entable TTY?</label>
+                <input type="checkbox" class="form-check-input mr-1" id="chkTty">
+                <label class="form-check-label mt-1 ml-2" for="chkRun">Entable TTY?</label>
             </div>
         `;
         footer = `
             <div class="d-flex justify-content-between w-100">
              <div class="form-check">
                 <input type="checkbox" class="form-check-input" id="chkRun">
-                <label class="form-check-label mt-1" for="chkRun">Create and Run?</label>
+                <label class="form-check-label mt-1 ml-2" for="chkRun">Create and Run?</label>
             </div>
             <div>
                 <a href="/container_creation">Advanced Creation</a>
@@ -104,16 +108,23 @@ function createContainerFrom(imageid) {
     showConfirmationModal(
         '<h5>If a field is left empty, container will be created anyway but without that argument. Do you want to continue?</h5>',
         (e) => { 
-            let data = {
-                'image': $('#selectTag')[0].value.toString(),
-                'name': $('#containername')[0].value.toString(),
-                'ports': $('#ports')[0].value.toString(),
-                'volume': $('#volume')[0].value.toString(),
-                'command': $('#command')[0].value.toString(),
-                'tty': $('#chkTty')[0].checked,
-                'run': $('#chkRun')[0].checked
-            };
+            let data = { 'image': $('#selectTag')[0].value.toString() };
 
+            let name = $('#containername')[0].value.toString();
+            let ports = $('#ports')[0].value.toString();
+            let volume = $('#volume')[0].value.toString();
+            let command = $('#command')[0].value.toString();
+
+            if(name) data['name'] = name;
+            if(ports) data['ports'] = ports;
+            if(volume) data['volume'] = volume;
+            if(command) data['command'] = command;
+            
+            data['tty'] = $('#chkTty')[0].checked;
+            data['run'] = $('#chkRun')[0].checked;
+
+            console.log('data: ', data);
+                
             let reqObj = {
                 'type': 'POST',
                 'url': `/containers/create`,
@@ -122,7 +133,7 @@ function createContainerFrom(imageid) {
                 'requestHeaders': { 'Content-Type': 'application/json' }
             };
 
-            sendRequest(reqObj, 
+            sendRequest(reqObj, null,
                 (response) => $('#modal').modal('hide'),
                 (error) => console.log('error: ', error));
             hideConfirmationModal();
@@ -198,7 +209,7 @@ function deleteImage() {
         'params': null
     };
 
-    sendRequest(reqObj, 
+    sendRequest(reqObj, null,
         (response) => {
             showAlert('Image deleted successfully!', 'success');
             refreshImageTable();
@@ -265,7 +276,7 @@ function pullImage(imageRep, source) {
         'params': null
     };
 
-    sendRequest(reqObj, 
+    sendRequest(reqObj, null,
         (response) => refreshImageTable() ,
         (error) => console.log('error: ', error));
 }
@@ -319,7 +330,7 @@ function loadRegistry() {
         'params': null
     };
 
-    sendRequest(reqObj, 
+    sendRequest(reqObj, null,
         (response) => {
             repositories = JSON.parse(response).repositories;
             loadRegistryRepositories(repositories);
@@ -335,7 +346,7 @@ function searchOnDockerhub(text) {
         'params': null
     };
 
-    sendRequest(reqObj, 
+    sendRequest(reqObj, null
         (response) => {
             dockerhubRepositories = JSON.parse(response).repositories;
             loadDockerhubRepositories(dockerhubRepositories);

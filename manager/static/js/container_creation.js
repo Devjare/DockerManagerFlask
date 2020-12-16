@@ -1,8 +1,4 @@
 // TODO: ADD ONE MESSAGE FOR EVERY TEXT/NUMBER INPUT FIELD
-let fieldsMessages = {
-    'containerName': 'Invalid name: only letters, numbers, underscore and hyphen',
-    'entrypoint': 'Invalid string: Enter a path-formatted text(letters, numbers, underscore, hyphen, dot, slash and backslashes)'
-};
 
 let dictionaries = {
     'labels': {},
@@ -248,13 +244,20 @@ function validateInputs(inputs) {
 }
 
 $('#chkRun').change(() => {
-    if($('#chkRun')[0].checked) $('#chkRemove').removeAttr('disabled');
-    else $('#chkRemove').attr('disabled', true);
+    if($('#chkRun')[0].checked) {
+        $('#chkRemove').removeAttr('disabled');
+        $('#chkStdout').removeAttr('disabled');
+        $('#chkStderr').removeAttr('disabled');
+    }
+    else {
+        $('#chkRemove').attr('disabled', true);
+        $('#chkStdout').attr('disabled', true);
+        $('#chkStderr').attr('disabled', true);
+    }
 });
 
 function invalidParamsExists() {
     for(key in fieldsMessages) {
-        console.log('checking validity for: ', key);
         if(!document.getElementById(key).checkValidity()) {
             document.getElementById(key).setCustomValidity(fieldsMessages[key]);
             document.getElementById(key).reportValidity();
@@ -269,10 +272,9 @@ function createContainer() {
     // if there are at least one invalid field(marked in red)
     // a message will show up and cannot procceed to creation.
     if(invalidParamsExists()) {
-        console.log('invalid params, check red marked fields!');
+        showAlert('invalid params, check red marked fields!', 'danger');
         return;
     }
-    alert('everythings fine');
     let runAfterCreate = $('#chkRun')[0].checked;
     image = $('#selectImage')[0].value; 
 
@@ -287,7 +289,7 @@ function createContainer() {
     let working_dir = $('#working_dir')[0].value;
     let restart_policy = { 
         'Name': $('#restartPolicy')[0].value,
-        'MaximumRetryCount': $('#maxRetryCount')[0].value
+        'MaximumRetryCount': valueOrNull($('#maxRetryCount')[0].value, 'number')
     };
 
     // environment and labels are both dicts
@@ -412,7 +414,7 @@ function createContainer() {
         'image': image 
     };
     
-    if(name == '') params['name'] = name;
+    if(name) params['name'] = name;
     if(lists['command'].length > 0) params['command'] = lists['command'];
     if(!isObjectEmpty(dictionaries['ports'])) params['ports'] = dictionaries['ports'];     
     if(hostname) params['hostname'] = hostname;
@@ -425,7 +427,7 @@ function createContainer() {
     params['tty'] = tty;
     params['auto_remove'] = autoremove;
     params['detach'] = detach;
-    params['remove'] = remove;
+    if(runAfterCreate) params['remove'] = remove;
     params['publish_all_ports'] = publishAll;
     params['read_only'] = readOnly;
     params['privileged'] = privileged;
@@ -496,8 +498,8 @@ function createContainer() {
     if(!isObjectEmpty(dictionaries['tmpfs'])) params['tmpfs'] = dictionaries['tmpfs'];     
     params['oom_kill_disable'] = oomKill;
     params['init'] = init;
-    params['stderr'] = stderr;
-    params['stdout'] = stdout;
+    if(runAfterCreate) params['stderr'] = stderr;
+    if(runAfterCreate) params['stdout'] = stdout;
     params['stdin_open'] = stdin_open;
     params['stream'] = stream;
     params['use_config_proxy'] = useConfigProxy;
@@ -514,26 +516,16 @@ function createContainer() {
         'requestHeaders': { 'Content-Type': 'application/json' }
     };
 
-    sendRequest(reqObj,
+    sendRequest(reqObj, 
+        (e) => console.log('loading request...'),
         (response) => {
-            showAlert('Container created succesfully', 'success');
-            console.log('response for container creation: ', response);
-        },
+            let res = JSON.parse(response.srcElement.response);
+            console.log('response for container creation: ', res);
+            if('error' in res) showAlert('An error ocurred creating the container, check server logs.', 'danger');
+            else showAlert('Container created succesfully', 'success');
+        }, 
         (error) => {
             showAlert('Container failed to create', 'danger');
             console.log('error for container creation: ', error);
-
         });
 }
-
-$('main').ready((e) => {
-    // check if the invalidity popup should show after the
-    // content of an input changed
-    $('input[type=text]:not([readonly])').on('change', (e) => {
-        let id = e.target.id;
-        if(!document.getElementById(id).checkValidity()) {
-            document.getElementById(id).setCustomValidity(fieldsMessages[id]);
-            document.getElementById(id).reportValidity();
-        }
-    });
-});

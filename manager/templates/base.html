@@ -139,7 +139,7 @@
                                 Year-end sale
                                 </a>
                                 </li>
-                                </ul>-->
+                                </ul> -->
                     </div>
                 </nav>
                 {% block content %}{% endblock %} 
@@ -180,6 +180,18 @@
                     <script src="{{url_for('static', filename='js/utils.js')}}"></script>
                     <script src="{{url_for('static', filename='js/base.js')}}"></script>
 
+                    <script>
+                        // check if the invalidity popup should show after the
+                        // content of an input changed
+                        $('input[type=text]:not([readonly])').on('change', (e) => {
+                            console.log('changed: ', e);
+                            let id = e.target.id;
+                            if(!document.getElementById(id).checkValidity()) {
+                                document.getElementById(id).setCustomValidity(fieldsMessages[id]);
+                                document.getElementById(id).reportValidity();
+                            }
+                        });
+                    </script>
                     <!-- Graphs
                     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.0.0/Chart.min.js" 
                         integrity="sha512-oPvxMUC37WigeVCeZVcU9IoRJjR3xg5/XQaautxFc0rCWJZgQ625mTEPz2nfp7/papNkImutg4thPHf6ok/Fwg==" crossorigin="anonymous">
