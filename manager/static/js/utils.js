@@ -57,8 +57,8 @@ function showAlert(msg, type) {
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
     <span aria-hidden="true">&times;</span></button></div>`
     $('body').append(alertEl);
-    setTimeout(() => {
-        $('.alert').alert('close');
+        setTimeout(() => {
+            $('.alert').alert('close');
     }, 5000);
 }
 
@@ -218,4 +218,8 @@ function isObjectEmpty(obj) {
         if(obj.hasOwnProperty(key)) return false;
     }
     return true;
+}
+
+function isEmptyString(str) {
+    return str == '';
 }

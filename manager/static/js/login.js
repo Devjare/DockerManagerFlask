@@ -15,7 +15,7 @@ registerFormTemplate = `<div>
 <input name="username" id="username" class="form-control m-1" type="text" placeholder="Username" pattern="\\w+$" oninput="setCustomValidity('')">
 <input name="password" id="password" class="form-control m-1" type="password" placeholder="Password" placeholder="Password" pattern="[^\\s\\\\]+$" oninput="setCustomValidity('')">
 <input name="confirmpassword" id="confirmPassword" class="form-control m-1" type="password" placeholder="Confirm Password" placeholder="Password" pattern="[^\\s\\\\]+$" oninput="setCustomValidity('')">
-<div class="p-2 m-3"><button class="btn btn-lg btn-primary btn-block m-1">Register</button>
+<div class="p-2 m-3"><button class="btn btn-lg btn-primary btn-block m-1" onclick="signup()">Register</button>
 <div class="checkbox mb-3 d-flex justify-content-center">
 <small><a onclick="switchForm('signin')" href="#">Already have an account?, Sign in here!</a></small>
 </div></div></div>`;
@@ -24,10 +24,6 @@ function switchForm(to) {
     document.getElementById('form-type').innerHTML = to == "signup" ? registerFormTemplate : loginFormTemplate;
     setValidities();
 } 
-
-function validate(field) {
-    return field.length > 0;
-}
 
 function invalidSignupParamsExists() {
     if(!document.getElementById('username').checkValidity()) {
@@ -71,9 +67,7 @@ function login() {
     username = $('#username')[0].value;
     password = $('#password')[0].value;
 
-    console.log('logging in with: ');
-    console.log(`username: ${username}, password: ${password}`);
-    if(validate(username) && validate(password)) {
+    if(username && password) {
         params = {
             'username': username,
             'password': password
@@ -91,7 +85,6 @@ function login() {
             (response) => {
                 let res = JSON.parse(response.srcElement.response);
                 if('error' in res) { 
-                    location.href = '/';
                     showAlert(`Failed to log in, error: ${res['error']}`, 'danger');
                 }
                 else {
@@ -110,6 +103,51 @@ function login() {
 }
 
 function signup() {
+    if(invalidSignupParamsExists()) {
+        showAlert('invalid params, check red marked fields!', 'danger');
+        return;
+    }
+
+    username = $('#username')[0].value;
+    password = $('#password')[0].value;
+    confirmPassword = $('#confirmPassword')[0].value;
+
+    if(username && password && confirmPassword) {
+        if(password != confirmPassword) {
+            showAlert('Password fields does not match', 'danger');
+            return;    
+        }
+        params = {
+            'username': username,
+            'password': password,
+        };
+        let reqObj = {
+            'type': 'POST',
+            'url': '/signup',
+            'isAsync': false,
+            'params': JSON.stringify(params),
+            'requestHeaders': { 'Content-Type': 'application/json' }
+        };
+
+        sendRequest(reqObj, 
+            (e) => console.log('loading request...'),
+            (response) => {
+                let res = JSON.parse(response.srcElement.response);
+                if('error' in res) { 
+                    showAlert(`Failed to sign up, error: ${res['error']}`, 'danger');
+                }
+                else {
+                    showAlert('successfully registered, loggin in!', 'success');
+                    location.href = '/home';
+                }
+            }, 
+            (error) => {
+                showAlert('Failed to sign up.', 'danger');
+            });
+    } else {
+        showAlert(`Don't leave empty fields`, 'danger');
+    }
+
 
 }
 

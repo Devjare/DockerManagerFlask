@@ -688,13 +688,14 @@ def authenticate(username, password):
 
 @app.route('/signup', methods=['POST'])
 def signup():
-    params = request.form;
+    params = request.json;
+    
     if(len(params) > 0):
+        # authenticate
         username = params.get('username')
         password = params.get('password')
 
         exists = authenticate(username, password)
-
         if(exists):
             return { 'error': 'User already exists, login instead'}
         else:
@@ -704,7 +705,9 @@ def signup():
             
             db.session.add(user)
             db.session.commit()
-            return main()
+            return { 'signup': True } 
+    
+    return { 'error': 'An error occurred, failed to authenticate.' } 
 
 # API
 
