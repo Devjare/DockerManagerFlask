@@ -1,33 +1,8 @@
-var fieldsMessages = {
+var loginFieldsMessages = {
     'username': 'Only numbers, letters, _, and - are allowed.',
     'password': 'No Whitespaces',
-    'confirmPassword': 'No Whitespaces',
-    'containerName': 'Invalid name: only letters, numbers, underscore and hyphen',
-    'hostname': 'Invalid name: only letters, numbers, underscore and hyphen',
-    'apiversion': 'Invalid String: Only numbers and .',
-    'working_dir': 'File format path only, e.g /folder_name/folder',
-    'maxRetryCount': 'Invalid Entry: Only numbers',
-    'cgroupParent': 'Only letters, numbers, _ and - are allowed.',
-    'cpusetMems': 'Invalid input, only numbers, - and ,.',
-    'cpusetCpus': 'Invalid input, only numbers, - and ,.',
-    'memLimit': 'Invalid input, only numbers and the unit letter(b,B,k,K,m,M,g,G)',
-    'memReservation': 'Invalid input, only numbers and the unit letter(b,B,k,K,m,M,g,G)',
-    'memSwapLimit': 'Invalid input, only numbers and the unit letter(b,B,k,K,m,M,g,G)',
-    'volumeDriver': 'Only numbers, letters, _, and - are allowed.',
-    'initPath': 'File format path only, e.g /folder_name/folder',
-    'ipcMode': 'Only numbers, letters, _, and : are allowed',
-    'isolation': 'Only numbers, letters and _ are allowed.',
-    'kernelMemory': 'Invalid input, only numbers and the unit letter(b,B,k,K,m,M,g,G)',
-    'macAddress': 'Invalid input, enter a valid mac address.',
-    'pidMode': 'Only numbers, letters and _ are allowed.',
-    'platform': 'Only numbers, letters and _ are allowed.',
-    'runtime': 'Only numbers, letters and _ are allowed.',
-    'shmSize': 'Invalid input, only numbers and the unit letter(b,B,k,K,m,M,g,G)',
-    'stopSignal': 'Only letters, -, and _ are allowed.',
-    'user': 'Only numbers, letters, _, and - are allowed.',
-    'usernsMode': 'Only numbers, letters, _, and - are allowed.',
-    'utsMode': 'Only numbers, letters, and  _ are allowed.',
-};
+    'confirmPassword': 'No Whitespaces'
+}
 
 function portsArrayToString(portsArray) {
     str = "";
@@ -51,14 +26,20 @@ function timeConverter(UNIX_timestamp){
     return time;
 }
 
+var alertCount = 0;
 function showAlert(msg, type) { 
-    let alertEl = `<div class="alert alert-${type} position-absolute d-flex justify-content-between p-2 w-25" 
-    style="z-index: 100!important;top: 80px;right: 50px" role="alert">${msg}
+    alertCount++;
+    let alertEl = `<div id="alert-${alertCount}" class="alert alert-${type} position-absolute d-flex justify-content-between p-2 w-25" 
+    style="z-index: 100!important;top: ${40 * alertCount + 20}px;right: 50px" role="alert">${msg}
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
     <span aria-hidden="true">&times;</span></button></div>`
     $('body').append(alertEl);
-        setTimeout(() => {
-            $('.alert').alert('close');
+   
+    // set timeout to disappear the alert after 5 secs.
+    setTimeout(() => {
+        console.log('alert count: ', alertCount);    
+        $(`.alert#alert-${alertCount}`).alert('close');
+        alertCount--;
     }, 5000);
 }
 

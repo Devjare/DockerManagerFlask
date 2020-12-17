@@ -1,4 +1,30 @@
-// TODO: ADD ONE MESSAGE FOR EVERY TEXT/NUMBER INPUT FIELD
+var containersFieldsMessages = {
+    'containerName': 'Invalid name: only letters, numbers, underscore and hyphen',
+    'hostname': 'Invalid name: only letters, numbers, underscore and hyphen',
+    'apiversion': 'Invalid String: Only numbers and .',
+    'working_dir': 'File format path only, e.g /folder_name/folder',
+    'maxRetryCount': 'Invalid Entry: Only numbers',
+    'cgroupParent': 'Only letters, numbers, _ and - are allowed.',
+    'cpusetMems': 'Invalid input, only numbers, - and ,.',
+    'cpusetCpus': 'Invalid input, only numbers, - and ,.',
+    'memLimit': 'Invalid input, only numbers and the unit letter(b,B,k,K,m,M,g,G)',
+    'memReservation': 'Invalid input, only numbers and the unit letter(b,B,k,K,m,M,g,G)',
+    'memSwapLimit': 'Invalid input, only numbers and the unit letter(b,B,k,K,m,M,g,G)',
+    'volumeDriver': 'Only numbers, letters, _, and - are allowed.',
+    'initPath': 'File format path only, e.g /folder_name/folder',
+    'ipcMode': 'Only numbers, letters, _, and : are allowed',
+    'isolation': 'Only numbers, letters and _ are allowed.',
+    'kernelMemory': 'Invalid input, only numbers and the unit letter(b,B,k,K,m,M,g,G)',
+    'macAddress': 'Invalid input, enter a valid mac address.',
+    'pidMode': 'Only numbers, letters and _ are allowed.',
+    'platform': 'Only numbers, letters and _ are allowed.',
+    'runtime': 'Only numbers, letters and _ are allowed.',
+    'shmSize': 'Invalid input, only numbers and the unit letter(b,B,k,K,m,M,g,G)',
+    'stopSignal': 'Only letters, -, and _ are allowed.',
+    'user': 'Only numbers, letters, _, and - are allowed.',
+    'usernsMode': 'Only numbers, letters, _, and - are allowed.',
+    'utsMode': 'Only numbers, letters, and  _ are allowed.',
+};
 
 let dictionaries = {
     'labels': {},
@@ -257,9 +283,10 @@ $('#chkRun').change(() => {
 });
 
 function invalidParamsExists() {
-    for(key in fieldsMessages) {
+    for(key in containersFieldsMessages) {
+        console.log('checking validity for: ', key);
         if(!document.getElementById(key).checkValidity()) {
-            document.getElementById(key).setCustomValidity(fieldsMessages[key]);
+            document.getElementById(key).setCustomValidity(containersFieldsMessages[key]);
             document.getElementById(key).reportValidity();
             return true;
         }
@@ -301,7 +328,6 @@ function createContainer() {
     let detach = $('#chkDetach')[0].checked;
     
     // remove only works if Create and Run is selected.
-    let remove = runAfterCreate ? $('#chkRemove')[0].checked : undefined;
     let publishAll = $('#chkPublishAll')[0].checked;
     let readOnly = $('#chkReadOnly')[0].checked;
     let privileged = $('#chkPrivileged')[0].checked;
@@ -317,7 +343,6 @@ function createContainer() {
     let cpu_shares = $('#cpuShares')[0].value;
     let nano_cpus = $('#nanoCpus')[0].value;
 
-    // TODO: validate before parsing to integer 
     cgroup_parent = Number(cgroup_parent);
     cpu_count = Number(cpu_count);
     cpu_percent = Number(cpu_percent);
@@ -333,10 +358,6 @@ function createContainer() {
     let mem_limit = $('#memLimit')[0].value;
     let mem_reservation = $('#memReservation')[0].value;
     
-    // TODO: CHECK FOR ALL FIELDS, BUT IF NOT MEMORY SWAPINESS IS SET
-    // YOUT CAN PUT IT AS None IN PYTHON AND IT WILL BE THE SAME AS IF
-    // THE containers.create() METHOD BE CALLED WITHOUT THAT ARGUMMENT
-    // CHECK THAT FOR THE REST OF ARGUMENTS, BUT MOST LIKELY WORKS THE SAME
     let mem_swappiness = $('#memSwappiness')[0].value;
     let mem_swap_limit = $('#memSwapLimit')[0].value;
     let blkio_weight = $('#blkioWeight')[0].value;
@@ -390,9 +411,7 @@ function createContainer() {
 
     let oomKill = $('#chkOomKill')[0].checked;
     let init = $('#chkInit')[0].checked;
-    let stdout = $('#chkStdout')[0].checked;
     let stdin_open = $('#chkStdinOpen')[0].checked;
-    let stderr = $('#chkStderr')[0].checked;
     let stream = $('#chkStream')[0].checked;
     let useConfigProxy = $('#chkUseConfigProxy')[0].checked;
 
@@ -427,7 +446,6 @@ function createContainer() {
     params['tty'] = tty;
     params['auto_remove'] = autoremove;
     params['detach'] = detach;
-    if(runAfterCreate) params['remove'] = remove;
     params['publish_all_ports'] = publishAll;
     params['read_only'] = readOnly;
     params['privileged'] = privileged;
@@ -498,8 +516,6 @@ function createContainer() {
     if(!isObjectEmpty(dictionaries['tmpfs'])) params['tmpfs'] = dictionaries['tmpfs'];     
     params['oom_kill_disable'] = oomKill;
     params['init'] = init;
-    if(runAfterCreate) params['stderr'] = stderr;
-    if(runAfterCreate) params['stdout'] = stdout;
     params['stdin_open'] = stdin_open;
     params['stream'] = stream;
     params['use_config_proxy'] = useConfigProxy;
@@ -521,7 +537,10 @@ function createContainer() {
         (response) => {
             let res = JSON.parse(response.srcElement.response);
             console.log('response for container creation: ', res);
-            if('error' in res) showAlert('An error ocurred creating the container, check server logs.', 'danger');
+            if('error' in res) {
+                showAlert('An error ocurred creating the container, check server logs.', 'danger');
+                console.log('error: ', res.error);
+            }
             else showAlert('Container created succesfully', 'success');
         }, 
         (error) => {

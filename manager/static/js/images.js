@@ -16,11 +16,19 @@ function loadAllImages() {
     };
     sendRequest(reqObj, null,
         (response) => {
-            images = JSON.parse(response).images;
-            loadImages(JSON.parse(response).images);
-            feather.replace();
+            let res = JSON.parse(response.srcElement.response);
+            if('error' in res) showAlert('An error occurred loading images!', 'danger');
+            else {
+                images = res.images;
+                loadImages(images);
+                feather.replace();
+                showAlert('Images loaded succesfully', 'success');
+            }
         },
-        (error) => console.log('error: ', error));
+        (error) => { 
+            console.log('error: ', error);
+            showAlert(`An error occurred, check console.`, 'danger');
+        });
 }
 
 function loadImages(imagesArr) {
@@ -134,8 +142,16 @@ function createContainerFrom(imageid) {
             };
 
             sendRequest(reqObj, null,
-                (response) => $('#modal').modal('hide'),
+                (response) => {
+                    let res = JSON.parse(response.srcElement.response);
+                    if('error' in res) showAlert('An error occurred creating container!', 'danger');
+                    else {
+                        hideModal();
+                        showAlert('Container created successfully!', 'success');
+                    }
+                },
                 (error) => console.log('error: ', error));
+            
             hideConfirmationModal();
             hideModal();
         }, 
@@ -211,10 +227,17 @@ function deleteImage() {
 
     sendRequest(reqObj, null,
         (response) => {
-            showAlert('Image deleted successfully!', 'success');
-            refreshImageTable();
+            let res = JSON.parse(response.srcElement.response);
+            if('error' in res) showAlert('An error occurred deleting the image.', 'danger');
+            else {
+                showAlert('Image deleted successfully!', 'success');
+                refreshImageTable();
+            }
         },
-        (error) => console.log('error: ', error));
+        (error) => {
+            console.log('error: ', error);
+            showAlert(`An error occurred, check console`, 'danger'); 
+        });
 }
 
 function showDeleteImageModal(imageid) {
@@ -277,8 +300,17 @@ function pullImage(imageRep, source) {
     };
 
     sendRequest(reqObj, null,
-        (response) => refreshImageTable() ,
-        (error) => console.log('error: ', error));
+        (response) => {
+            let res = JSON.parse(response.srcElement.response);
+            if('error' in res) showAlert('An error occurred pulling image.', 'danger');
+            else {
+                refreshImageTable();
+            }
+        },
+        (error) => {
+            console.log('error: ', error);
+            showAlert(`An error occurred, check console.`, 'danger')
+        });
 }
 
 function loadRegistryRepositories(repositories) {
@@ -332,10 +364,18 @@ function loadRegistry() {
 
     sendRequest(reqObj, null,
         (response) => {
-            repositories = JSON.parse(response).repositories;
-            loadRegistryRepositories(repositories);
+            let res = JSON.parse(response.srcElement.response);
+            if('error' in res) showAlert('An error occurred laoding registry!', 'danger');
+            else {
+                repositories = res.repositories;
+                loadRegistryRepositories(repositories);
+                showAlert('Registry loaded succesfully', 'success');
+            } 
         },
-        (error) => console.log('error: ', error));
+        (error) => {
+            console.log('error: ', error);
+            showAlert(`An error occurred, check console`, 'danger')
+        });
 }
 
 function searchOnDockerhub(text) {
@@ -346,10 +386,18 @@ function searchOnDockerhub(text) {
         'params': null
     };
 
-    sendRequest(reqObj, null
+    sendRequest(reqObj, null,
         (response) => {
-            dockerhubRepositories = JSON.parse(response).repositories;
-            loadDockerhubRepositories(dockerhubRepositories);
+            let res = JSON.parse(response.srcElement.response);
+            if('error' in res) showAlert('An error occurred trying to search on dockerhub!', 'danger');
+            else {
+                dockerhubRepositories = res.repositories;
+                loadDockerhubRepositories(dockerhubRepositories);
+                showAlert('Dockerhub results ready!', 'success');
+            }
         },
-        (error) => console.log('error: ', error));    
+        (error) => {
+            console.log(`error:  ${error}`);
+            showAlert('An error occurred, check console.', 'danger')
+        });    
 }

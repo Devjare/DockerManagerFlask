@@ -1,16 +1,4 @@
-// TODO: ADD builder.html
-// TODO: USE GENERATORS FOR docker stats() STREAM FROM FLASK
-// TODO: TRY TO IMPLEMENT LIVE RELOAD TO CONTAINERS, LEAVING OUT THE REFRESH BUTTON.
-// TODO: DESING CONTAINER/IMAGE DETAILS SCREEN(THIS IS GONNA USE GRAPHICS).
 // TODO: Search while in a filtered section, not working, solve.
-// TODO: Maybe make an admin account, who can see every container.
-// TODO: ADD DELETE OPTION FOR CONTAINERS/IMAGES
-// TODO: ADD LOADING OPTION, WHEN STARTING/STOPPING/PAUSING/UNPAUSING A CONTAINER
-// ON THE MODAL, IT WON'T CLOSE UNTIL THE ACTION IS DONE. OR MAYBE
-// SHOW AN ICON ON THE ROW/CARD OF THE CONTAINER SHOWING THAT THE ACTION IS STILL
-// ON PROGRESS
-
-
 
 // global vars
 var currentFilter = 'all';
@@ -32,7 +20,7 @@ $(document).on({
         let id = e.currentTarget.id;
         hidePopover(id);
     }
-}, ".popover-item");
+});
 
 function triggerContainerAction(id, action) {
     let reqObj = {
@@ -42,11 +30,32 @@ function triggerContainerAction(id, action) {
         'params': null
     };
     sendRequest(reqObj, null,
-        (response) => refresh(),
-        (error) => dump(`Error procesing petition, error: ${error}`));
+        (response) => {
+            console.log('container action response: ', response);
+            let res = JSON.parse(response.srcElement.response);
+            if('error' in res) showAlert('An error occurred triggering container action.', 'danger');
+            else {
+                refresh();
+            }
+        },
+        (error) => {
+            console.log('error: ', error);
+            showAlert('An error occurred trying to make a request, check console for more info.', 'danger');
+        });
 }
 
-
+function goToDetailsOf(containerName) {
+    console.log('container to detail name: ', containerName);
+    localStorage.setItem('container', containerName.substr(1, containerName.length));
+    // pass the current container list, only names
+    containersNames = containers.map(c => { 
+        let name = c.Names[0];
+        return name.substr(1, name.length);
+    });
+    console.log('containers names: ', containersNames);
+    localStorage.setItem('containers_list', containersNames);
+    location.href = '/container_details';
+}
 function showCModal(container) {
     let state = container.State;
     let id = container.Id;
@@ -63,27 +72,33 @@ function showCModal(container) {
     &nbsp;<div class="row"><strong>Created: ${timeConverter(container.Created)}</strong><p id="container-created">&nbsp;</p></div>
     </div>`;
 
-    let footer = '';
+    let footer = `
+        <div class="w-100 d-flex justify-content-between">
+        <a class="d-flex align-self-center" href="#" onclick="goToDetailsOf('${container.Names[0]}')">Container details</a>`;
     if(state == 'exited' || state == 'created') {
-        footer += `<div class="form-check">
-     <input class="form-check-input" type="checkbox" value="" id="chkLaunchOptions">
-     <label class="form-check-label" for="chkLaunchOptions">
-         Add arguments to launch?
-     </label>
-     </div>
-    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-    <button onclick="triggerContainerAction('${id}','start')" type="button" class="btn btn-primary" data-dismiss="modal">Start</button>`
+        footer += `
+        <div class="d-flex">
+        <button type="button" class="btn btn-secondary mx-1" data-dismiss="modal">Close</button>
+        <button onclick="triggerContainerAction('${id}','start')" type="button" class="btn btn-primary mx-1" data-dismiss="modal">Start</button>
+        </div>`
     } else if(state == 'paused') {
-        footer += `<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button onclick="triggerContainerAction('${id}','unpause')" type="button" class="btn btn-info" data-dismiss="modal">Unpause</button>
-        <button onclick="triggerContainerAction('${id}','stop')" type="button" class="btn btn-danger" data-dismiss="modal">Stop</button>`
+        footer += `
+        <div class="d-flex">
+        <button type="button" class="btn btn-secondary mx-1" data-dismiss="modal">Close</button>
+        <button onclick="triggerContainerAction('${id}','unpause')" type="button" class="btn btn-info mx-1" data-dismiss="modal">Unpause</button>
+        <button onclick="triggerContainerAction('${id}','stop')" type="button" class="btn btn-danger mx-1" data-dismiss="modal">Stop</button>
+        </div>`
     } else if(state == 'running') {
-        footer += `<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button onclick="triggerContainerAction('${id}','restart')" type="button" class="btn btn-warning" data-dismiss="modal">Restart</button>
-        <button onclick="triggerContainerAction('${id}','pause')" type="button" class="btn btn-info" data-dismiss="modal">Pause</button>
-        <button onclick="triggerContainerAction('${id}','stop')" type="button" class="btn btn-danger" data-dismiss="modal">Stop</button>`
+        footer += `
+        <div class="d-flex">
+        <button type="button" class="btn btn-secondary mx-1" data-dismiss="modal">Close</button>
+        <button onclick="triggerContainerAction('${id}','restart')" type="button" class="btn btn-warning mx-1" data-dismiss="modal">Restart</button>
+        <button onclick="triggerContainerAction('${id}','pause')" type="button" class="btn btn-info mx-1" data-dismiss="modal">Pause</button>
+        <button onclick="triggerContainerAction('${id}','stop')" type="button" class="btn btn-danger mx-1" data-dismiss="modal">Stop</button>
+        </div>`
     }
-
+    
+    footer += '</div>';
     showModal(title, body, footer);
 }
 
@@ -143,7 +158,7 @@ function buildContainerHtmlTemplate(container) {
     var containerHtmlTemplate = `
     <div id="${container.Id}" class="card">
     <div class="card-header ${cardHeaderClasses} grid-card-header">${container.Names} (${state})
-        <span onclick="showContainerDetails('${container.Id}')" data-feather="info"></span>
+        <span onclick="showDeleteContainerModal('${container.Names[0]}')" data-feather="trash"></span>
     </div>
     <div class="card-body">
         <p class="card-text"><strong>ID: </strong>${container.Id}</p>
@@ -182,11 +197,10 @@ function loadContainers(containers, filter) {
 }
 
 function refresh() {
-    console.log('refreshing');
     let reqObj = {
         'type': 'GET',
-        'url': `http://localhost:8000/containers/json`,
-        'isAsync': false,
+        'url': `/containers/json`,
+        'isAsync': true,
         'params': null
     };
     sendRequest(reqObj, null,
@@ -200,7 +214,10 @@ function refresh() {
                 loadContainers(containers, currentFilter);
             }
         },
-        (error) => dump(`Error procesing petition, error: ${error}`));
+        (error) => {
+            console.log('error: ', error);
+            showAlert('An error occurred trying to make a request, check console for more info.', 'danger');
+        });
 }
 
 function formatView(format) {
@@ -278,7 +295,10 @@ function deleteContainer(container) {
                 refresh();
             }
         },
-        (error) => console.log('error: ', error));
+        (error) => {
+            console.log('error: ', error);
+            showAlert('An error occurred trying to make a request, check console for more info.', 'danger');
+        });
 }
 
 function showDeleteContainerModal(container) {

@@ -1,4 +1,3 @@
-
 var xhr = new XMLHttpRequest();
 
 loginFormTemplate = `<div>
@@ -27,17 +26,17 @@ function switchForm(to) {
 
 function invalidSignupParamsExists() {
     if(!document.getElementById('username').checkValidity()) {
-        document.getElementById('username').setCustomValidity(fieldsMessages['username']);
+        document.getElementById('username').setCustomValidity(loginFieldsMessages['username']);
         document.getElementById('username').reportValidity();
         return true;
     }
     if(!document.getElementById('password').checkValidity()) {
-        document.getElementById('password').setCustomValidity(fieldsMessages['password']);
+        document.getElementById('password').setCustomValidity(loginFieldsMessages['password']);
         document.getElementById('password').reportValidity();
         return true;
     }
     if(!document.getElementById('confirmPassword').checkValidity()) {
-        document.getElementById('confirmpassword').setCustomValidity(fieldsMessages['confirmPassword']);
+        document.getElementById('confirmpassword').setCustomValidity(loginFieldsMessages['confirmPassword']);
         document.getElementById('confirmpassword').reportValidity();
         return true;
     }
@@ -45,12 +44,12 @@ function invalidSignupParamsExists() {
 }
 function invalidLoginParamsExists() {
     if(!document.getElementById('username').checkValidity()) {
-        document.getElementById('username').setCustomValidity(fieldsMessages[key]);
+        document.getElementById('username').setCustomValidity(loginFieldsMessages[key]);
         document.getElementById('username').reportValidity();
         return true;
     }
     if(!document.getElementById('password').checkValidity()) {
-        document.getElementById('password').setCustomValidity(fieldsMessages[key]);
+        document.getElementById('password').setCustomValidity(loginFieldsMessages[key]);
         document.getElementById('password').reportValidity();
         return true;
     }
@@ -162,11 +161,8 @@ function setValidities() {
         console.log('changed: ', e);
         let id = e.target.id;
         if(!document.getElementById(id).checkValidity()) {
-            document.getElementById(id).setCustomValidity(fieldsMessages[id]);
+            document.getElementById(id).setCustomValidity(loginFieldsMessages[id]);
             document.getElementById(id).reportValidity();
         }
     });
 }
-
-// TODO: CONFIRM THAT THE PASSWORD IS THE SAME WHEN USING SIGN UP FORM
-// TODO: PUT ERROR COLORS WHEN NOT PASSWORD/USERNAME GIVEN

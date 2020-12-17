@@ -1,487 +1,172 @@
 {% extends 'base.html' %} {% block title %} Container Details {% endblock %} {% block head %} {{ super() }} {% endblock %} {%
 block content %}
+<link href="{{url_for('static', filename='css/container_creator.css')}}" rel="stylesheet"> 
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4 position-relative">
     <!-- CONTAINER DETAILS TEMPLATE -->
-    <div class="site-content">
-            <div class="container-options d-flex flex-wrap pb-3">
-                <!-- BASICS CARD -->
-                <div class="card basics">
-                    <div class="card-header d-flex justify-content-between align-items-center" onclick="collapseCard(event)">
-                        <strong>Basics</strong>
-                        <span data-feather="chevron-down"></span>
+    <div class="site-content d-flex flex-column">
+        <div class="title"><h3>Container info</h3></div>
+        <div class="d-flex justify-content-between bg-light p-2">
+            <div class="d-flex flex-wrap w-75 p-1">
+                <div class="d-flex flex-column flex-wrap w-75">
+                    <select id="selectContainer"></select>
+                    <div class="d-flex px-1 flex-column align-items-start">
+                        <strong>Image Id: </strong>
+                        <p class="p-0 m-0 text-muted" id="imageId">e9c49c98e47c9893d9eb2224c17db40b7ab87ee6957de429bd4c4500007c8fb9</p>
                     </div>
-                    <div class="card-body p-1 d-flex flex-wrap">
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="containerName">Container name:</label>
-                            <input autocomplete="off" id="containerName" type"text" placeholder="Container Name" class="form-control" pattern="[A-Za-z0-9_-]+$" onchange="checkValidity(event)">
-                            <button id="addvalidity" onclick="addValidity()">ADDVALIDITY</button>
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <!-- Could be a list -->
-                            <label for="command">Command to run:</label>
-                            <input autocomplete="off" id="command" type"text" placeholder="Container command" class="form-control">
-                        </div>                        
-                        <div class="input-group-sm m-2">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <label class="py-0 my-0" for="ports">Ports binds:</label>
-                                <button onclick="showDictionaryModal('ports')" class="btn btn-sm btn-primary my-1" >add</button>
-                            </div>
-                            <input autocomplete="off" id="ports" type"text" placeholder="Ports" class="form-control" readonly>
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="hostname">Host name:</label>
-                            <input autocomplete="off" id="hostname" type"text" placeholder="Host Name" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="apiversion">API Version:</label>
-                            <input autocomplete="off" id="apiversion" type"text" placeholder="1.35,1.40" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <!-- Could be a list -->
-                            <label for="entrypoint">Entrypoint:</label>
-                            <input autocomplete="off" id="entrypoint" type"text" placeholder="Entrypoint" class="form-control" oninvalid="alert('Entryypoint invalid')">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="working_dir">Working Dir:</label>
-                            <input autocomplete="off" id="working_dir" type"text" placeholder="Working Dir" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="restartPolicy">Restart Policy:</label>
-                            <select id="restartPolicy">
-                                <option value="no">no</option>>
-                                <option value="always">always</option>>
-                                <option value="on-failure">on-failure</option>>
-                                <option value="unless-stopped">unless-stopped</option>>
-                            </select>
-                            <input autocomplete="off" id="maxRetryCount" type"text" placeholder="Maximum Retry Count" class="form-control"> 
-                        </div>
-                        <div class="input-group-sm m-2">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <label class="py-0 my-0" for="environment">Environment:</label>
-                                <button onclick="showDictionaryModal('environment')" class="btn btn-sm btn-primary my-1" >add</button>
-                            </div>
-                            <input autocomplete="off" id="environment" type"text" placeholder="Environment" class="form-control" readonly>
-                        </div>
-                        <div class="input-group-sm m-2">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <label class="py-0 my-0" for="labels">Labels:</label>
-                                <button onclick="showDictionaryModal('labels')" class="btn btn-sm btn-primary my-1" >add</button>
-                            </div>
-                            <input autocomplete="off" id="labels" type"text" placeholder="Labels" class="form-control" readonly>
-                        </div>
-                        <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
-                            <input autocomplete="off" id="chkTty" type="checkbox">
-                            <label for="chkTty" class="ml-1 mb-0 mr-2">Enable tty?</label>
-                            <span data-feather="help-circle"></span>
-                        </div>
-                        <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
-                            <input autocomplete="off" id="chkAutoremove" type="checkbox">
-                            <label for="chkAutoremove" class="ml-1 mb-0 mr-2">Autoremove?</label>
-                            <span data-feather="help-circle"></span>
-                        </div>
-                        <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
-                            <input autocomplete="off" id="chkDetach" type="checkbox">
-                            <label for="chkDetach" class="ml-1 mb-0 mr-2">Detach?</label>
-                            <span data-feather="help-circle"></span>
-                        </div>
-                        <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
-                            <input autocomplete="off" id="chkRemove" type="checkbox" disabled>
-                            <label for="chkRemove" class="ml-1 mb-0 mr-2">Remove?</label>
-                            <span data-feather="help-circle"></span>
-                        </div>
-                        <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
-                            <input autocomplete="off" id="chkPublishAll" type="checkbox">
-                            <label for="chkPublishAll" class="ml-1 mb-0 mr-2">Publish all ports?</label>
-                            <span data-feather="help-circle"></span>
-                        </div>
-                        <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
-                            <input autocomplete="off" id="chkReadOnly" type="checkbox">
-                            <label for="chkReadOnly" class="ml-1 mb-0 mr-2">Read only?</label>
-                            <span data-feather="help-circle"></span>
-                        </div>
-                        <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
-                            <input autocomplete="off" id="chkPrivileged" type="checkbox">
-                            <label for="chkPrivileged" class="ml-1 mb-0 mr-2">Privileged?</label>
-                            <span data-feather="help-circle"></span>
-                        </div>
+                    <div class="d-flex px-1 flex-column align-items-start">
+                        <strong>Id: </strong>
+                        <p class="p-0 m-0 text-muted" id="containerId">e9c49c98e47c9893d9eb2224c17db40b7ab87ee6957de429bd4c4500007c8fb9</p>
+                    </div>
+                    <div class="d-flex px-1 flex-column align-items-start">
+                        <strong>Created at: </strong>
+                        <p class="p-0 m-0 text-muted" id="createdAt">2020-12-03T23:39:25.150801135Z</p>
                     </div>
                 </div>
-                <!-- RESOURCES CARD -->
-                <div class="card resources">
-                    <div class="card-header d-flex justify-content-between align-items-center" onclick="collapseCard(event)">
-                        <strong>Resources</strong>
-                        <span data-feather="chevron-down"></span>
+                <div class="d-flex justify-content-center align-items-start flex-column flex-wrap w-25">
+                    <div class="d-flex px-1 flex-column align-items-start">
+                        <strong>Platform: </strong>
+                        <p class="p-0 m-0 text-muted" id="platform">Linux</p>
                     </div>
-                    <div class="card-body p-1 d-flex flex-wrap">
-                        <!-- CPU -->
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="cgroupParent">CGroup Parent:</label>
-                            <input autocomplete="off" id="cgroupParent" type"text" placeholder="CGroup Parent" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="cpuCount">CPU Count:</label>
-                            <input autocomplete="off" id="cpuCount" type="number" placeholder="CPU Count(Windows Only)" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="cpuPercent">CPU Percent:</label>
-                            <input autocomplete="off" id="cpuPercent" type="number" placeholder="CPU Percent(Windows Only)" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="cpuPeriod">CPU Perid:</label>
-                            <input autocomplete="off" id="cpuPeriod" type="number" placeholder="CPU Period" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="cpuQuota">CPU Quota:</label>
-                            <input autocomplete="off" id="cpuQuota" type="number" placeholder="CPU Quota" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="cpuRtPeriod">CPU Real Time Period:</label>
-                            <input autocomplete="off" id="cpuRtPeriod" type="number" placeholder="CPU RT Period" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="cpuRtRuntime">CPU Real Time Runtime:</label>
-                            <input autocomplete="off" id="cpuRtRuntime" type="number" placeholder="CPU RT Runtime" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="cpuShares">CPU Shares:</label>
-                            <input autocomplete="off" id="cpuShares" type="number" placeholder="CPU Shares" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="nanoCpus">Nano CPUs:</label>
-                            <input autocomplete="off" id="nanoCpus" type="number" placeholder="Nano CPUs" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="cpusetMems">Set MEMS:</label>
-                            <input autocomplete="off" id="cpusetMems" type="text" placeholder="--cpuset_mems" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="cpusetCpus">Set CPUs:</label>
-                            <input autocomplete="off" id="cpusetCpus" type="text" placeholder="Set CPUs to use" class="form-control">
-                        </div>
-                        <!-- MEMORY -->
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="memLimit">Memory Limit:</label>
-                            <input autocomplete="off" id="memLimit" type="text" placeholder="Set maximum memory to use" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="memReservation">Memory Reservation:</label>
-                            <input autocomplete="off" id="memReservation" type="text" placeholder="Set memory to reserve" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="memSwappiness">Set memory swappiness: </label>
-                            <input autocomplete="off" id="memSwappiness" type="text" placeholder="Set memory swappiness" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="memSwapLimit">Set Memory Swap Limit:</label>
-                            <input autocomplete="off" id="memSwapLimit" type="text" placeholder="Set memory swap limit" class="form-control">
-                        </div>
-                        <!-- IO -->
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="blkioWeight">Set BLKIO Weight:</label>
-                            <input autocomplete="off" id="blkioWeight" type="number" placeholder="blkio_weight" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <!-- list of objects -->
-                            <label for="blkioWeightDevice">BLKIO Weight Device:</label>
-                            <input autocomplete="off" id="blkioWeightDevice" type="text" placeholder="blkio_weight_device" class="form-control">
-                        </div>
+                    <div class="d-flex px-1 flex-column align-items-start">
+                        <strong>Restart Count: </strong>
+                        <p class="p-0 m-0 text-muted" id="restartCount">0</p>
                     </div>
                 </div>
-                <!-- NETWORKS SECTION -->
-                <div class="card networks">
-                    <div class="card-header d-flex justify-content-between align-items-center" onclick="collapseCard(event)">
-                        <strong>Networks</strong>
-                        <span data-feather="chevron-down"></span>
+            </div>
+            <div id="state" class="d-flex w-25 flex-column flex-wrap justify-content-end align-content-end">
+                <div class="d-flex justify-content-end p-1">
+                    <h2 id="status" class="text-success font-weight-bold">Running</h2>
+                </div>
+                <div class="d-flex flex-column p-1">
+                    <div class="d-flex flex-column align-items-end">
+                        <strong>Started at: </strong>
+                        <p class="p-0 m-0 text-muted" id="startedAt">2020-12-03T23:39:25.150801135Z</p>
                     </div>
-                    <div class="card-body">
-                        <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
-                            <input autocomplete="off" id="chkNetworkDisabled" type="checkbox">
-                            <label for="chkNetworkDisabled" class="ml-1 mb-0 mr-2">Disabled Network?</label>
-                            <span data-feather="help-circle"></span>
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <!-- USE A SELECT -->
-                            <label for="network">Network: </label>
-                            <input autocomplete="off" id="network" type="text" placeholder="Network to use" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="networkMode">Network Mode:</label>
-                            <select id="networkMode">
-                                <option value="bridge">bridge</option>
-                                <option value="none">none</option>
-                                <option value="host">host</option>
-                                <option value="container">container</option>
-                            </select>
-                        </div>
+                    <div class="d-flex flex-column align-items-end">
+                        <strong>Finished at: </strong>
+                        <p class="p-0 m-0 text-muted" id="finishedAt">2020-12-03T23:39:25.150801135Z</p>
                     </div>
                 </div>
-                <!-- VOLUMES SECTION -->
-                <div class="card volumes">
-                    <div class="card-header d-flex justify-content-between align-items-center" onclick="collapseCard(event)">
-                        <strong>Volumes / Binds</strong>
-                        <span data-feather="chevron-down"></span>
-                    </div>
-                    <div class="card-body">
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="volumeDriver">Volume Driver: </label>
-                            <input autocomplete="off" id="volumeDriver" type="text" placeholder="Volume Driver" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <!-- DICT OR LIST --> 
-                            <label for="volumes">Volumes: </label>
-                            <input autocomplete="off" id="volumes" type="text" placeholder="Volumes" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="volumesFrom">Volumes From: </label>
-                            <input autocomplete="off" id="volumesFrom" type="text" placeholder="volumes list" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="mounts">Mounts: </label>
-                            <input autocomplete="off" id="mounts" type="text" placeholder="mounts list" class="form-control">
-                        </div>
-                    </div>
+            </div>
+        </div>
+        <div class="container-options d-flex flex-wrap pb-3">
+            <!-- BASICS CARD -->
+            <div class="card basics">
+                <div class="card-header d-flex justify-content-between align-items-center" onclick="collapseCard(event)">
+                    <strong>Basics</strong>
+                    <span data-feather="chevron-down"></span>
                 </div>
-                <!-- ADVANCED SECTION -->
-                <div class="advanced-options card">
-                    <div class="card-header d-flex justify-content-between align-items-center" onclick="collapseCard(event)">
-                        <strong>ADVANCED</strong>
-                        <span data-feather="chevron-down"></span>
+                <div class="card-body p-1 d-flex flex-wrap">
+                    <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                        <div class="d-flex flex-column justify-content-between align-items-center">
+                            <strong>Commands:</strong>
+                            <ul id="commandsList"></ul>
+                        </div>
+                    </div>                        
+                    <div class="input-group-sm m-2">
+                        <div class="d-flex flex-column justify-content-between align-items-center">
+                            <strong>Ports binds:</strong>
+                            <table class="table table-sm table-responsive">
+                                <thead class="thead-dark">
+                                    <th>#</th>
+                                    <th>Host port</th>
+                                    <th>Container bind</th>
+                                </thead>
+                                <tbody id="portsTableBody"></tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div class="card-body p-1 d-flex flex-wrap">
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <!-- ARRAYS OF JSONS -->
-                            <label for="deviceReadBps">Device Read BPS: </label>
-                            <input autocomplete="off" id="deviceReadBps" type="text" placeholder="[{'Path': '/dev/sda1'}, 'Rate': '50Mb']" class="form-control">
+                    <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                        <strong>Host name:</h5>
+                        <h5 id="hostname">HOST NAME</h5>
+                    </div>
+                    <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                        <strong>API Version:</strong>
+                        <h5 id="hostname">API Version</h5>
+                    </div>
+                    <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                        <div class="d-flex flex-column justify-content-between align-items-center">
+                            <strong>Entrypoint:</strong>
+                            <ul id="entrypointList"></ul>
                         </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <!-- ARRAYS OF JSONS -->
-                            <label for="deviceReadIops">Device Read IO Per Second: </label>
-                            <input autocomplete="off" id="deviceReadIops" type="text" placeholder="[{'Path': '/dev/sda1'}, 'Rate': '50Mb']" class="form-control">
+                    </div>
+                    <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                        <strong>Working Dir:</strong>
+                        <h5 id="hostname">HOST NAME</h5>
+                    </div>
+                    <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                        <strong>Restart Policy:</strong>
+                        <h5 id="hostname">HOST NAME</h5>
+                    </div>
+                    <div class="input-group-sm m-2">
+                        <div class="d-flex flex-column justify-content-between align-items-center">
+                            <strong>Environment Vars:</strong>
+                            <table class="table table-sm table-responsive">
+                                <thead class="thead-dark">
+                                    <th>#</th>
+                                    <th>ENV Key</th>
+                                    <th>ENV Value</th>
+                                </thead>
+                                <tbody id="environmentTableBody"></tbody>
+                            </table>
                         </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <!-- ARRAYS OF JSONS -->
-                            <label for="deviceWriteBps">Device Write BPS: </label>
-                            <input autocomplete="off" id="deviceWriteBps" type="text" placeholder="[{'Path': '/dev/sda1'}, 'Rate': '50Mb']" class="form-control">
+                    </div>
+                    <div class="input-group-sm m-2">
+                        <div class="d-flex flex-column justify-content-between align-items-center">
+                            <strong>Labels:</strong>
+                            <table class="table table-sm table-responsive">
+                                <thead class="thead-dark">
+                                    <th>#</th>
+                                    <th>Label Key</th>
+                                    <th>Label Value</th>
+                                </thead>
+                                <tbody id="labelsTableBody"></tbody>
+                            </table>
                         </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <!-- ARRAYS OF JSONS -->
-                            <label for="deviceWriteIops">Device Write IO Per Second: </label>
-                            <input autocomplete="off" id="deviceWriteIops" type="text" placeholder="[{'Path': '/dev/sda1'}, 'Rate': '50Mb']" class="form-control">
-                        </div>
-                    
-                        <!-- LISTS OR STR -->
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="capAdd">Add Capabilities: </label>
-                            <input autocomplete="off" id="capAdd" type="text" placeholder="Add Capabilities" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="capDrop">Drop Capabilities: </label>
-                            <input autocomplete="off" id="capDrop" type="text" placeholder="Drop Capabilities" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="domainName">Domain Name: </label>
-                            <input autocomplete="off" id="domainName" type="text" placeholder="Domain Name" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="initPath">Init Path: </label>
-                            <input autocomplete="off" id="initPath" type="text" placeholder="Init Path" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="ipcMode">IPC Mode: </label>
-                            <input autocomplete="off" id="ipcMode" type="text" placeholder="IPC Mode" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="isolation">Isolation: </label>
-                            <input autocomplete="off" id="isolation" type="text" placeholder="Isolation" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="kernelMemory">Kernel Memory: </label>
-                            <input autocomplete="off" id="kernelMemory" type="text" placeholder="Kernel Memory" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="macAddress">Mac Address: </label>
-                            <input autocomplete="off" id="macAddress" type="text" placeholder="Mac Address" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="pidMode">PID Mode: </label>
-                            <input autocomplete="off" id="pidMode" type="text" placeholder="PID Mode" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="platform">Platform: </label>
-                            <input autocomplete="off" id="platform" type="text" placeholder="Platform" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="runtime">Runtime: </label>
-                            <input autocomplete="off" id="runtime" type="text" placeholder="Runtime" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="shmSize">SHM Size: </label>
-                            <input autocomplete="off" id="shmSize" type="text" placeholder="SHM Size" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="stopSignal">STOP Signal: </label>
-                            <input autocomplete="off" id="stopSignal" type="text" placeholder="STOP Signal" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="user">User: </label>
-                            <input autocomplete="off" id="user" type="text" placeholder="User" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="usernsMode">UserNS mode: </label>
-                            <input autocomplete="off" id="usernsMode" type="text" placeholder="User Namespace mode" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="utsMode">UTS Mode: </label>
-                            <input autocomplete="off" id="utsMode" type="text" placeholder="UTS Mode" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="deviceCgroupRule">Device CGroup Rules: </label>
-                            <input autocomplete="off" id="deviceCgroupRule" type="text" placeholder="Device CGroup Rules" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="devices">Devices: </label>
-                            <input autocomplete="off" id="devices" type="text" placeholder="<hostpath>:<containerpath>:<cgrouppermissions>" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="deviceRequests">Devices Requests: </label>
-                            <input autocomplete="off" id="deviceRequests" type="text" placeholder="Devices Requests" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="dns">DNS: </label>
-                            <input autocomplete="off" id="dns" type="text" placeholder="DNS" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="dnsOpt">DNS Options: </label>
-                            <input autocomplete="off" id="dnsOpt" type="text" placeholder="DNS Options" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="dnsSearch">DNS Search: </label>
-                            <input autocomplete="off" id="dnsSearch" type="text" placeholder="DNS Search" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="groupAdd">Group Add: </label>
-                            <input autocomplete="off" id="groupAdd" type="text" placeholder="Group Add" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="securityOpt">Security Options: </label>
-                            <input autocomplete="off" id="securityOpt" type="text" placeholder="Security Options" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="ulimits">ULimits: </label>
-                            <input autocomplete="off" id="ulimits" type="text" placeholder="ULimits" class="form-control">
-                        </div>
-
-                        <div class="input-group-sm m-2">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <label class="py-0 my-0" for="lxcConf">LXC Config:</label>
-                                <button onclick="showDictionaryModal('lxcConf')" class="btn btn-sm btn-primary my-1" >add</button>
-                            </div>
-                            <input autocomplete="off" id="lxcConf" type"text" placeholder="LXC Config" class="form-control" readonly>
-                        </div>
-
-                        <div class="input-group-sm m-2">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <label class="py-0 my-0" for="healthcheck">Healthcheck:</label>
-                                <button onclick="showDictionaryModal('healthcheck')" class="btn btn-sm btn-primary my-1" >add</button>
-                            </div>
-                            <input autocomplete="off" id="healthcheck" type"text" placeholder="Healthcheck" class="form-control" readonly>
-                        </div>
-                        
-                        <div class="input-group-sm m-2">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <label class="py-0 my-0" for="extraHosts">Extra hosts:</label>
-                                <button onclick="showDictionaryModal('extraHosts')" class="btn btn-sm btn-primary my-1" >add</button>
-                            </div>
-                            <input autocomplete="off" id="extraHosts" type"text" placeholder="Extra hosts" class="form-control" readonly>
-                        </div>
-
-                        <div class="input-group-sm m-2">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <label class="py-0 my-0" for="links">Link:</label>
-                                <button onclick="showDictionaryModal('links')" class="btn btn-sm btn-primary my-1" >add</button>
-                            </div>
-                            <input autocomplete="off" id="links" type"text" placeholder="Links" class="form-control" readonly>
-                        </div>
-
-                        <div class="input-group-sm m-2">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <label class="py-0 my-0" for="logConfig">Log Config:</label>
-                                <button onclick="showDictionaryModal('logConfig')" class="btn btn-sm btn-primary my-1" >add</button>
-                            </div>
-                            <input autocomplete="off" id="logConfig" type"text" placeholder="Log Config" class="form-control" readonly>
-                        </div>
-                        
-                        <div class="input-group-sm m-2">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <label class="py-0 my-0" for="storageOpt">Storage Options:</label>
-                                <button onclick="showDictionaryModal('storageOpt')" class="btn btn-sm btn-primary my-1" >add</button>
-                            </div>
-                            <input autocomplete="off" id="storageOpt" type"text" placeholder="Storage Options" class="form-control" readonly>
-                        </div>
-                        
-                        <div class="input-group-sm m-2">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <label class="py-0 my-0" for="sysctls">System CTLS:</label>
-                                <button onclick="showDictionaryModal('sysctls')" class="btn btn-sm btn-primary my-1" >add</button>
-                            </div>
-                            <input autocomplete="off" id="sysctls" type"text" placeholder="System CTLS" class="form-control" readonly>
-                        </div>
-
-                        <div class="input-group-sm m-2">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <label class="py-0 my-0" for="tmpfs">Temporary Filesystems:</label>
-                                <button onclick="showDictionaryModal('tmpfs')" class="btn btn-sm btn-primary my-1" >add</button>
-                            </div>
-                            <input autocomplete="off" id="tmpfs" type"text" placeholder="Temporary Filesystems" class="form-control" readonly>
-                        </div>
-
-                        <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
-                            <input autocomplete="off" id="chkOomKill" type="checkbox">
-                            <label for="chkOomKill" class="ml-1 mb-0 mr-2">Disable OOM Kill?</label>
-                            <span data-feather="help-circle"></span>
-                        </div>
-                        <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
-                            <input autocomplete="off" id="chkInit" type="checkbox">
-                            <label for="chkInit" class="ml-1 mb-0 mr-2">Init?</label>
-                            <span data-feather="help-circle"></span>
-                        </div>
-                        <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
-                            <input autocomplete="off" id="chkStdinOpen" type="checkbox">
-                            <label for="chkStdinOpen" class="ml-1 mb-0 mr-2">Open STDIN?</label>
-                            <span data-feather="help-circle"></span>
-                        </div>
-                        <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
-                            <input autocomplete="off" id="chkStdout" type="checkbox">
-                            <label for="chkStdout" class="ml-1 mb-0 mr-2">Enable STDOUT?</label>
-                            <span data-feather="help-circle"></span>
-                        </div>
-                        <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
-                            <input autocomplete="off" id="chkStderr" type="checkbox">
-                            <label for="chkStderr" class="ml-1 mb-0 mr-2">Enable STERR?</label>
-                            <span data-feather="help-circle"></span>
-                        </div>
-                        <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
-                            <input autocomplete="off" id="chkStream" type="checkbox">
-                            <label for="chkStream" class="ml-1 mb-0 mr-2">Enable Stream?</label>
-                            <span data-feather="help-circle"></span>
-                        </div>
-                        <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
-                            <input autocomplete="off" id="chkUseConfigProxy" type="checkbox">
-                            <label for="chkUseConfigProxy" class="ml-1 mb-0 mr-2">Use Proxy Config?</label>
-                            <span data-feather="help-circle"></span>
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="oomScoreAdj">OOM Score: </label>
-                            <input autocomplete="off" id="oomScoreAdj" type="number" placeholder="OOM Score" class="form-control">
-                        </div>
-                        <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="pidsLimit">PIDS Limit: </label>
-                            <input autocomplete="off" id="pidsLimit" type="number" placeholder="PIDS Limit" class="form-control">
-                        </div>
+                    </div>
+                    <div class="d-flex flex-column justify-content-between align-items-center p-2 bg-light">
+                        <ul id="enableables" class="list-group">
+                            <li id="autoremove" class="list-group-item d-flex justify-content-between">Testo
+                                <span data-feather="x"></span></li>
+                            <li id="detach" class="list-group-item d-flex justify-content-between">Testo
+                                <span data-feather="x"></span></li>
+                            <li id="autoremove" class="list-group-item d-flex justify-content-between">Testo
+                                <span data-feather="x"></span></li>
+                            <li id="autoremove" class="list-group-item d-flex justify-content-between">Testo
+                                <span data-feather="x"></span></li>
+                            <li id="autoremove" class="list-group-item d-flex justify-content-between">Testo
+                                <span data-feather="x"></span></li>
+                        </ul>
+                    </div>
+                    <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
+                        <input autocomplete="off" id="chkTty" type="checkbox">
+                        <label for="chkTty" class="ml-1 mb-0 mr-2">Enable tty?</label>
+                    </div>
+                    <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
+                        <input autocomplete="off" id="chkAutoremove" type="checkbox">
+                        <label for="chkAutoremove" class="ml-1 mb-0 mr-2">Autoremove?</label>
+                    </div>
+                    <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
+                        <input autocomplete="off" id="chkDetach" type="checkbox">
+                        <label for="chkDetach" class="ml-1 mb-0 mr-2">Detach?</label>
+                    </div>
+                    <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
+                        <input autocomplete="off" id="chkPublishAll" type="checkbox">
+                        <label for="chkPublishAll" class="ml-1 mb-0 mr-2">Publish all ports?</label>
+                    </div>
+                    <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
+                        <input autocomplete="off" id="chkReadOnly" type="checkbox">
+                        <label for="chkReadOnly" class="ml-1 mb-0 mr-2">Read only?</label>
+                    </div>
+                    <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
+                        <input autocomplete="off" id="chkPrivileged" type="checkbox">
+                        <label for="chkPrivileged" class="ml-1 mb-0 mr-2">Privileged?</label>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    </div>
+    <script src="{{url_for('static', filename='js/container_details.js')}}"></script>
 </main>
 {% endblock %} {% block footer %} {{ super() }} {% endblock %}

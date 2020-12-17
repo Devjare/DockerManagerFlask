@@ -98,6 +98,7 @@ class Container(db.Model):
 
 class UsersContainers(db.Model):
     __tablename__ = 'users_containers'
+    id = db.Column(db.String(255), primary_key=True)
     user_id = db.Column(db.Integer, 
             ForeignKey('containers.id'),
             primary_key=True)
@@ -331,6 +332,15 @@ def addContainerToUser(idcontainer):
     db.session.add(userContainer)
     db.session.commit()
 
+@app.route('/images/inspect/<id>', methods=["GET"])
+def getImageInfo(id):
+    image = {}
+    try:
+        image = dockercli.inspect_image(id)
+    except docker.errors.APIError as err:
+        return { "error": err }
+    return {"image": image} 
+
 # ************* CONTAINERS ********************
 
 @app.route('/container_creation')
@@ -348,6 +358,7 @@ def createContainer():
     if('advancedCreation' in data):
         print('data: ', data);
         if(not data['run']):
+            print('create without running')
             try:
                 container = client.containers.create(
                     image = data['image'], 
@@ -405,7 +416,7 @@ def createContainer():
                     kernel_memory = data['kernel_memory'] if 'kernel_memory' in data else None,
                     mac_address = data['mac_address'] if 'mac_address' in data else None,
                     pid_mode = data['pid_mode'] if 'pid_mode' in data else None,
-                    # platform = data['platform'], apparently platform, and source are not valid paramters
+                    # platform = data['platform'], apparently platform, and stream are not valid paramters
                     # maybe the version of python or docker is causing the problem.
                     runtime = data['runtime'] if 'runtime' in data else None,
                     shm_size = data['shm_size'] if 'shm_size' in data else None,
@@ -437,14 +448,17 @@ def createContainer():
                     oom_score_adj = int(data['oom_score_adj']) if 'oom_score_adj' in data else None,
                     pids_limit = int(data['pids_limit']) if 'pids_limit' in data else None
                 )
+                print('created container', container)
                 addContainerToUser(container.id)
             except docker.errors.APIError as api_error:
-                return { 'error': True }
+                print('error: ', api_error)
+                return { 'error': api_error }
             except docker.errors.ImageNotFound as error:
-                return { 'error': True }
+                return { 'error': error }
         else:        
+            print('create running')
             try:
-                container = client.containers.run(
+                container = client.containers.create(
                     image = data['image'], 
                     name = data['name'] if 'name' in data else None, 
                     ports = data['ports'] if 'ports' in data else None, 
@@ -462,7 +476,6 @@ def createContainer():
                     read_only = data['read_only'] if 'read_only' in data else None,
                     privileged = data['privileged'] if 'privileged' in data else None,
                     publish_all_ports = data['publish_all_ports'] if 'publish_all_ports' in data else None,
-                    remove = data['remove'] if 'remove' in data else None,
                     cgroup_parent = data['cgroup_parent'] if 'cgroup_parent' in data else None,
                     cpu_count = int(data['cpu_count']) if 'cpu_count' in data else None,
                     cpu_percent = int(data['cpu_percent']) if 'cpu_percent' in data else None,
@@ -500,7 +513,7 @@ def createContainer():
                     kernel_memory = data['kernel_memory'] if 'kernel_memory' in data else None,
                     mac_address = data['mac_address'] if 'mac_address' in data else None,
                     pid_mode = data['pid_mode'] if 'pid_mode' in data else None,
-                    platform = data['platform'] if 'platform' in data else None,
+                    # platform = data['platform'] if 'platform' in data else None,
                     runtime = data['runtime'] if 'runtime' in data else None,
                     shm_size = data['shm_size'] if 'shm_size' in data else None,
                     stop_signal = data['stop_signal'] if 'stop_signal' in data else None,
@@ -526,21 +539,24 @@ def createContainer():
                     oom_kill_disable = data['oom_kill_disable'] if 'oom_kill_disable' in data else None,
                     init = data['init'] if 'init' in data else None,
                     stdin_open = data['stdin_open'] if 'stdin_open' in data else None,
-                    stdout = data['stdout'] if 'stdout' in data else None,
-                    stderr = data['stderr'] if 'stderr' in data else None,
-                    stream = data['stream'] if 'stream' in data else None,
+                    # stream = data['stream'] if 'stream' in data else None,
                     use_config_proxy = data['use_config_proxy'] if 'use_config_proxy' in data else None,
                     oom_score_adj = int(data['oom_score_adj']) if 'oom_score_adj' in data else None,
                     pids_limit = int(data['pids_limit']) if 'pids_limit' in data else None
-                )
+                 )
+                 # since run() doesnt return the new created container id, 
+                 # make a query to look up for the last created container on API
+
+                print('created container', container)
                 addContainerToUser(container.id)
             except docker.errors.APIError as api_error:
                 # since there's no way on knowing on client side, what caused the error
                 # just return that there was an error, hoping for the sdk to implement something
                 # for that.
-                return { 'error': True }
+                print('error: ', api_error)
+                return { 'error': api_error }
             except docker.errors.ImageNotFound as error:
-                return { 'error': True }
+                return { 'error': error }
     else:
         # if not advanced
         print('basic data: ', data)
@@ -559,8 +575,7 @@ def createContainer():
 
         container = client.containers.create(image=data['image'],name=data['name'],ports=ports,command=command, tty=data['tty'], volumes=volume)
         addContainerToUser(container.id)
-    
-    # if run after create is marked, start the container
+   
     if(data['run']):
         container.start()
     # Add container info to database
@@ -579,7 +594,22 @@ def deleteContainer():
     links = request.args.get('links')
     force = request.args.get('force')
     try:
-        client.containers.get(str(container)).remove(v=volumes, link=links, force=force)
+        container = client.containers.get(str(container))
+        print('containerid: ', container.id);
+        
+        # delete from db, Container
+        containerDb = Container.query.get(container.id)
+        db.session.delete(containerDb)
+        
+        # delete row on UserContainerTable
+        usercontainer = UsersContainers.query.filter_by(user_id=session[USERID], container_id=container.id).first()
+        print('usercontainer to delete: ', usercontainer)
+        print('usercontainer to delete: ', usercontainer.id)
+        db.session.delete(usercontainer)
+        db.session.commit()
+
+        # remove on docker
+        container.remove(v=volumes, link=links, force=force)
     except docker.errors.ImageNotFound as e: 
         return { 'error': True }
     except docker.errors.APIError as e: 
@@ -613,34 +643,54 @@ def containerToJson(container):
     c = {"id": container.short_id, "name": container.name, "status": container.status, "image": image}
     return json.dumps(c)
 
-@app.route('/containers/<id>')
+@app.route('/containers/inspect/<id>', methods=["GET"])
 def getContainerInfo(id):
-    return {"contaienrinfo": 'Hello {id}'}
+    container = {}
+    try:
+        container = dockercli.inspect_container(id)
+    except docker.errors.APIError as err:
+        return { "error": err }
+    return {"container": container} 
 
 @app.route('/containers/start/<id>')
 def startContainer(id):
-    dockercli.start(id)
-    return 'running'
+    try:
+        dockercli.start(id)
+    except docker.errors.APIError as err:
+        return { 'error': err }
+    return { 'started': True }
 
 @app.route('/containers/stop/<id>')
 def stopContainer(id):
-    dockercli.stop(id)
-    return 'running'
+    try:
+        dockercli.stop(id)
+    except docker.errors.APIError as err:
+        return { 'error': err }
+    return { 'stopped': True }
 
 @app.route('/containers/restart/<id>')
 def restartContainer(id):
-    dockercli.restart(id)
-    return 'running'
+    try:
+        dockercli.restart(id)
+    except docker.errors.APIError as err:
+        return { 'error': err }
+    return { 'restarting': True }
 
 @app.route('/containers/pause/<id>')
 def pauseContainer(id):
-    dockercli.pause(id)
-    return 'running'
+    try:
+        dockercli.pause(id)
+    except docker.errors.APIError as err:
+        return { 'error': err }
+    return { 'paused': True }
 
 @app.route('/containers/unpause/<id>')
 def unpauseContainer(id):
-    dockercli.unpause(id)
-    return 'running'
+    try:
+        dockercli.unpause(id)
+    except docker.errors.APIError as err:
+        return { 'error': err }
+    return { 'unpaused': True }
 
 @app.route('/', methods=['GET'])
 def loginscreen():
