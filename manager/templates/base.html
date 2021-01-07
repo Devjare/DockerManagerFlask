@@ -56,55 +56,55 @@
                             </li>
                             <!--<li class="nav-item">
                                 <a class="nav-link" href="/silo">
-                                    <span data-feather="file"></span>
-                                    Silo
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/unidades">
-                                    <span data-feather="shopping-cart"></span>
-                                    Unidades de construcción
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/subservicios">
-                                    <span data-feather="users"></span>
-                                    Subservicios virtuales
-                                </a>
-                            </li>-->
-                            <li class="nav-item">
-                                <a id="itemContainers" class="nav-link" href="#"><span data-feather="users"></span>
-                                Containers</a>
-                                <div class="containers-item-submenu">
-                                    <ul>
-                                        <li><a href="/containers"><span data-feather="list"></span>List</a></li>
-                                        <li><a href="/container_details"><span data-feather="info"></span>Details</a></li>
-                                        <li><a href="/container_creation"><span data-feather="info"></span>Creation tool</a></li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li class="nav-item">
-                                <a id="itemImages" class="nav-link" href="#"><span data-feather="users"></span>Images</a>
-                                <div class="images-item-submenu">
-                                    <ul>
-                                        <li><a href="/images"><span data-feather="list"></span>List</a></li>
-                                        <li><a href="/image_details"><span data-feather="info"></span>Details</a></li>
-                                        <li><a href="/image_builder"><span data-feather="info"></span>Build tool</a></li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <!--<li class="nav-item">
-                                <a class="nav-link" href="#">
-                                <span data-feather="bar-chart-2"></span>
-                                Reports
+                                <span data-feather="file"></span>
+                                Silo
                                 </a>
                                 </li>
                                 <li class="nav-item">
-                                <a class="nav-link" href="#">
-                                <span data-feather="layers"></span>
-                                Integrations
+                                <a class="nav-link" href="/unidades">
+                                <span data-feather="shopping-cart"></span>
+                                Unidades de construcción
                                 </a>
-                                </li> -->
+                                </li>
+                                <li class="nav-item">
+                                <a class="nav-link" href="/subservicios">
+                                <span data-feather="users"></span>
+                                Subservicios virtuales
+                                </a>
+                                </li>-->
+                                <li class="nav-item">
+                                    <a id="itemContainers" class="nav-link" href="#" onclick="document.querySelector('.containers-item-submenu').classList.toggle('d-none')"><span data-feather="users"></span>
+                                        Containers</a>
+                                    <div class="containers-item-submenu d-none">
+                                        <ul>
+                                            <li><a href="/containers"><span data-feather="list"></span>List</a></li>
+                                            <li><a href="/container_details"><span data-feather="info"></span>Details</a></li>
+                                            <li><a href="/container_creation"><span data-feather="info"></span>Creation tool</a></li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li class="nav-item">
+                                    <a id="itemImages" class="nav-link" href="#" onclick="document.querySelector('.images-item-submenu').classList.toggle('d-none')"><span data-feather="users"></span>Images</a>
+                                    <div class="images-item-submenu d-none">
+                                        <ul>
+                                            <li><a href="/images"><span data-feather="list"></span>List</a></li>
+                                            <li><a href="/image_details"><span data-feather="info"></span>Details</a></li>
+                                            <li><a href="/image_builder"><span data-feather="info"></span>Build tool</a></li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <!--<li class="nav-item">
+                                    <a class="nav-link" href="#">
+                                    <span data-feather="bar-chart-2"></span>
+                                    Reports
+                                    </a>
+                                    </li>
+                                    <li class="nav-item">
+                                    <a class="nav-link" href="#">
+                                    <span data-feather="layers"></span>
+                                    Integrations
+                                    </a>
+                                    </li> -->
                         </ul>
                         <div class="d-flex justify-content-center">
                             <button onclick="logout()" class="btn btn-danger w-100 h-100" style="border-radius: 0;">Log out</button>
@@ -190,41 +190,58 @@
                                 document.getElementById(id).reportValidity();
                             }
                         });
+                        function logout() {
+                            let reqObj = {
+                                'type': 'GET',
+                                'url': `http://localhost:8000/logout`,
+                                'isAsync': false,
+                                'params': null
+                            };
+                            sendRequest(reqObj, 
+                                (response) => { 
+                                    console.log('successfully logged out!');
+                                    window.location.href = '/';
+                                },
+                                (error) => {
+                                    console.log('failed to logout: ', error);
+                                    showAlert('Failed to logout...', 'danger')
+                                });
+                        }
                     </script>
                     <!-- Graphs
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.0.0/Chart.min.js" 
-                        integrity="sha512-oPvxMUC37WigeVCeZVcU9IoRJjR3xg5/XQaautxFc0rCWJZgQ625mTEPz2nfp7/papNkImutg4thPHf6ok/Fwg==" crossorigin="anonymous">
-                    </script> -->
-                    <script>
-                       //  var ctx = document.getElementById("myChart");
-                       //  var myChart = new Chart(ctx, {
-                       //      type: 'line',
-                       //      data: {
-                       //          labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-                       //          datasets: [{
-                       //              data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
-                       //              lineTension: 0,
-                       //              backgroundColor: 'transparent',
-                       //              borderColor: '#007bff',
-                       //              borderWidth: 4,
-                       //              pointBackgroundColor: '#007bff'
-                       //          }]
-                       //      },
-                       //      options: {
-                       //          scales: {
-                       //              yAxes: [{
-                       //                  ticks: {
-                       //                      beginAtZero: false
-                       //                  }
-                       //              }]
-                       //          },
-                       //          legend: {
-                       //              display: false,
-                       //          }
-                       //      }
-                       //  });
-                    </script> 
-                    {% endblock %} 
+                        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.0.0/Chart.min.js" 
+                            integrity="sha512-oPvxMUC37WigeVCeZVcU9IoRJjR3xg5/XQaautxFc0rCWJZgQ625mTEPz2nfp7/papNkImutg4thPHf6ok/Fwg==" crossorigin="anonymous">
+                        </script> -->
+                        <script>
+                            //  var ctx = document.getElementById("myChart");
+                            //  var myChart = new Chart(ctx, {
+                            //      type: 'line',
+                            //      data: {
+                            //          labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+                            //          datasets: [{
+                            //              data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
+                            //              lineTension: 0,
+                            //              backgroundColor: 'transparent',
+                            //              borderColor: '#007bff',
+                            //              borderWidth: 4,
+                            //              pointBackgroundColor: '#007bff'
+                            //          }]
+                            //      },
+                            //      options: {
+                            //          scales: {
+                            //              yAxes: [{
+                            //                  ticks: {
+                            //                      beginAtZero: false
+                            //                  }
+                            //              }]
+                            //          },
+                            //          legend: {
+                            //              display: false,
+                            //          }
+                            //      }
+                            //  });
+                        </script> 
+                        {% endblock %} 
     </body>
 
 </html>

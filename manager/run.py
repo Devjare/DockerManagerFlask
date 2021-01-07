@@ -26,7 +26,7 @@ app.secret_key = '\xa8\xe8\xa4\xd0\x1f\xab-\xd5%\x0e\x0f/\xff\xddp\x08\x81 \xb60
 
 # 192.168.1.148:2375 <-- original IP
 # disys0.tamps.cinvestav.mx:2375 <-- IP Servidor
-LOCALIP = "192.168.1.148:2375"
+LOCALIP = "192.168.1.198:2375"
 #LOCALIP = "unix://var/run/docker.sock"
 # client = docker.DockerClient(base_url='http://192.168.1.87:2375/')
 client = docker.DockerClient(base_url=LOCALIP + "/")
