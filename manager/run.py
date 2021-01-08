@@ -582,8 +582,16 @@ def createContainer():
     new_container = Container(container.id, container.name, container.image.id)
     db.session.add(new_container)
     db.session.commit()
+    
     # add recently created container to user session containers array.
-    session[USERCONTAINERS].append(container.id)
+    
+    print('container id to append: ', container.id)
+
+    current_containers = session[USERCONTAINERS]
+    current_containers.append(container.id)
+    session[USERCONTAINERS] = current_containers
+
+    print('session after adding container: ', session)
 
     return { 'containerid': container.short_id }
 
@@ -595,7 +603,6 @@ def deleteContainer():
     force = request.args.get('force')
     try:
         container = client.containers.get(str(container))
-        print('containerid: ', container.id);
         
         # delete from db, Container
         containerDb = Container.query.get(container.id)
@@ -611,9 +618,18 @@ def deleteContainer():
         # remove on docker
         container.remove(v=volumes, link=links, force=force)
     except docker.errors.ImageNotFound as e: 
-        return { 'error': True }
+        return { 'error': e }
     except docker.errors.APIError as e: 
-        return { 'error': True }
+        return { 'error': e }
+
+    # delete container id from session
+    print('container id to remove: ', container.id)
+    
+    current_containers = session[USERCONTAINERS]
+    current_containers.remove(container.id)
+    session[USERCONTAINERS] = current_containers
+    
+    print('session after deleting container: ', session)
 
     return { 'deleted': True }
 
@@ -624,6 +640,7 @@ def showContainerDetails():
 @app.route('/containers/json')
 def getContainers():
     containers = dockercli.containers(all=True)
+    print('current session data: ', session)
     containers = filter(lambda c: c['Id'] in session[USERCONTAINERS], containers) 
     return {'containers': containers}
 

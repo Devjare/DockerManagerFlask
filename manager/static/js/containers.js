@@ -255,7 +255,7 @@ function filterBy(state) {
 function findContainersBy(pattern) {
     return containers.filter(c => 
         c.Id.includes(pattern)  
-        || c.Names[0].includes(pattern) 
+        || c.Names.toString().includes(pattern) 
         || c.Image.includes(pattern) 
         || c.ImageID.includes(pattern));
 }

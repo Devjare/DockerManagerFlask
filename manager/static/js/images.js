@@ -7,6 +7,14 @@ var images = [];
 var repositories = [];
 var dockerhubRepositories = [];
 
+function findImagesBy(pattern) {
+    console.log('all images: ', images)
+    return images.filter(i => 
+       i.Id.includes(pattern)  
+       || i.RepoDigests.toString().includes(pattern) 
+       || i.RepoTags.toString().includes(pattern));
+}
+
 function loadAllImages() {
     let reqObj = {
         'type': 'GET',
@@ -32,6 +40,7 @@ function loadAllImages() {
 }
 
 function loadImages(imagesArr) {
+    $('#images-table').empty();
     let index = 0;
     imagesArr.forEach(image => {
         template = buildImageTableTemplate(index, image);
@@ -41,7 +50,6 @@ function loadImages(imagesArr) {
 }
 
 function refreshImageTable() {
-    $('#images-table').empty();
     loadAllImages(); 
 }
 
@@ -201,6 +209,7 @@ function searchOn() {
 
 function searchImages() {
     let text = $('#searchImagesText')[0].value;
+    loadImages(findImagesBy(text));
 }
 
 function searchRegistry() {

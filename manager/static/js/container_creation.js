@@ -541,7 +541,10 @@ function createContainer() {
                 showAlert('An error ocurred creating the container, check server logs.', 'danger');
                 console.log('error: ', res.error);
             }
-            else showAlert('Container created succesfully', 'success');
+            else {
+                showAlert('Container created succesfully', 'success');
+                location.href = '/containers';
+            }
         }, 
         (error) => {
             showAlert('Container failed to create', 'danger');
