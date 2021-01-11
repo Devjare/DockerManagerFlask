@@ -200,7 +200,24 @@ function isObjectEmpty(obj) {
     }
     return true;
 }
+function isObject(obj) {
+    return typeof obj === 'object' && obj !== null;
+}
 
 function isEmptyString(str) {
     return str == '';
+}
+
+function fillTableWithJSON(tableid, jsonObject) {
+    let table = $(`#${tableid} .table-body`);
+    console.log('table to fill: ', table);
+    console.log('filling with: ');
+    for(key in jsonObject) {
+        let newRow = 
+        `<tr class="d-flex">
+            <td class="col-3"><strong>${key}</strong></td>
+            <td class="col-9">${jsonObject[key]}</td>
+        </tr>`;
+        table.append(newRow);
+    }
 }

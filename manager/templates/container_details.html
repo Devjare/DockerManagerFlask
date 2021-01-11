@@ -5,46 +5,38 @@ block content %}
     <!-- CONTAINER DETAILS TEMPLATE -->
     <div class="site-content d-flex flex-column">
         <div class="title"><h3>Container info</h3></div>
-        <div class="d-flex justify-content-between bg-light p-2">
-            <div class="d-flex flex-wrap w-75 p-1">
-                <div class="d-flex flex-column flex-wrap w-75">
-                    <select id="selectContainer"></select>
-                    <div class="d-flex px-1 flex-column align-items-start">
-                        <strong>Image Id: </strong>
-                        <p class="p-0 m-0 text-muted" id="imageId">e9c49c98e47c9893d9eb2224c17db40b7ab87ee6957de429bd4c4500007c8fb9</p>
-                    </div>
-                    <div class="d-flex px-1 flex-column align-items-start">
-                        <strong>Id: </strong>
-                        <p class="p-0 m-0 text-muted" id="containerId">e9c49c98e47c9893d9eb2224c17db40b7ab87ee6957de429bd4c4500007c8fb9</p>
-                    </div>
-                    <div class="d-flex px-1 flex-column align-items-start">
-                        <strong>Created at: </strong>
-                        <p class="p-0 m-0 text-muted" id="createdAt">2020-12-03T23:39:25.150801135Z</p>
-                    </div>
+        <div class="d-flex flex-column justify-content-start bg-light p-2 overflow-auto">
+            <div class="d-flex justify-content-between p-2">
+                <div class="d-flex justify-content-center w-50 p-2">
+                    <select id="selectContainer" class="w-100"></select>
                 </div>
-                <div class="d-flex justify-content-center align-items-start flex-column flex-wrap w-25">
-                    <div class="d-flex px-1 flex-column align-items-start">
-                        <strong>Platform: </strong>
-                        <p class="p-0 m-0 text-muted" id="platform">Linux</p>
-                    </div>
-                    <div class="d-flex px-1 flex-column align-items-start">
-                        <strong>Restart Count: </strong>
-                        <p class="p-0 m-0 text-muted" id="restartCount">0</p>
-                    </div>
+                <div class="d-flex justify-content-end py-2 px-4 bg-success">
+                    <h3 id="status" class="text-white font-weight-bold">Running</h3>
                 </div>
             </div>
-            <div id="state" class="d-flex w-25 flex-column flex-wrap justify-content-end align-content-end">
-                <div class="d-flex justify-content-end p-1">
-                    <h2 id="status" class="text-success font-weight-bold">Running</h2>
-                </div>
-                <div class="d-flex flex-column p-1">
-                    <div class="d-flex flex-column align-items-end">
-                        <strong>Started at: </strong>
-                        <p class="p-0 m-0 text-muted" id="startedAt">2020-12-03T23:39:25.150801135Z</p>
-                    </div>
-                    <div class="d-flex flex-column align-items-end">
-                        <strong>Finished at: </strong>
-                        <p class="p-0 m-0 text-muted" id="finishedAt">2020-12-03T23:39:25.150801135Z</p>
+            <div class="d-flex">
+                <div class="d-flex flex-wrap p-1">
+                    <div class="d-flex flex-wrap">
+                        <div class="d-flex flex-column px-1 m-2">
+                            <h5>Image Id:</h5>
+                            <p class="p-0 m-0 text-muted" id="imageId">e9c49c98e47c9893d9eb2224c17db40b7ab87ee6957de429bd4c4500007c8fb9</p>
+                        </div>
+                        <div class="d-flex px-1 flex-column m-2">
+                            <h5>Id: </h5>
+                            <p class="p-0 m-0 text-muted" id="containerId">e9c49c98e47c9893d9eb2224c17db40b7ab87ee6957de429bd4c4500007c8fb9</p>
+                        </div>
+                        <div class="d-flex px-1 flex-column m-2">
+                            <h5>Created at:</h5>
+                            <p class="p-0 m-0 text-muted" id="createdAt">2020-12-03T23:39:25.150801135Z</p>
+                        </div>
+                        <div class="d-flex flex-column m-2">
+                            <h5>Started at:</h5>
+                            <p class="p-0 m-0 text-muted" id="startedAt">2020-12-03T23:39:25.150801135Z</p>
+                        </div>
+                        <div class="d-flex flex-column m-2">
+                            <h5>Finished at:</h5>
+                            <p class="p-0 m-0 text-muted" id="finishedAt">2020-12-03T23:39:25.150801135Z</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -56,112 +48,109 @@ block content %}
                     <strong>Basics</strong>
                     <span data-feather="chevron-down"></span>
                 </div>
-                <div class="card-body p-1 d-flex flex-wrap">
-                    <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                        <div class="d-flex flex-column justify-content-between align-items-center">
-                            <strong>Commands:</strong>
-                            <ul id="commandsList"></ul>
-                        </div>
-                    </div>                        
-                    <div class="input-group-sm m-2">
-                        <div class="d-flex flex-column justify-content-between align-items-center">
-                            <strong>Ports binds:</strong>
-                            <table class="table table-sm table-responsive">
-                                <thead class="thead-dark">
-                                    <th>#</th>
-                                    <th>Host port</th>
-                                    <th>Container bind</th>
-                                </thead>
-                                <tbody id="portsTableBody"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                        <strong>Host name:</h5>
-                        <h5 id="hostname">HOST NAME</h5>
-                    </div>
-                    <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                        <strong>API Version:</strong>
-                        <h5 id="hostname">API Version</h5>
-                    </div>
-                    <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                        <div class="d-flex flex-column justify-content-between align-items-center">
-                            <strong>Entrypoint:</strong>
-                            <ul id="entrypointList"></ul>
-                        </div>
-                    </div>
-                    <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                        <strong>Working Dir:</strong>
-                        <h5 id="hostname">HOST NAME</h5>
-                    </div>
-                    <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                        <strong>Restart Policy:</strong>
-                        <h5 id="hostname">HOST NAME</h5>
-                    </div>
-                    <div class="input-group-sm m-2">
-                        <div class="d-flex flex-column justify-content-between align-items-center">
-                            <strong>Environment Vars:</strong>
-                            <table class="table table-sm table-responsive">
-                                <thead class="thead-dark">
-                                    <th>#</th>
-                                    <th>ENV Key</th>
-                                    <th>ENV Value</th>
-                                </thead>
-                                <tbody id="environmentTableBody"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="input-group-sm m-2">
-                        <div class="d-flex flex-column justify-content-between align-items-center">
-                            <strong>Labels:</strong>
-                            <table class="table table-sm table-responsive">
-                                <thead class="thead-dark">
-                                    <th>#</th>
-                                    <th>Label Key</th>
-                                    <th>Label Value</th>
-                                </thead>
-                                <tbody id="labelsTableBody"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="d-flex flex-column justify-content-between align-items-center p-2 bg-light">
-                        <ul id="enableables" class="list-group">
-                            <li id="autoremove" class="list-group-item d-flex justify-content-between">Testo
-                                <span data-feather="x"></span></li>
-                            <li id="detach" class="list-group-item d-flex justify-content-between">Testo
-                                <span data-feather="x"></span></li>
-                            <li id="autoremove" class="list-group-item d-flex justify-content-between">Testo
-                                <span data-feather="x"></span></li>
-                            <li id="autoremove" class="list-group-item d-flex justify-content-between">Testo
-                                <span data-feather="x"></span></li>
-                            <li id="autoremove" class="list-group-item d-flex justify-content-between">Testo
-                                <span data-feather="x"></span></li>
-                        </ul>
-                    </div>
-                    <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
-                        <input autocomplete="off" id="chkTty" type="checkbox">
-                        <label for="chkTty" class="ml-1 mb-0 mr-2">Enable tty?</label>
-                    </div>
-                    <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
-                        <input autocomplete="off" id="chkAutoremove" type="checkbox">
-                        <label for="chkAutoremove" class="ml-1 mb-0 mr-2">Autoremove?</label>
-                    </div>
-                    <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
-                        <input autocomplete="off" id="chkDetach" type="checkbox">
-                        <label for="chkDetach" class="ml-1 mb-0 mr-2">Detach?</label>
-                    </div>
-                    <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
-                        <input autocomplete="off" id="chkPublishAll" type="checkbox">
-                        <label for="chkPublishAll" class="ml-1 mb-0 mr-2">Publish all ports?</label>
-                    </div>
-                    <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
-                        <input autocomplete="off" id="chkReadOnly" type="checkbox">
-                        <label for="chkReadOnly" class="ml-1 mb-0 mr-2">Read only?</label>
-                    </div>
-                    <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
-                        <input autocomplete="off" id="chkPrivileged" type="checkbox">
-                        <label for="chkPrivileged" class="ml-1 mb-0 mr-2">Privileged?</label>
-                    </div>
+                <div class="card-body p-2 d-flex flex-wrap">
+                    <table id="basics-table" class="table table-sm table-bordered table-stripped table-hover m-1">
+                        <thead class="thead-dark">
+                            <tr class="d-flex">
+                                <th class="col-3">Property</th>
+                                <th class="col-9">Value</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- HOST CONFIG CARD -->
+            <div class="card hostconfig">
+                <div class="card-header d-flex justify-content-between align-items-center" onclick="collapseCard(event)">
+                    <strong>Host Config</strong>
+                    <span data-feather="chevron-down"></span>
+                </div>
+                <div class="card-body p-2 d-flex flex-wrap">
+                    <table class="table table-sm table-bordered table-stripped table-hover m-1">
+                        <thead class="thead-dark">
+                            <tr class="d-flex">
+                                <th class="col-3">Property</th>
+                                <th class="col-9">Value</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-body">
+                            <tr class="d-flex">
+                                <td class="col-3"><strong>ResolvConfPath</strong></td>
+                                <td class="col-9">/var/lib/docker/containers/e9c49c98e47c9893d9eb2224c17db40b7ab87ee6957de429bd4c4500007c8fb9/e9c49c98e47c9893d9eb2224c17db40b7ab87ee6957de429bd4c4500007c8fb9-json.log</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- CONFIG CARD -->
+            <div class="card config">
+                <div class="card-header d-flex justify-content-between align-items-center" onclick="collapseCard(event)">
+                    <strong>Config</strong>
+                    <span data-feather="chevron-down"></span>
+                </div>
+                <div class="card-body p-2 d-flex flex-wrap">
+                    <table class="table table-sm table-bordered table-stripped table-hover m-1">
+                        <thead class="thead-dark">
+                            <tr class="d-flex">
+                                <th class="col-3">Property</th>
+                                <th class="col-9">Value</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-body">
+                            <tr class="d-flex">
+                                <td class="col-3"><strong>ResolvConfPath</strong></td>
+                                <td class="col-9">/var/lib/docker/containers/e9c49c98e47c9893d9eb2224c17db40b7ab87ee6957de429bd4c4500007c8fb9/e9c49c98e47c9893d9eb2224c17db40b7ab87ee6957de429bd4c4500007c8fb9-json.log</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- GRAPH DRIVER CARD -->
+            <div class="card graph-driver">
+                <div class="card-header d-flex justify-content-between align-items-center" onclick="collapseCard(event)">
+                    <strong>Graph Driver</strong>
+                    <span data-feather="chevron-down"></span>
+                </div>
+                <div class="card-body p-2 d-flex flex-wrap">
+                    <table class="table table-sm table-bordered table-stripped table-hover m-1">
+                        <thead class="thead-dark">
+                            <tr class="d-flex">
+                                <th class="col-3">Property</th>
+                                <th class="col-9">Value</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-body">
+                            <tr class="d-flex">
+                                <td class="col-3"><strong>ResolvConfPath</strong></td>
+                                <td class="col-9">/var/lib/docker/containers/e9c49c98e47c9893d9eb2224c17db40b7ab87ee6957de429bd4c4500007c8fb9/e9c49c98e47c9893d9eb2224c17db40b7ab87ee6957de429bd4c4500007c8fb9-json.log</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- NETWORK CONFIG CARD -->
+            <div class="card network-config">
+                <div class="card-header d-flex justify-content-between align-items-center" onclick="collapseCard(event)">
+                    <strong>Network Config</strong>
+                    <span data-feather="chevron-down"></span>
+                </div>
+                <div class="card-body p-2 d-flex flex-wrap">
+                    <table class="table table-sm table-bordered table-stripped table-hover m-1">
+                        <thead class="thead-dark">
+                            <tr class="d-flex">
+                                <th class="col-3">Property</th>
+                                <th class="col-9">Value</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-body">
+                            <tr class="d-flex">
+                                <td class="col-3"><strong>ResolvConfPath</strong></td>
+                                <td class="col-9">/var/lib/docker/containers/e9c49c98e47c9893d9eb2224c17db40b7ab87ee6957de429bd4c4500007c8fb9/e9c49c98e47c9893d9eb2224c17db40b7ab87ee6957de429bd4c4500007c8fb9-json.log</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
