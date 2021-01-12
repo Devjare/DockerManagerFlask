@@ -48,12 +48,6 @@ function goToDetailsOf(containerName) {
     console.log('container to detail name: ', containerName);
     localStorage.setItem('container', containerName.substr(1, containerName.length));
     // pass the current container list, only names
-    containersNames = containers.map(c => { 
-        let name = c.Names[0];
-        return name.substr(1, name.length);
-    });
-    console.log('containers names: ', containersNames);
-    localStorage.setItem('containers_list', containersNames);
     location.href = '/container_details';
 }
 function showCModal(container) {
@@ -212,6 +206,11 @@ function refresh() {
                 console.log('containers/json response: ', res);
                 containers = res['containers'];
                 loadContainers(containers, currentFilter);
+                containersNames = containers.map(c => { 
+                    let name = c.Names[0];
+                    return name.substr(1, name.length);
+                });
+                localStorage.setItem('containers_list', containersNames);
             }
         },
         (error) => {

@@ -5,40 +5,40 @@ body {
     overflow-x: hidden!important;
 }
 
-li {
-	list-style-type: none;
-	padding: 0;
+.containers-item-submenu li
+, .images-item-submenu li {
+    list-style-type: none;
 }
 
 .listoptions {
-	display: flex;
-	flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 
 .side-bar {
-	background: #09478E;
-	width: 10%;
-	height: 100%;
-	position: relative;
-	z-index: 1;
+    background: #09478E;
+    width: 10%;
+    height: 100%;
+    position: relative;
+    z-index: 1;
 }
 
 .list-element {
-	cursor: pointer;
+    cursor: pointer;
 }
 
 .list-element:hover {
-	background: #0060A8!important;
+    background: #0060A8!important;
 }
 
 .site-content {
-	width:  100%;
-	height: 100%;
-	display: flex;
-	flex-direction: row;
-	/* background: darkgray; */
-	z-index: 1;
-        overflow: hidden;
+    width:  100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    /* background: darkgray; */
+    z-index: 1;
+    overflow: hidden;
 }
 
 .content { 
@@ -47,26 +47,26 @@ li {
 }
 
 .titlebar {
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-        flex-wrap: wrap;
-        width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    width: 100%;
 }
 
 .titlebar::after {
-	content: "";
-	width: 100%;
-	background: black;
-	height: 1px;
+    content: "";
+    width: 100%;
+    background: black;
+    height: 1px;
 }
 
 .options {
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-        flex-wrap: wrap;
-	padding: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 5px;
 }
 
 .searchbar {
@@ -83,16 +83,16 @@ li {
 }
 
 .view-format {
-	display: flex;
-	justify-content: space-around;
-        align-items: center;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
 }
 
 .view-format > svg {
-	margin: 10px;
-        cursor: pointer;
-        width: 18px;
-        height: 18px;
+    margin: 10px;
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
 }
 
 .view-format > svg:hover {
@@ -100,23 +100,23 @@ li {
 }
 
 .right-panel {
-	position: absolute;
-	right: 0px;
-	width: 0px;
-	height: 95vh;
-	box-shadow: -3px 0px 3px -2px rgba(0,0,0,0.75);
+    position: absolute;
+    right: 0px;
+    width: 0px;
+    height: 95vh;
+    box-shadow: -3px 0px 3px -2px rgba(0,0,0,0.75);
 
-	/* display: flex; */
-	flex-direction: column;
-	transition: width 1s;
+    /* display: flex; */
+    flex-direction: column;
+    transition: width 1s;
 
-	background: #F8F9FA;
-        /* display: none; */
+    background: #F8F9FA;
+    /* display: none; */
 }
 
 .rp-title {
-	width: 100%;
-        padding: 10px;
+    width: 100%;
+    padding: 10px;
 }
 
 .rp-title:after {
@@ -146,25 +146,25 @@ li {
 }
 
 .logout-button {
-	width: 100%;
-	padding: 5px;
+    width: 100%;
+    padding: 5px;
 
-	position: absolute;
-	bottom: 55px;
+    position: absolute;
+    bottom: 55px;
 
-	cursor: pointer;
+    cursor: pointer;
 }
 
 .logout-button:hover {
-	background: #c00!important;
+    background: #c00!important;
 }
 
 #btnLogout {
-	font-size: 1.2em;
-	color: white;
-	background: none;
-	border: none;
-	margin: 5px;
+    font-size: 1.2em;
+    color: white;
+    background: none;
+    border: none;
+    margin: 5px;
 }
 
 #containersPanel {
@@ -186,9 +186,9 @@ li {
 }
 
 .grid-card-header > svg {
-        cursor: pointer;
-        width: 18px;
-        height: 18px;
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
 }
 .grid-card-header > svg:hover {
     background: lightgray;
@@ -212,7 +212,7 @@ li {
     max-width: 450px!important;
     min-width: 250px!important;
     max-height: 350px!important;
-    
+
     transition: height 500ms;
 }
 
@@ -223,10 +223,10 @@ li {
  * units of card-header height.
  * */
 
-.collapsed { 
-    height: 2.835rem;
-}
+    .collapsed { 
+        height: 2.835rem;
+    }
 
-.hide {
-    display: none!important;
-}
+    .hide {
+        display: none!important;
+    }

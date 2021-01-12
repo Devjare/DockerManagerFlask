@@ -26,6 +26,14 @@ function timeConverter(UNIX_timestamp){
     return time;
 }
 
+function validateStrFor(str, type) {
+    if(str == '') return false
+    if(type == 'number') {
+        if(isNaN(Number(str))) return false;
+    } 
+    return true;
+}
+
 var alertCount = 0;
 function showAlert(msg, type) { 
     alertCount++;
@@ -83,26 +91,6 @@ function collapseCard(event) {
     parent[0].classList.toggle('collapsed');
     // hide card-body
     parent[0].children[1].classList.toggle('hide');
-}
-
-// validateOpt is an object containing options on how to validate the field
-// for example, if is an email, only _,@ and . are valid characters, the object could be
-// validateOpt = { 'allow': [ NUMBERS, LETTERS, '@', '.', '_'], 'deny': [ ' ' ]}
-function isValidInput(event, validateOpt, onValid) {
-    // USE TO VALIDATE --> res = arr1.filter(el => !arr2.includes(el));
-    let target = event.target;
-    let value = target.value;
-    if(validateOpt == 'isempty') {
-        if(value == '') {
-            target.classList.add('is-invalid');
-            target.classList.remove('is-valid');
-            if(onInvalid) onInvalid();
-        } else {
-            target.classList.remove('is-invalid');
-            target.classList.add('is-valid');
-            if(onValid) onValid();
-        }
-    }
 }
 
 function showConfirmationModal(msg, onConfirm, onCancel) {
@@ -170,19 +158,6 @@ function hideModal() {
     $('#modal').modal('hide');
 }
 
-function validateStrFor(str, type) {
-    if(str == '') return false
-    if(type == 'number') {
-        if(isNaN(Number(str))) return false;
-    } 
-    return true;
-}
-
-function strToNumber(str) {
-    if(mem_swappiness == '') return null;
-    else return Number(mem_swappiness);
-}
-
 // return null if the passed string is empty.
 function valueOrNull(str, type) {
     if(type == 'number') {
@@ -210,14 +185,43 @@ function isEmptyString(str) {
 
 function fillTableWithJSON(tableid, jsonObject) {
     let table = $(`#${tableid} .table-body`);
-    console.log('table to fill: ', table);
-    console.log('filling with: ');
     for(key in jsonObject) {
-        let newRow = 
-        `<tr class="d-flex">
-            <td class="col-3"><strong>${key}</strong></td>
-            <td class="col-9">${jsonObject[key]}</td>
-        </tr>`;
+        let newRow = '<tr class="d-flex">';
+        let value = jsonObject[key];
+        if(Array.isArray(value)) {
+            newRow += 
+            `<td class="col-4"><strong>${key}</strong></td>
+            <td class="col-8">${createListForArray(value)}</td></tr>`;
+        } else if(isObject(value)) {
+            newRow += 
+            `<td class="col-4"><strong>${key}</strong></td>
+            <td class="col-8">${createTableForJSON(value)}</td></tr>`;
+        } else {
+            newRow += 
+            `<td class="col-4"><strong>${key}</strong></td>
+            <td class="col-8">${value}</td>
+            </tr>`;
+        }
         table.append(newRow);
     }
+}
+
+function createTableForJSON(obj) {
+    let table = `<table class="table"><tbody class="table-body">`; 
+    for(key in obj) {
+        value = obj[key];
+        table += 
+        `<tr><td><strong>${key}</strong></td><td>
+         ${isObject(value) ? createTableForJSON(value) : (Array.isArray(value) ? createListForArray(value) : value)}
+         </td></tr>`;
+    }
+    table += `</tbody></table>`;
+    return table;
+}
+
+function createListForArray(array) {
+    let list = `<ul>`; 
+    array.forEach(el => list += `<li>${el}</li>`);
+    list += `</ul>`;
+    return list;
 }

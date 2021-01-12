@@ -156,6 +156,7 @@ function createContainerFrom(imageid) {
                     else {
                         hideModal();
                         showAlert('Container created successfully!', 'success');
+                        location.href = '/containers';
                     }
                 },
                 (error) => console.log('error: ', error));
