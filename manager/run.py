@@ -332,8 +332,9 @@ def addContainerToUser(idcontainer):
     db.session.add(userContainer)
     db.session.commit()
 
-@app.route('/images/inspect/<id>', methods=["GET"])
-def getImageInfo(id):
+@app.route('/images/inspect', methods=["GET"])
+def getImageInfo():
+    id = request.args['id']
     image = {}
     try:
         image = dockercli.inspect_image(id)

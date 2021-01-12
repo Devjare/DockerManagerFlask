@@ -50,6 +50,7 @@ function goToDetailsOf(containerName) {
     // pass the current container list, only names
     location.href = '/container_details';
 }
+
 function showCModal(container) {
     let state = container.State;
     let id = container.Id;

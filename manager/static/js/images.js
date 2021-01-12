@@ -15,6 +15,20 @@ function findImagesBy(pattern) {
        || i.RepoTags.toString().includes(pattern));
 }
 
+function goToDetailsOf(image, textType) {
+    console.log('image to detail name: ', image);
+    // split text in case multiple tags are loaded.
+    // any tag used will result on the same data.
+    if(textType == 'tag') localStorage.setItem('image', image);
+    else {
+        // get the tags of the current image id
+        name = images.find(i => i.Id == image).RepoTags.toString(); 
+        localStorage.setItem('image', name);
+    }
+
+    location.href = '/image_details';
+}
+
 function loadAllImages() {
     let reqObj = {
         'type': 'GET',
@@ -25,12 +39,15 @@ function loadAllImages() {
     sendRequest(reqObj, null,
         (response) => {
             let res = JSON.parse(response.srcElement.response);
-            if('error' in res) showAlert('An error occurred loading images!', 'danger');
+            if('error' in res) showAlert('An error occurred loading image info!', 'danger');
             else {
                 images = res.images;
                 loadImages(images);
                 feather.replace();
                 showAlert('Images loaded succesfully', 'success');
+                
+                imagesNames = images.map(i => i.RepoTags.toString());
+                localStorage.setItem('images_list', imagesNames);
             }
         },
         (error) => { 
@@ -179,8 +196,10 @@ function buildImageTableTemplate(index, image) {
         <td class="col-s-1 d-flex align-items-center" scope="row">
             <span class="icon" onclick="showDeleteImageModal('${image.Id}')" data-feather="trash"></span>
         </td>
-        <td class="col-5 d-flex align-items-center text-truncate">${image['Id']}</td>
-        <td class="col-3 text-truncate d-flex align-items-center">${tagsStr}</td>
+        <td class="col-5 d-flex align-items-center text-truncate">
+        <a href="#" onclick="goToDetailsOf('${image['Id']}', 'id')">${image['Id']}</a></td>
+        <td class="col-3 text-truncate d-flex align-items-center">
+        <a href="#" onclick="goToDetailsOf('${tagsStr}', 'tag')">${tagsStr}</a></td>
         <td class="col-1 d-flex align-items-center">${created}</td>
         <td class="col-1 d-flex align-items-center">${sizeOnMb} MB</td>
         <td class="col-3 d-flex align-items-center">

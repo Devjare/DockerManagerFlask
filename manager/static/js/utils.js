@@ -185,6 +185,7 @@ function isEmptyString(str) {
 
 function fillTableWithJSON(tableid, jsonObject) {
     let table = $(`#${tableid} .table-body`);
+    table.empty();
     for(key in jsonObject) {
         let newRow = '<tr class="d-flex">';
         let value = jsonObject[key];

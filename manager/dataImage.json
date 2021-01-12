@@ -1,0 +1,91 @@
+{
+    "Architecture": "amd64",
+    "Os": "linux",
+    "Size": 5574537,
+    "VirtualSize": 5574537,
+    "Id": "sha256:a24bb4013296f61e89ba57005a7b3e52274d8edd3ae2077d04395f806b63d83e",
+    "DockerVersion": "18.09.7",
+    "Author": "",
+    "Parent": "",
+    "Comment": "",
+    "Created": "2020-05-29T21:19:46.363518345Z",
+    "Container": "ce1874fa1fc1eb128516899352f185645f492c443b5a80d9a3fae8b09d1b6b16",
+    "RepoTags": [
+        "localhost:5000/alpine312:latest",
+        "localhost:5000/alpine312:v2"
+    ],
+    "RepoDigests": [
+        "localhost:5000/alpine312@sha256:a15790640a6690aa1730c38cf0a440e2aa44aaca9b0e8931a9f2b0d7cc90fd65"
+    ],
+    "RootFS": {
+        "Type": "layers",
+        "Layers": [
+            "sha256:50644c29ef5a27c9a40c393a73ece2479de78325cae7d762ef3cdc19bf42dd0a"
+        ]
+    },
+    "Metadata": {
+        "LastTagTime": "0001-01-01T00:00:00Z"
+    },
+
+    "ContainerConfig": {
+        "Hostname": "ce1874fa1fc1",
+        "Domainname": "",
+        "User": "",
+        "AttachStdin": false,
+        "AttachStdout": false,
+        "AttachStderr": false,
+        "Tty": false,
+        "OpenStdin": false,
+        "StdinOnce": false,
+        "Env": [
+            "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+        ],
+        "Cmd": [
+            "/bin/sh",
+            "-c",
+            "#(nop) ",
+            "CMD [\"/bin/sh\"]"
+        ],
+        "ArgsEscaped": true,
+        "Image": "sha256:64771e4514cb653a0fe68e1ceed5bd16640ebf3bd859dc3333efe87dc4709a5d",
+        "Volumes": null,
+        "WorkingDir": "",
+        "Entrypoint": null,
+        "OnBuild": null,
+        "Labels": {}
+    },
+
+    "Config": {
+        "Hostname": "",
+        "Domainname": "",
+        "User": "",
+        "AttachStdin": false,
+        "AttachStdout": false,
+        "AttachStderr": false,
+        "Tty": false,
+        "OpenStdin": false,
+        "StdinOnce": false,
+        "Env": [
+            "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+        ],
+        "Cmd": [
+            "/bin/sh"
+        ],
+        "ArgsEscaped": true,
+        "Image": "sha256:64771e4514cb653a0fe68e1ceed5bd16640ebf3bd859dc3333efe87dc4709a5d",
+        "Volumes": null,
+        "WorkingDir": "",
+        "Entrypoint": null,
+        "OnBuild": null,
+        "Labels": null
+    },
+
+    "GraphDriver": {
+        "Data": {
+            "MergedDir": "/var/lib/docker/overlay2/4b7042616f4b9cde7aa24545b6c320aba94fae1902de7a91feb963eba87dba9e/merged",
+            "UpperDir": "/var/lib/docker/overlay2/4b7042616f4b9cde7aa24545b6c320aba94fae1902de7a91feb963eba87dba9e/diff",
+            "WorkDir": "/var/lib/docker/overlay2/4b7042616f4b9cde7aa24545b6c320aba94fae1902de7a91feb963eba87dba9e/work"
+        },
+        "Name": "overlay2"
+    },
+}
