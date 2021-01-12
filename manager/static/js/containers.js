@@ -51,6 +51,12 @@ function goToDetailsOf(containerName) {
     location.href = '/container_details';
 }
 
+function goToDetailsOfImage(image) {
+    console.log('image to detail name: ', image);
+    localStorage.setItem('image', image);
+    location.href = '/image_details';
+}
+
 function showCModal(container) {
     let state = container.State;
     let id = container.Id;
@@ -134,8 +140,9 @@ function buildContainerTableRow(container, index) {
       <td>${container.Names[0]}</td>
       <td>${container.State}</td>
       <td>${ipport == ""?"NONE":ipport}</td>
-      <td><a href="#" id="${container.Id}" class="popover-item" data-placement="bottom" 
-      data-toggle="popover" title="Image Info" data-content="ID: ${container.ImageID}">${container.Image}</a></td>
+      <td><a href="#" id="${container.Id}" class="popover-item" onclick="goToDetailsOfImage('${container.Image}')" 
+      data-placement="bottom" data-toggle="popover" title="Image Info" data-content="ID: 
+      ${container.ImageID}">${container.Image}</a></td>
       <td><a href="#" onclick="showContainerDetails('${container.Id}')">More</a></td>
     </tr>`
     return template;
