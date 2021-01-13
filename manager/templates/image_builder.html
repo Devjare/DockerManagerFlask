@@ -1,7 +1,23 @@
 {% extends 'base.html' %} {% block title %} Image Builder {% endblock %} {% block head %} {{ super() }} {% endblock %} {%block content %}
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4 position-relative">
-    <!-- IMAGE BUILDER TEMPLATE -->
     <div class="site-content">
+        <div class="content m-0">
+            <div class="row titlebar p-3">
+                <div class="d-flex p-2 justify-content-between align-items-center">
+                    <h4 class="m-2">Image Builder</h4>
+                </div>
+            </div>
+            <div class="d-flex">
+                <div id="dockerfile-content">
+                    <input type="text" placeholder="Dockerfile path"> Or
+                    <button class="btn btn-sm btn-primary">Make a dockerfile</button>
+                </div>
+                <div class="form-group">
+                    <label for="exampleFormControlFile1">Example file input</label>
+                    <input type="file" class="form-control-file" id="exampleFormControlFile1">
+                </div>
+            </div>
+        </div>
     </div>
 </main>
 {% endblock %} {% block footer %} {{ super() }} {% endblock %}
