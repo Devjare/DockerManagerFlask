@@ -8,7 +8,6 @@ var repositories = [];
 var dockerhubRepositories = [];
 
 function findImagesBy(pattern) {
-    console.log('all images: ', images)
     return images.filter(i => 
        i.Id.includes(pattern)  
        || i.RepoDigests.toString().includes(pattern) 
@@ -43,7 +42,6 @@ function loadAllImages() {
             else {
                 images = res.images;
                 loadImages(images);
-                feather.replace();
                 showAlert('Images loaded succesfully', 'success');
                 
                 imagesNames = images.map(i => i.RepoTags.toString());
@@ -64,6 +62,7 @@ function loadImages(imagesArr) {
         $('#images-table').append(template);
         index++;
     });
+    feather.replace();
 }
 
 function refreshImageTable() {
@@ -238,7 +237,13 @@ function searchRegistry() {
     if(currentView == "dockerhub") {
         searchOnDockerhub(text);
     } else {
-        alert('looking on private registry');
+        let filteredRepos = {};
+        for(key in repositories) {
+            if(key.includes(text) || repositories[key].toString().includes(text)) 
+                filteredRepos[key] = repositories[key];
+        }
+        console.log('filtered repos: ', filteredRepos);
+        loadRegistryRepositories(filteredRepos);
     }
 }
 
@@ -256,6 +261,7 @@ function deleteImage() {
 
     sendRequest(reqObj, null,
         (response) => {
+            console.log('response after delete tryy: ', response);
             let res = JSON.parse(response.srcElement.response);
             if('error' in res) showAlert('An error occurred deleting the image.', 'danger');
             else {
@@ -345,6 +351,7 @@ function pullImage(imageRep, source) {
 function loadRegistryRepositories(repositories) {
     let index = 0;
     let table = $('#rep-1-table');
+    table.empty();
     for(let rep in repositories) {
         let template = `
         <tr class="d-flex">
@@ -397,6 +404,7 @@ function loadRegistry() {
             if('error' in res) showAlert('An error occurred laoding registry!', 'danger');
             else {
                 repositories = res.repositories;
+                console.log('repos: ', repositories);
                 loadRegistryRepositories(repositories);
                 showAlert('Registry loaded succesfully', 'success');
             } 

@@ -9,13 +9,107 @@
             </div>
             <div class="d-flex">
                 <div id="dockerfile-content">
-                    <input type="text" placeholder="Dockerfile path"> Or
-                    <button class="btn btn-sm btn-primary">Make a dockerfile</button>
+                    <div class="">
+                        <input type="text" placeholder="Dockerfile path"> Or
+                        <button class="btn btn-sm btn-primary">Make a dockerfile</button>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleFormControlFile1">Example file input</label>
+                        <input type="file" class="form-control-file" id="exampleFormControlFile1">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="exampleFormControlFile1">Example file input</label>
-                    <input type="file" class="form-control-file" id="exampleFormControlFile1">
+            </div>
+            <!-- STRS -->
+            <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                <label for="path">Path to directory containing dockerfile(Context):</label>
+                <input autocomplete="off" id="path" type="file" placeholder="Directory path" class="form-control">
+                <button class="btn btn-sm">Or make your dockerfile</button>
+            </div>
+            <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                <label for="tag">Tag:</label>
+                <input autocomplete="off" id="tag" type="text" placeholder="Tag" class="form-control" pattern="[\w_-]+$" oninput="setCustomValidity('')">
+            </div>
+            <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                <label for="enconding">Encoding:</label>
+                <input autocomplete="off" id="enconding" type="text" placeholder="Encoding" class="form-control" pattern="[\w_-]+$" oninput="setCustomValidity('')">
+            </div>
+            <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                <label for="dockerile">Dockerfile path:</label>
+                <input autocomplete="off" id="dockerfile" type="text" placeholder="Docker file path within the build context" class="form-control" pattern="[\w_-]+$" oninput="setCustomValidity('')">
+            </div>
+            <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                <label for="network-mode">Network Mode:</label>
+                <input autocomplete="off" id="network-mode" type="text" placeholder="Network mode" class="form-control" pattern="[\w_-]+$" oninput="setCustomValidity('')">
+            </div>
+            <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                <label for="platform">Platform:</label>
+                <input autocomplete="off" id="Platform" type="text" placeholder="Platform" class="form-control" pattern="[\w_-]+$" oninput="setCustomValidity('')">
+            </div>
+            <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                <label for="isolation">Isolation:</label>
+                <input autocomplete="off" id="isolation" type="text" placeholder="Isolation" class="form-control" pattern="[\w_-]+$" oninput="setCustomValidity('')">
+            </div>
+            <!-- NUMBERS -->
+            <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                <label for="timeout">Timeout: </label>
+                <input autocomplete="off" id="timeout" type="number" placeholder="Time out" class="form-control">
+            </div>
+            <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                <label for="shmsize">SHM Size: </label>
+                <input autocomplete="off" id="shmsize" type="number" placeholder="SHM Size" class="form-control">
+            </div>
+            <!-- LISTS -->
+            <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                <div class="d-flex justify-content-between align-items-center">
+                    <label class="py-0 my-0" for="volumes">Volumes:</label>
+                    <button onclick="showListModal('volumes')" class="btn btn-sm btn-primary my-1" >add</button>
                 </div>
+                <input autocomplete="off" id="volumes" type="text" placeholder="Volumes" class="form-control" readonly>
+            </div>
+            <!-- DICTS -->
+            <div class="input-group-sm m-2">
+                <div class="d-flex justify-content-between align-items-center">
+                    <label class="py-0 my-0" for="ports">Ports binds:</label>
+                    <button onclick="showDictionaryModal('ports')" class="btn btn-sm btn-primary my-1" >add</button>
+                </div>
+                <input autocomplete="off" id="ports" type="text" placeholder="Ports" class="form-control" readonly oninput="setCustomValidity('')">
+            </div>
+            <!-- BOOLS -->
+            <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
+                <input autocomplete="off" id="chkTty" type="checkbox">
+                <label for="chkTty" class="ml-1 mb-0 mr-2">Enable tty?</label>
+            </div>
+            <div class="">
+                <input id="quiet" type="checkbox">
+                <label for="quiet">Quiet?</label>
+            </div>
+            <div class="">
+                <input id="no-cache" type="checkbox">
+                <label for="no-cache">No Cache?</label>
+            </div>
+            <div class="">
+                <input id="rm" type="checkbox">
+                <label for="rm">Remove intermediate containers?</label>
+            </div>
+            <div class="">
+                <input id="rm" type="checkbox">
+                <label for="rm">Force remove intermediate containers?</label>
+            </div>
+            <div class="">
+                <input id="custom-context" type="checkbox">
+                <label for="custom-context">Custom context?</label>
+            </div>
+            <div class="">
+                <input id="pull" type="checkbox">
+                <label for="pull">Pull updates?</label>
+            </div>
+            <div class="">
+                <input id="squash" type="checkbox">
+                <label for="squash">Squash?</label>
+            </div>
+            <div class="">
+                <input id="use-config-proxy" type="checkbox">
+                <label for="use-config-proxy">Use config proxy?</label>
             </div>
         </div>
     </div>

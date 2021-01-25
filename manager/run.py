@@ -5,7 +5,7 @@ import simplejson as json
 import docker
 import os
 
-from flask import Flask, request, jsonify, abort, render_template, session
+from flask import Flask, request, jsonify, abort, render_template, session, send_file
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey
 from flask_marshmallow import Marshmallow
@@ -24,7 +24,6 @@ ma = Marshmallow(app)
 
 app.secret_key = '\xa8\xe8\xa4\xd0\x1f\xab-\xd5%\x0e\x0f/\xff\xddp\x08\x81 \xb60$\xe7NE'
 
-# 192.168.1.148:2375 <-- original IP
 # disys0.tamps.cinvestav.mx:2375 <-- IP Servidor
 LOCALIP = "192.168.1.198:2375"
 #LOCALIP = "unix://var/run/docker.sock"
@@ -294,9 +293,9 @@ def deleteImage():
     msg = 'deleted'
     try: 
         client.images.remove(image=image, force=force, noprune=noprune) 
-    except:
-        msg = 'error'
-    return msg
+    except docker.errors.APIError as err:
+        return { "error": str(err) }
+    return { 'success': True }
 
 @app.route('/images/pull', methods=["GET"])
 def pullImageFrom():
@@ -339,7 +338,7 @@ def getImageInfo():
     try:
         image = dockercli.inspect_image(id)
     except docker.errors.APIError as err:
-        return { "error": err }
+        return { "error": str(err) }
     return {"image": image} 
 
 # ************* CONTAINERS ********************
@@ -452,10 +451,9 @@ def createContainer():
                 print('created container', container)
                 addContainerToUser(container.id)
             except docker.errors.APIError as api_error:
-                print('error: ', api_error)
-                return { 'error': api_error }
+                return { 'error': str(api_error) }
             except docker.errors.ImageNotFound as error:
-                return { 'error': error }
+                return { 'error': str(error) }
         else:        
             print('create running')
             try:
@@ -554,10 +552,9 @@ def createContainer():
                 # since there's no way on knowing on client side, what caused the error
                 # just return that there was an error, hoping for the sdk to implement something
                 # for that.
-                print('error: ', api_error)
-                return { 'error': api_error }
+                return { 'error': str(api_error) }
             except docker.errors.ImageNotFound as error:
-                return { 'error': error }
+                return { 'error': str(error) }
     else:
         # if not advanced
         print('basic data: ', data)
@@ -619,9 +616,9 @@ def deleteContainer():
         # remove on docker
         container.remove(v=volumes, link=links, force=force)
     except docker.errors.ImageNotFound as e: 
-        return { 'error': e }
+        return { 'error': str(e) }
     except docker.errors.APIError as e: 
-        return { 'error': e }
+        return { 'error': str(e) }
 
     # delete container id from session
     print('container id to remove: ', container.id)
@@ -667,7 +664,7 @@ def getContainerInfo(id):
     try:
         container = dockercli.inspect_container(id)
     except docker.errors.APIError as err:
-        return { "error": err }
+        return { "error": str(err) }
     return {"container": container} 
 
 @app.route('/containers/start/<id>')
@@ -675,7 +672,7 @@ def startContainer(id):
     try:
         dockercli.start(id)
     except docker.errors.APIError as err:
-        return { 'error': err }
+        return { 'error': str(err) }
     return { 'started': True }
 
 @app.route('/containers/stop/<id>')
@@ -683,7 +680,7 @@ def stopContainer(id):
     try:
         dockercli.stop(id)
     except docker.errors.APIError as err:
-        return { 'error': err }
+        return { 'error': str(err) }
     return { 'stopped': True }
 
 @app.route('/containers/restart/<id>')
@@ -691,7 +688,7 @@ def restartContainer(id):
     try:
         dockercli.restart(id)
     except docker.errors.APIError as err:
-        return { 'error': err }
+        return { 'error': str(err) }
     return { 'restarting': True }
 
 @app.route('/containers/pause/<id>')
@@ -699,7 +696,7 @@ def pauseContainer(id):
     try:
         dockercli.pause(id)
     except docker.errors.APIError as err:
-        return { 'error': err }
+        return { 'error': str(err) }
     return { 'paused': True }
 
 @app.route('/containers/unpause/<id>')
@@ -707,7 +704,7 @@ def unpauseContainer(id):
     try:
         dockercli.unpause(id)
     except docker.errors.APIError as err:
-        return { 'error': err }
+        return { 'error': str(err) }
     return { 'unpaused': True }
 
 @app.route('/', methods=['GET'])
@@ -907,6 +904,19 @@ def get_uc():
     result = piece_schema.dump(pieces)
     return jsonify({"ucs": result.data})
 
+
+## PURE TEST
+@app.route('/servezip/with')
+def getZipFile():
+    return send_file('./zips/one.tar.gz', as_attachment=True)
+
+
+@app.route('/servezip/without')
+def getZipFile2():
+    return send_file('./zips/three.zip', as_attachment=True)
+
+
+
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         print("usage: %s port" % (sys.argv[0]))
@@ -915,3 +925,4 @@ if __name__ == '__main__':
     p = int(sys.argv[1])
     print("start at port %s" % (p))
     app.run(host='0.0.0.0', port=p, debug=True, threaded=True)
+
