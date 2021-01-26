@@ -10,8 +10,12 @@ def loginscreen():
 
 @login_bp.route('/logout', methods=['GET'])
 def logout():
-    [session.pop(key) for key in list(session.keys())]
-    return loginscreen();
+    try:
+        [session.pop(key) for key in list(session.keys())]
+    except Exception as e:
+        return { 'error': e }
+
+    return { 'success': True } 
 
 @login_bp.route('/login', methods=['POST'])
 def login():

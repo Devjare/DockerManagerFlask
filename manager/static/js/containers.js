@@ -45,16 +45,13 @@ function triggerContainerAction(id, action) {
 }
 
 function goToDetailsOf(containerName) {
-    console.log('container to detail name: ', containerName);
     localStorage.setItem('container', containerName.substr(1, containerName.length));
-    // pass the current container list, only names
-    location.href = '/container_details';
+    location.href = '/containers/details';
 }
 
 function goToDetailsOfImage(image) {
-    console.log('image to detail name: ', image);
     localStorage.setItem('image', image);
-    location.href = '/image_details';
+    location.href = '/images/details';
 }
 
 function showCModal(container) {
@@ -104,9 +101,7 @@ function showCModal(container) {
 }
 
 // containers actions
-
 function showContainerDetails(id) {
-    // showmodal
     let container = containers.find(c => c.Id == id);
     showCModal(container);
     $('#modal').ready(() => {

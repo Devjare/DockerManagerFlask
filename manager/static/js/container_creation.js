@@ -535,6 +535,7 @@ function createContainer() {
     sendRequest(reqObj, 
         (e) => console.log('loading request...'),
         (response) => {
+            console.log('response: ', response);
             let res = JSON.parse(response.srcElement.response);
             console.log('response for container creation: ', res);
             if('error' in res) {
