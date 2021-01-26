@@ -88,7 +88,7 @@ function login() {
                 }
                 else {
                     showAlert('login successfull!', 'success');
-                    location.href = '/home';
+                    location.href = '/containers';
                 }
             }, 
             (error) => {

@@ -1,16 +1,19 @@
+from flask import Blueprint, render_template, request
+from config import dockercli, client
+import requests
 
-# ************* IMAGES ******************** 
-@app.route('/image_builder')
+images_bp = Blueprint("images", __name__, static_folder="url_for('static')", template_folder="url_for('templates')")
+
+@images_bp.route('/builder')
 def showImageBuilder():
-    return render_template('image_builder.html')
+    return render_template('images/builder.html')
 
-@app.route('/image_details')
+@images_bp.route('/details')
 def showImageDetails():
-    return render_template('image_details.html')
+    return render_template('images/details.html')
 
-@app.route('/images/json')
+@images_bp.route('/json')
 def getAllImages():
-    params = request.args
     images = dockercli.images(all=True)
     return { 'images': images }
 
@@ -32,7 +35,7 @@ def getTagsOf(repname, source):
     # Return only the array of tags
     return tags
 
-@app.route('/registry')
+@images_bp.route('/registry')
 def getImagesFromRegistry():
     source = request.args.get('source')
     text = request.args.get('text')
@@ -58,7 +61,7 @@ def getImagesFromRegistry():
 
     return { "repositories": repsWithTags }
 
-@app.route('/images/delete', methods=["GET"])
+@images_bp.route('/delete', methods=["GET"])
 def deleteImage():
     image = request.args.get('imagerepo')
     force = request.args.get('force') == 'true'
@@ -70,7 +73,7 @@ def deleteImage():
         return { "error": str(err) }
     return { 'success': True }
 
-@app.route('/images/pull', methods=["GET"])
+@images_bp.route('/pull', methods=["GET"])
 def pullImageFrom():
     repname = request.args.get('repname')
     source = request.args.get('source')
@@ -87,24 +90,16 @@ def pullImageFrom():
     return { 'id': imageid }
 
 
-@app.route('/rep/<repname>/push/<id>')
+@images_bp.route('/rep/<repname>/push/<id>')
 def pushToRepo(repname, id):
     pass
 
-
-@app.route('/images')
+@images_bp.route('/')
+@images_bp.route('/images')
 def listImages():
-    return render_template('images.html')
+    return render_template('images/list.html')
 
-
-def addContainerToUser(idcontainer):
-    print('adding: ', idcontainer)
-    print('to user: ', session[USERNAME])
-    userContainer = UsersContainers(session[USERID], idcontainer)
-    db.session.add(userContainer)
-    db.session.commit()
-
-@app.route('/images/inspect', methods=["GET"])
+@images_bp.route('/inspect', methods=["GET"])
 def getImageInfo():
     id = request.args['id']
     image = {}

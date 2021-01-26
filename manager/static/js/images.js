@@ -25,13 +25,13 @@ function goToDetailsOf(image, textType) {
         localStorage.setItem('image', name);
     }
 
-    location.href = '/image_details';
+    location.href = '/images/details';
 }
 
 function loadAllImages() {
     let reqObj = {
         'type': 'GET',
-        'url': `http://localhost:8000/images/json?all=True`,
+        'url': `/images/json?all=True`,
         'isAsync': false,
         'params': null
     };
@@ -106,7 +106,7 @@ function showImageModal(imageid, action) {
             </div>
              <div class="form-check">
                 <input type="checkbox" class="form-check-input mr-1" id="chkTty">
-                <label class="form-check-label mt-1 ml-2" for="chkRun">Entable TTY?</label>
+                <label class="form-check-label mt-1 ml-2" for="chkTty">Entable TTY?</label>
             </div>
         `;
         footer = `
@@ -116,7 +116,7 @@ function showImageModal(imageid, action) {
                 <label class="form-check-label mt-1 ml-2" for="chkRun">Create and Run?</label>
             </div>
             <div>
-                <a href="/container_creation">Advanced Creation</a>
+                <a href="/containers/creation">Advanced Creation</a>
                 <button onclick="createContainerFrom('${imageid}')" class="btn btn-sm btn-primary">Create Container</button>
             </div>
             </div>
@@ -254,7 +254,7 @@ function deleteImage() {
 
     let reqObj = {
         'type': 'GET',
-        'url': `http://localhost:8000/images/delete?imagerepo=${toDelete}&noprune=${noPrune}&force=${force}`,
+        'url': `/images/delete?imagerepo=${toDelete}&noprune=${noPrune}&force=${force}`,
         'isAsync': true,
         'params': null
     };
@@ -325,16 +325,16 @@ function showPullImageModal(imageName, source) {
 function pullImage(imageRep, source) {
     // rep + tag = imageToPull
     let imageToPull = `${source=='registry'?'localhost:5000/':''}${imageRep}:${$('#imageTag')[0].value}`;
-
-    
+ 
     let reqObj = {
         'type': 'GET',
-        'url': `http://localhost:8000/images/pull?repname=${imageToPull}&source=${source}`,
+        'url': `/images/pull?repname=${imageToPull}&source=${source}`,
         'isAsync': true,
         'params': null
     };
 
-    sendRequest(reqObj, null,
+    sendRequest(reqObj, 
+        (e) => showAlert('Pulling image from dockerhub...', 'info'),
         (response) => {
             let res = JSON.parse(response.srcElement.response);
             if('error' in res) showAlert('An error occurred pulling image.', 'danger');
@@ -346,6 +346,8 @@ function pullImage(imageRep, source) {
             console.log('error: ', error);
             showAlert(`An error occurred, check console.`, 'danger')
         });
+
+    showAlert('Pulling image from dockerhub...', 'info');
 }
 
 function loadRegistryRepositories(repositories) {
@@ -393,7 +395,7 @@ function loadDockerhubRepositories(repositories) {
 function loadRegistry() {
     let reqObj = {
         'type': 'GET',
-        'url': 'http://localhost:8000/registry?source=registry',
+        'url': '/images/registry?source=registry',
         'isAsync': false,
         'params': null
     };
@@ -418,7 +420,7 @@ function loadRegistry() {
 function searchOnDockerhub(text) {
     let reqObj = {
         'type': 'GET',
-        'url': `http://localhost:8000/registry?source=dockerhub&text=${text}`,
+        'url': `/images/registry?source=dockerhub&text=${text}`,
         'isAsync': true,
         'params': null
     };
