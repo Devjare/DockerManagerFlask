@@ -7,6 +7,7 @@ var currentView = 'list';
 function showPopover(id) {
     $(`#${id}`).popover('show');
 }
+
 function hidePopover(id) {
     $(`#${id}`).popover('hide');
 }
@@ -57,7 +58,7 @@ function goToDetailsOfImage(image) {
 function showCModal(container) {
     let state = container.State;
     let id = container.Id;
-    
+
     let title = 'Container action';
 
     let body = `<div class="container-fluid">
@@ -95,7 +96,7 @@ function showCModal(container) {
         <button onclick="triggerContainerAction('${id}','stop')" type="button" class="btn btn-danger mx-1" data-dismiss="modal">Stop</button>
         </div>`
     }
-    
+
     footer += '</div>';
     showModal(title, body, footer);
 }
@@ -118,7 +119,7 @@ function buildContainerTableRow(container, index) {
     let color = "";
     let state = container.State;
     let ipport = "";
-        
+
     if(container.Ports.length > 0) {
         let p = container.Ports[0];
         ipport = `${p.IP}:${p.PublicPort}->${p.PrivatePort}/${p.Type}`;
@@ -169,7 +170,7 @@ function loadContainers(containers, filter) {
     console.log('containers loaded: ', containers);
     clearContainersPanel();
     let filtered;
-    
+
     if(filter != 'all') filtered = filterContainersBy(filter);
     else filtered = containers;
 
@@ -180,7 +181,7 @@ function loadContainers(containers, filter) {
 
         gridTemplate = buildContainerHtmlTemplate(c);
         document.querySelector('#containersGrid > div').innerHTML += gridTemplate;
-    
+
         if(currentView == 'list') {
             document.getElementById('containersGrid').style.display="none";
             document.getElementById('containersList').style.display="flex";
@@ -305,7 +306,7 @@ function deleteContainer(container) {
 
 function showDeleteContainerModal(container) {
     let title = 'Delete container';
-    
+
     let body = `<h5>Deleting: ${container}</h5>
     <div class="form-check">
         <input type="checkbox" class="form-check-input" id="chkVolumes">
@@ -319,11 +320,11 @@ function showDeleteContainerModal(container) {
         <input type="checkbox" class="form-check-input" id="chkForce">
         <label class="form-check-label mt-2 ml-2" for="chkForce">Force removal(SIGKILL)?</label>
     </div>`;
-    
+
     let footer = `
         <button onclick="deleteContainer('${container.replace('/','')}')" class="btn btn-primary" data-dismiss="modal">Delete</button>
          <button class="btn btn-secondary" data-dismiss="modal">Cancel</button>`;   
-    
+
     showModal(title, body, footer);
 }
 

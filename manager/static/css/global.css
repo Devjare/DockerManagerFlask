@@ -216,6 +216,11 @@ body {
     transition: height 500ms;
 }
 
+/* BOOSTRAP DASHBOARD FOR NAV TOGGLER */
+.navbar .navbar-toggler {
+  top: .25rem;
+  right: 1rem;
+}
 /* 
  * COLLAPSABLE CARDS CLASSESS 
  * The default value for card-header heights, is 1.50 for padding(bottom and top)
