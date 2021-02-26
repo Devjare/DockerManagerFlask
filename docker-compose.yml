@@ -6,5 +6,5 @@ services:
         ports:
             - 46000:46000
         volumes:
-            - ./manager/app:/app/
+            - ./manager/:/manager/
         tty: true
