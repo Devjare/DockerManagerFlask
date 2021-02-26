@@ -1,0 +1,233 @@
+body,html {
+    height: 100%;
+} 
+body {
+    overflow-x: hidden!important;
+}
+
+.containers-item-submenu li
+, .images-item-submenu li {
+    list-style-type: none;
+}
+
+.listoptions {
+    display: flex;
+    flex-direction: column;
+}
+
+.side-bar {
+    background: #09478E;
+    width: 10%;
+    height: 100%;
+    position: relative;
+    z-index: 1;
+}
+
+.list-element {
+    cursor: pointer;
+}
+
+.list-element:hover {
+    background: #0060A8!important;
+}
+
+.site-content {
+    width:  100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    /* background: darkgray; */
+    z-index: 1;
+    overflow: hidden;
+}
+
+.content { 
+    width: 100%;
+    height: 100%;
+}
+
+.titlebar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.titlebar::after {
+    content: "";
+    width: 100%;
+    background: black;
+    height: 1px;
+}
+
+.options {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 5px;
+}
+
+.searchbar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.searchbar > #searchText{
+    padding: 5px;
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.75);
+}
+
+.view-format {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.view-format > svg {
+    margin: 10px;
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+}
+
+.view-format > svg:hover {
+    background: lightgray;
+}
+
+.right-panel {
+    position: absolute;
+    right: 0px;
+    width: 0px;
+    height: 95vh;
+    box-shadow: -3px 0px 3px -2px rgba(0,0,0,0.75);
+
+    /* display: flex; */
+    flex-direction: column;
+    transition: width 1s;
+
+    background: #F8F9FA;
+    /* display: none; */
+}
+
+.rp-title {
+    width: 100%;
+    padding: 10px;
+}
+
+.rp-title:after {
+    content: "";
+    width: 100%;
+    height: 1px;
+    background: black;
+}
+
+.launch-button {
+    width: 100%;
+    min-height: 20px;
+    max-height: 100px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+    padding: 10px;
+    border: none;
+    position: absolute;
+    bottom: 0px;
+    overflow: auto;
+}
+
+.launch-button:hover {
+    background: darkgreen;
+}
+
+.logout-button {
+    width: 100%;
+    padding: 5px;
+
+    position: absolute;
+    bottom: 55px;
+
+    cursor: pointer;
+}
+
+.logout-button:hover {
+    background: #c00!important;
+}
+
+#btnLogout {
+    font-size: 1.2em;
+    color: white;
+    background: none;
+    border: none;
+    margin: 5px;
+}
+
+#containersPanel {
+    height: 100%;
+}
+
+.containers {
+    padding: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    overflow: auto;
+    width: 100%;
+    height: 86%;
+}
+
+.grid-card-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.grid-card-header > svg {
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+}
+.grid-card-header > svg:hover {
+    background: lightgray;
+}
+
+.list-group {
+    width: 100%;
+    height: 100%;
+}
+
+#modalBody {
+    overflow: auto;
+}
+
+/* BOOTSTRAP SPECIFIC MODIFICATIONS */
+.card {
+    max-width: 450px!important;
+    min-width: 250px!important;
+    max-height: 350px!important;
+
+    transition: height 500ms;
+}
+
+/* BOOSTRAP DASHBOARD FOR NAV TOGGLER */
+.navbar .navbar-toggler {
+  top: .25rem;
+  right: 1rem;
+}
+/* 
+ * COLLAPSABLE CARDS CLASSESS 
+ * The default value for card-header heights, is 1.50 for padding(bottom and top)
+ * plus the .875 of the font. with border-box sizing, it makes a total of 2.375rem
+ * units of card-header height.
+ * */
+
+    .collapsed { 
+        height: 2.835rem;
+    }
+
+    .hide {
+        display: none!important;
+    }

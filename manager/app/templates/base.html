@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+        {% block head %}
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <!--<link rel="icon" href="http://getbootstrap.com/favicon.ico">-->
+
+        <title>{% block title %}{% endblock %} - Gestor global</title>
+
+        <!-- Bootstrap core CSS -->
+        <link href="http://getbootstrap.com/docs/4.1/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+
+        <!-- Custom styles for this template -->
+        <link href="http://getbootstrap.com/docs/4.1/examples/dashboard/dashboard.css" rel="stylesheet"> 
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+
+        <link rel="stylesheet" href="{{url_for('static', filename='css/global.css')}}">
+        <link rel="stylesheet" href="{{url_for('static', filename='css/images.css')}}">
+
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+        <!-- <script src="http://getbootstrap.com/docs/4.1/assets/js/vendor/popper.min.js"></script> -->
+        {% endblock %}
+    </head>
+
+    <body>
+        <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+            <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="#">Container Manager</a>
+            <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-toggle="collapse" data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+                <ul class="navbar-nav px-3">
+                <li class="nav-item text-nowrap">
+                <a class="nav-link" href="#">Sign out</a>
+                </li>
+                </ul> -->
+        </nav>
+
+        <div class="container-fluid content">
+            <div class="row content">
+                <nav id="sidebarMenu" class="col-md-2 d-md-block bg-light sidebar collapse">
+                    <div class="sidebar-sticky d-flex flex-column justify-content-between">
+                        <ul class="nav flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link active" href="/home">
+                                    <span data-feather="home"></span>Control Panel
+                                    <span class="sr-only">(current)</span>
+                                </a>
+                            </li>
+                            <!--<li class="nav-item">
+                                <a class="nav-link" href="/silo">
+                                <span data-feather="file"></span>
+                                Silo
+                                </a>
+                                </li>
+                                <li class="nav-item">
+                                <a class="nav-link" href="/unidades">
+                                <span data-feather="shopping-cart"></span>
+                                Unidades de construcción
+                                </a>
+                                </li>
+                                <li class="nav-item">
+                                <a class="nav-link" href="/subservicios">
+                                <span data-feather="users"></span>
+                                Subservicios virtuales
+                                </a>
+                                </li>-->
+                                <li class="nav-item">
+                                    <a id="itemContainers" class="nav-link" href="#" onclick="document.querySelector('.containers-item-submenu').classList.toggle('d-none')"><span data-feather="package"></span>
+                                        Containers</a>
+                                    <div class="containers-item-submenu d-none">
+                                        <ul>
+                                            <li class="mb-1"><a href="/containers"><span class="mx-1" data-feather="list"></span>List</a></li>
+                                            <li class="mb-1"><a href="/containers/details"><span class="mx-1" data-feather="info"></span>Details</a></li>
+                                            <li class="mb-1"><a href="/containers/creation"><span class="mx-1" data-feather="tool"></span>Creation tool</a></li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li class="nav-item">
+                                    <a id="itemImages" class="nav-link" href="#" onclick="document.querySelector('.images-item-submenu').classList.toggle('d-none')"><span data-feather="image"></span>Images</a>
+                                    <div class="images-item-submenu d-none">
+                                        <ul>
+                                            <li class="mb-1"><a href="/images"><span class="mx-1" data-feather="list"></span>List</a></li>
+                                            <li class="mb-1"><a href="/images/details"><span class="mx-1" data-feather="info"></span>Details</a></li>
+                                            <li class="mb-1"><a href="/images/builder"><span class="mx-1" data-feather="tool"></span>Build tool</a></li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <!--<li class="nav-item">
+                                    <a class="nav-link" href="#">
+                                    <span data-feather="bar-chart-2"></span>
+                                    Reports
+                                    </a>
+                                    </li>
+                                    <li class="nav-item">
+                                    <a class="nav-link" href="#">
+                                    <span data-feather="layers"></span>
+                                    Integrations
+                                    </a>
+                                    </li> -->
+                        </ul>
+                        <div class="d-flex justify-content-center">
+                            <button onclick="logout()" class="btn btn-danger w-100 h-100" style="border-radius: 0;">
+                                <span class="mx-2" data-feather="log-out"></span>
+                                Log out
+                            </button>
+                        </div>
+
+                        <!--<h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                            <span>Saved reports</span>
+                            <a class="d-flex align-items-center text-muted" href="#">
+                            <span data-feather="plus-circle"></span>
+                            </a>
+                            </h6>-->
+                            <!--<ul class="nav flex-column mb-2">
+                                <li class="nav-item">
+                                <a class="nav-link" href="#">
+                                <span data-feather="file-text"></span>
+                                Current month
+                                </a>
+                                </li>
+                                <li class="nav-item">
+                                <a class="nav-link" href="#">
+                                <span data-feather="file-text"></span>
+                                Last quarter
+                                </a>
+                                </li>
+                                <li class="nav-item">
+                                <a class="nav-link" href="#">
+                                <span data-feather="file-text"></span>
+                                Social engagement
+                                </a>
+                                </li>
+                                <li class="nav-item">
+                                <a class="nav-link" href="#">
+                                <span data-feather="file-text"></span>
+                                Year-end sale
+                                </a>
+                                </li>
+                                </ul> -->
+                    </div>
+                </nav>
+                {% block content %}{% endblock %} 
+                {% block footer %}
+                <!-- ======================== Bootstrap core JavaScript ========================== -->
+                    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
+
+                    <!-- Icons -->
+                    <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+                    <script>
+                        feather.replace()
+                    </script>
+
+                    <!-- Custom JS Files -->
+                    <script src="{{url_for('static', filename='js/utils.js')}}"></script>
+                    <script src="{{url_for('static', filename='js/base.js')}}"></script>
+
+
+                    <!-- Graphs 
+                        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.0.0/Chart.min.js" 
+                            integrity="sha512-oPvxMUC37WigeVCeZVcU9IoRJjR3xg5/XQaautxFc0rCWJZgQ625mTEPz2nfp7/papNkImutg4thPHf6ok/Fwg==" 
+                            crossorigin="anonymous"></script> -->
+                        {% endblock %} 
+    </body>
+
+</html>
