@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request
 from app import dockercli, client
 from app.constants import PRIVATE_REGISTRY 
 import requests
+import docker
 
 images_bp = Blueprint("images", __name__, static_folder="url_for('static')", template_folder="url_for('templates')")
 

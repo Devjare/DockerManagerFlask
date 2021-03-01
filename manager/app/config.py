@@ -4,7 +4,6 @@ class Config(object):
     SECRET_KEY = "\xa8\xe8\xa4\xd0\x1f\xab-\xd5%\x0e\x0f/\xff\xddp\x08\x81 \xb60$\xe7NE"
 
     SQLALCHEMY_DATABASE_URI = 'sqlite:///db/manager.db'
-    PORT = "46000"
     JSON_SORT_KEYS = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
@@ -17,7 +16,6 @@ class DevelopmentConfig(Config):
     SECRET_KEY = "\xa8\xe8\xa4\xd0\x1f\xab-\xd5%\x0e\x0f/\xff\xddp\x08\x81 \xb60$\xe7NE"
 
     SQLALCHEMY_DATABASE_URI = 'sqlite:///db/manager.db'
-    PORT = "46000" 
     JSON_SORT_KEYS = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 

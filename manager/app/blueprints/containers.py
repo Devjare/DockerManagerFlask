@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, session, request, current_app
 from app import dockercli, client, db
-from app.constants import USERID, USERCONTAINERS, USERNAME, HOST_ADDRESS
+from app.constants import USERID, USERCONTAINERS, USERNAME
 from app.db_models import UsersContainers, Container
 import requests
 import simplejson as json

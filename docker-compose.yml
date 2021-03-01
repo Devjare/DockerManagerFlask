@@ -4,7 +4,11 @@ services:
         build: ./manager
         restart: always
         ports:
-            - 46000:46000
+            - 8889:8889
         volumes:
             - ./manager/:/manager/
+        environment:
+            - PORT=8889
+            - DOCKER_HOST_IP=192.168.1.198:2375
+            - PRIVATE_REGISTRY=http://192.168.1.198:5000
         tty: true
