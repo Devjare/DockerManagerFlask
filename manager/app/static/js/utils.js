@@ -298,6 +298,42 @@ function createListForArray(array) {
     return list;
 }
 
+let onDeleteProperty, onAddProperty;
+function deleteDataRow(event, onDeleteProp) {
+    let rowToDelete = event.target.parentNode.closest('tr');
+    let propToDelete = rowToDelete.children[0].children[0].value;
+
+    onDeleteProperty(propToDelete);
+}
+
+function addNewDataRow(onAddProp) {
+    // serch prev new row
+    let prevNewRow = $('.new-row');
+    let key = $('.new-row').find('.key-input').val();
+    let value = $('.new-row').find('.value-input').val();
+    // if key is not empty, procceed to remove prev new row and add new empty row.
+    if(key != '') {
+        // change add button to remove button
+        prevNewRow.find('button')[0].onclick = (event) => deleteDataRow(event);
+        prevNewRow.find('button')[0].classList.remove('btn-primary');
+        prevNewRow.find('button')[0].classList.add('btn-danger');
+        prevNewRow.find('button').text('Delete');
+        // delete 'new-row' class from prev new row
+        prevNewRow[0].classList.remove('new-row');
+        // REVIEW: maybe make the fields read only(?)
+        // get prev 'new-row' data and pass to onAddProp
+        $('#tableBody').append(`
+        <tr class="new-row">
+            <td><input class="form-control key-input" type="text" placeholder="Data Key"></td>
+            <td><input class="form-control value-input" type="text" placeholder="Data Value"></td>
+            <td><button class="btn btn-sm btn-primary" onclick="addNewDataRow()">Add</a></td>
+        </tr>`); 
+        onAddProperty(key, value);
+    } else {
+        showAlert('Cannot add an empty key property!', 'danger');
+    }
+}
+
 // getDynamicDictTemplate() and getDynamicListTemplate()
 // are methods to generate an html section to use when a 
 // dictionary or a set of key-value pairs is needed as input.
@@ -308,8 +344,27 @@ function createListForArray(array) {
 // 
 // NOTE: Both examples can be found on the container_creation page.
 
-function getDynamicDictTemplate() {
-    
+function getDynamicDictTemplate(dict, onAddProp, onDeleteProp) {
+    onDeleteProperty = onDeleteProp;
+    onAddProperty = onDeleteProp;
+    let table = `<table id="tableBody" class="table table-sm"> <thead class="thead-dark">
+    <tr><th>Label Key</th><th>Label Value</th><th>Delete</th>
+    </tr></thead><tbody id="tableBody">`;
+    for(key in dict) {
+        table += `
+        <tr>
+            <td><input class="form-control lkey-input" type="text" value="${key}" disabled></td>
+            <td><input class="form-control lvalue-input" type="text" value="${dict[key]}"></td>
+            <td><a href="#" onclick="deleteDataRow(event)">delete</a></td>
+        </tr>`;
+    }
+    table += `
+    <tr class="new-row">
+        <td><input class="form-control key-input" type="text" placeholder="Data Key"></td>
+        <td><input class="form-control value-input" type="text" placeholder="Data Value"></td>
+        <td><button class="btn btn-sm btn-primary" onclick="addNewDataRow()">Add</a></td>
+    </tr></tbody></table>`; 
+   return table; 
 }
 
 function getDynamicListTemplate() {

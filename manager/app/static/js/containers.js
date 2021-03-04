@@ -77,6 +77,15 @@ function getContainerModalInfo(container) {
 }
 
 var commitConfs = {};
+
+function addNewConfig(key, value) {
+    if(!(key in commitConfs)) commitConfs[key] = value; 
+}
+
+function deleteConfig(key) {
+    if(key in commitConfs) delete commitConfs[key];
+}
+
 function getContainerCommitTemplate(containerid) {
     let body = `
     <div id="mbContainerCommit" class="d-none">
@@ -85,24 +94,9 @@ function getContainerCommitTemplate(containerid) {
     <div><textarea id="message" class="m-1 form-control" placeholder="Message" rows="4" columns="50"></textarea></div>
     <div><input id="author" type="text" class="m-1 form-control" placeholder="Default user name"></div>
     <div><textarea id="changes" class="m-1 form-control" placeholder="Changes" rows="4" columns="50"></textarea></div>
-    <div>
-        <table id="tableBody" class="table table-sm"> <thead class="thead-dark">
-        <tr><th>Conf Key</th><th>Conf Value</th><th>Delete</th>
-        </tr></thead><tbody id="tableBody">`;
-    
-    for(key in commitConfs) {
-        body += `
-        <tr>
-            <td><input class="form-control lkey-input" type="text" value="${key}" disabled></td>
-            <td><input class="form-control lvalue-input" type="text" value="${commitConfs[key]}"></td>
-            <td><a href="#" onclick="deleteDataRow(event)">delete</a></td>
-        </tr>`;
-    }
-
-    body += `</tbody></table></div>
-    <button class="btn btn-primary" onclick="commitContainer('${containerid}')">New config</button>
-    </div>
-    </div>`;
+    <div>`;
+    body += getDynamicDictTemplate(commitConfs, addNewConfig, deleteConfig);
+    body += `</div></div>`;
 
     return body;
 }
