@@ -1,3 +1,4 @@
+// Default invalid input messages for fields in container_creation page.
 var containersFieldsMessages = {
     'containerName': 'Invalid name: only letters, numbers, underscore and hyphen',
     'hostname': 'Invalid name: only letters, numbers, underscore and hyphen',
@@ -26,6 +27,10 @@ var containersFieldsMessages = {
     'utsMode': 'Only numbers, letters, and  _ are allowed.',
 };
 
+// When creating a container, many kind of arguments are needed,
+// objects and lists are some of them.
+// The above objects save the name of the arg needed and it's value
+// those are gonna be passed to the server.
 let dictionaries = {
     'labels': {},
     'environment': {},
@@ -222,7 +227,7 @@ function showDictionaryModal(dictName) {
             <td><input class="form-control lkey-input" type="text" value="${key}" disabled></td>
             <td><input class="form-control lvalue-input" type="text" value="${data[key]}"></td>
             <td><a href="#" onclick="deleteDataRow(event, '${dictName}')">delete</a></td>
-        </tr
+        </tr>
         `;
     }
     body += `</tbody></table>

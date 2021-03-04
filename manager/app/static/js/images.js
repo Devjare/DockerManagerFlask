@@ -81,7 +81,7 @@ function showImageModal(imageid, action) {
         body = `
             <div class="m-2 form-group">
                 <label for="selectTag"> Select Tag</label>
-                <select id="selectTag">
+                <select id="selectTag" class="form-control">
                 </select>
             </div>
             <div class="m-2 form-group">

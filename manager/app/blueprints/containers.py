@@ -10,7 +10,7 @@ containers_bp = Blueprint("containers", __name__, static_folder="url_for('static
 
 @containers_bp.route('/creation')
 def showContainerCreation():
-    images = dockercli.images(all=True) 
+    images = dockercli.images() 
     return render_template('containers/creator.html', images=images)
 
 @containers_bp.route('/create', methods=['POST'])
@@ -307,6 +307,25 @@ def deleteContainer():
     print('session after deleting container: ', session)
 
     return { 'deleted': True }
+
+@containers_bp.route('/commit', methods=['POST'])
+def commitContainer():
+    data = request.json
+    container = client.containers.get(str(data['id']))
+    confing = json.loads(data['conf']) if 'conf' in data else None
+    try:
+        # first 2 args are obligatory
+        container.commit(
+                repository = data['repository'], 
+                tag = data['tag'],
+                message = data['message'] if 'message' in data else None,
+                author = data['author'] if 'author' in data else None,
+                change = data['changes'] if 'changes' in data else None,
+                conf = config)
+
+    except docker.errors.APIError as e: 
+        return { 'error': str(e) }
+    return { 'success': True } 
 
 @containers_bp.route('/details')
 def showContainerDetails():

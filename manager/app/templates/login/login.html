@@ -23,9 +23,9 @@
                         <div>
                             <h1 class="h3 mb-3 font-weight-normal d-flex justify-content-center">Sign in Please</h1>
                             <label class="sr-only" for="username">Username: </label>                            
-                            <input name="username" id="username" class="form-control m-1" type="text" placeholder="Username" pattern="\w+$" oninput="setCustomValidity('')"> 
+                            <input name="username" id="username" class="form-control m-1" type="text" placeholder="Username" pattern="\w+$" oninput="setCustomValidity('')" onkeyup="onEnter(event)"> 
                             <label class="sr-only" for="password">Password</label> 
-                            <input name="password" id="password" class="form-control m-1" type="password" placeholder="Password" pattern="[^\s\\]+$" oninput="setCustomValidity('')">
+                            <input name="password" id="password" class="form-control m-1" type="password" placeholder="Password" pattern="[^\s\\]+$" oninput="setCustomValidity('')" onkeyup="onEnter(event)">
                             <div class="p-2 m-3">
                                 <button class="btn btn-lg btn-primary btn-block m-1" onclick="login()">Sign in</button>                                 
                                 <div class="checkbox mb-3 d-flex justify-content-center">                                     

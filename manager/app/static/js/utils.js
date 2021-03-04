@@ -1,8 +1,13 @@
+
+// Description: Object containing the default messages
+// that are shown on login fields when invalid input is
+// entered.`
 var loginFieldsMessages = {
     'username': 'Only numbers, letters, _, and - are allowed.',
     'password': 'No Whitespaces',
     'confirmPassword': 'No Whitespaces'
 }
+
 
 function portsArrayToString(portsArray) {
     str = "";
@@ -26,6 +31,8 @@ function timeConverter(UNIX_timestamp){
     return time;
 }
 
+// Description: Validates 'str' for the 'type'
+// that is specified.
 function validateStrFor(str, type) {
     if(str == '') return false
     if(type == 'number') {
@@ -34,6 +41,11 @@ function validateStrFor(str, type) {
     return true;
 }
 
+// alertCount is used mainly to set the margin between alerts
+// when displaying on browsers.
+// showAlert displays an colored notification with a message.
+// The colors that uses are the same as bootstrap: 
+// success, danger, warning, primary, etc.
 var alertCount = 0;
 function showAlert(msg, type) { 
     alertCount++;
@@ -51,7 +63,9 @@ function showAlert(msg, type) {
     }, 5000);
 }
 
-// GLOBAL XHR OBJECT
+// sendRequests encapsulates, some data when using xmlhttprequest,
+// mainly to reduce code invoking it every time is needed,
+// is the replacement for jquery's ajax request methods.
 function sendRequest(reqObj, onProgress, onLoad, onError, onAbort) {
     var xhr = new XMLHttpRequest();
     // set to null to prevent using previous listeners assigned
@@ -64,18 +78,19 @@ function sendRequest(reqObj, onProgress, onLoad, onError, onAbort) {
     if(onAbort) xhr.onabort = onAbort;
     else xhr.onabort = null;
 
-    console.log('request: ', reqObj);
     xhr.open(reqObj.type, reqObj.url, reqObj.isAsync);
     if('requestHeaders' in reqObj) {
         for(header in reqObj.requestHeaders) {
-            // adding every requet header indicated
+            // adding every request header indicated
             xhr.setRequestHeader(header, reqObj.requestHeaders[header]);
         }
     }
     xhr.send(reqObj.params);
 }
 
-
+// As it's name says, this function collapse or expands,
+// the cards that have the event asigned.
+// The ones shown on the description pages.
 function collapseCard(event) {
     let target =  event.target;
     let parent = $(target.parentNode);
@@ -93,6 +108,9 @@ function collapseCard(event) {
     parent[0].children[1].classList.toggle('hide');
 }
 
+// Modal templates, they're here because every time they are hidden
+// or shown, it's necesary to delete or add them to the DOM Completely,
+// in order to make dynamic use of them to show different things.
 // ================ MODALS =======================
 let modalTemplate = `
  <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -132,6 +150,10 @@ let confirmationModalTemplate = `
     </div>
 </div>`
 
+// showConfirmationModal, and showModal, both make what their name says,
+// the confirmation modal has an greater z-index than the normal modal,
+// in case a confirmation modal should be displayed on top of a normal 
+// modal.
 function showConfirmationModal(msg, onConfirm, onCancel) {
     $('body').append(confirmationModalTemplate);
     
@@ -193,13 +215,16 @@ function valueOrNull(str, type) {
     }
 }
 
-// check if object is empty
+// check if an object is empty
 function isObjectEmpty(obj) {
     for(var key in obj) {
         if(obj.hasOwnProperty(key)) return false;
     }
     return true;
 }
+
+// check if an element is an object,
+// NOTE: null is also considered an object.
 function isObject(obj) {
     return typeof obj === 'object' && obj !== null;
 }
@@ -208,6 +233,22 @@ function isEmptyString(str) {
     return str == '';
 }
 
+// If a json needs to be displayed and that json object,
+// has objects with their own children on various levels
+// e.g:
+// {
+//   'prop1': '',
+//   'prop2': {
+//      'prop3': '',
+//      'prop4': {
+//         'prop5': ''
+//       }
+//    }
+// },
+// or has an array of data, this method builds an html 
+// table prepared to show those 2 kind of obejcts
+// using createTableForJSON and createListForArray methods.
+//
 function fillTableWithJSON(tableid, jsonObject) {
     let table = $(`#${tableid} .table-body`);
     table.empty();
@@ -232,6 +273,9 @@ function fillTableWithJSON(tableid, jsonObject) {
     }
 }
 
+// returns the complete table html template formatted as
+// key - value, recursively calling itself again if needed,
+// or createListForArray
 function createTableForJSON(obj) {
     let table = `<table class="table"><tbody class="table-body">`; 
     for(key in obj) {
@@ -245,9 +289,29 @@ function createTableForJSON(obj) {
     return table;
 }
 
+// simply returns a list html template with the 
+// passed array argument.
 function createListForArray(array) {
     let list = `<ul>`; 
     array.forEach(el => list += `<li>${el}</li>`);
     list += `</ul>`;
     return list;
+}
+
+// getDynamicDictTemplate() and getDynamicListTemplate()
+// are methods to generate an html section to use when a 
+// dictionary or a set of key-value pairs is needed as input.
+// e.g. when entering container labels, they can be unlimited
+// labels(dynamic) and have a key-value format.
+// Lists, on the other hand, is similar but when multiple
+// strings are needed, for example with container's arguments.
+// 
+// NOTE: Both examples can be found on the container_creation page.
+
+function getDynamicDictTemplate() {
+    
+}
+
+function getDynamicListTemplate() {
+
 }

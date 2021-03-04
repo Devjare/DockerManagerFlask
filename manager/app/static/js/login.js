@@ -2,8 +2,8 @@ var xhr = new XMLHttpRequest();
 
 loginFormTemplate = `<div>
 <h1 class="h3 mb-3 font-weight-normal d-flex justify-content-center">Log in Please</h1>
-<input name="username" id="username" class="form-control m-1" type="text" placeholder="Username" pattern="\\w+$" oninput="setCustomValidity('')">
-<input name="password" id="password" class="form-control m-1" type="password" placeholder="Password" pattern="[^\\s\\\\]+$" oninput="setCustomValidity('')">
+<input name="username" id="username" class="form-control m-1" type="text" placeholder="Username" pattern="\\w+$" oninput="setCustomValidity('')" onkeyup="onEnter(event)">
+<input name="password" id="password" class="form-control m-1" type="password" placeholder="Password" pattern="[^\\s\\\\]+$" oninput="setCustomValidity('')" onkeyup="onEnter(event)">
 <div class="p-2 m-3"><button onclick="login()" class="btn btn-lg btn-primary btn-block m-1">Log in</button>
 <div class="checkbox mb-3 d-flex justify-content-center">
 <small><a onclick="switchForm('signup')" href="#">Don't have an account?, sign up here!</a></small>
@@ -11,16 +11,19 @@ loginFormTemplate = `<div>
 
 registerFormTemplate = `<div>
 <h1 class="h3 mb-3 font-weight-normal d-flex justify-content-center">Sign up!</h1>
-<input name="username" id="username" class="form-control m-1" type="text" placeholder="Username" pattern="\\w+$" oninput="setCustomValidity('')">
-<input name="password" id="password" class="form-control m-1" type="password" placeholder="Password" placeholder="Password" pattern="[^\\s\\\\]+$" oninput="setCustomValidity('')">
-<input name="confirmpassword" id="confirmPassword" class="form-control m-1" type="password" placeholder="Confirm Password" placeholder="Password" pattern="[^\\s\\\\]+$" oninput="setCustomValidity('')">
+<input name="username" id="username" class="form-control m-1" type="text" placeholder="Username" pattern="\\w+$" oninput="setCustomValidity('')" onkeyup="onEnter(event)">
+<input name="password" id="password" class="form-control m-1" type="password" placeholder="Password" placeholder="Password" pattern="[^\\s\\\\]+$" oninput="setCustomValidity('')" onkeyup="onEnter(event)">
+<input name="confirmpassword" id="confirmPassword" class="form-control m-1" type="password" placeholder="Confirm Password" placeholder="Password" pattern="[^\\s\\\\]+$" oninput="setCustomValidity('')" onkeyup="onEnter(event)">
 <div class="p-2 m-3"><button class="btn btn-lg btn-primary btn-block m-1" onclick="signup()">Register</button>
 <div class="checkbox mb-3 d-flex justify-content-center">
 <small><a onclick="switchForm('signin')" href="#">Already have an account?, Sign in here!</a></small>
 </div></div></div>`;
 
-function switchForm(to) {
-    document.getElementById('form-type').innerHTML = to == "signup" ? registerFormTemplate : loginFormTemplate;
+var formType = "signin";
+
+function switchForm(newFormType) {
+    document.getElementById('form-type').innerHTML = (newFormType == "signup" ? registerFormTemplate : loginFormTemplate);
+    formType = newFormType;
     setValidities();
 } 
 
@@ -150,10 +153,19 @@ function signup() {
 
 }
 
+function onEnter(event) {
+    if(event.keyCode == 13) {
+        event.preventDefault();
+        if(formType == "signin") login();
+        else signup();
+    }
+}
+
 $('form').ready((e) => { 
     // check if the invalidity popup should show after the
     // content of an input changed
     setValidities();
+
 });
 
 function setValidities() { 

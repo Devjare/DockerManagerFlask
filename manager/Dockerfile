@@ -8,4 +8,4 @@ WORKDIR /manager
 
 EXPOSE 46000
 
-CMD ["python", "run.py", "46000"]
+CMD ["python", "run.py"]
