@@ -217,8 +217,9 @@ function showDictionaryModal(dictName) {
     let counter = 0;
     let title = `Mananage ${dictName} data`;
 
-    let body = `<div class="d-flex flex-column">
-    <table id="tableBody" class="table table-sm"> <thead class="thead-dark">
+    let body = `<div class="d-flex flex-column">`;
+    body += getDynamicDictTemplate(dictionaries[dictName]);
+    body += `<table id="tableBody" class="table table-sm"> <thead class="thead-dark">
     <tr><th>Label Key</th><th>Label Value</th><th>Delete</th>
     </tr></thead><tbody id="tableBody">`
     for(key in data) {

@@ -78,14 +78,6 @@ function getContainerModalInfo(container) {
 
 var commitConfs = {};
 
-function addNewConfig(key, value) {
-    if(!(key in commitConfs)) commitConfs[key] = value; 
-}
-
-function deleteConfig(key) {
-    if(key in commitConfs) delete commitConfs[key];
-}
-
 function getContainerCommitTemplate(containerid) {
     let body = `
     <div id="mbContainerCommit" class="d-none">
@@ -95,7 +87,7 @@ function getContainerCommitTemplate(containerid) {
     <div><input id="author" type="text" class="m-1 form-control" placeholder="Default user name"></div>
     <div><textarea id="changes" class="m-1 form-control" placeholder="Changes" rows="4" columns="50"></textarea></div>
     <div>`;
-    body += getDynamicDictTemplate(commitConfs, addNewConfig, deleteConfig);
+    body += getDynamicDictTemplate(commitConfs);
     body += `</div></div>`;
 
     return body;
@@ -109,7 +101,7 @@ function commitContainer(id) {
         'message': $('#message').val(),
         'author': $('#author').val(),
         'changes': $('#changes').val() ,
-        'conf': $('#conf').val()
+        'conf': commitConfs
     };
 
     let reqObj = {
@@ -123,17 +115,13 @@ function commitContainer(id) {
     sendRequest(reqObj, null,
         (response) => {
             let res = JSON.parse(response.srcElement.response);
-            if('error' in res) showAlert('An error ocurred obtaining containers, check server logs.', 'danger');
+            if('error' in res) {
+                showAlert('An error ocurred obtaining containers, check console logs.', 'danger');
+                console.log('error: ', res['error']);
+            }
             else {
-                showAlert('Containers obtained successfully!, refreshing list!', 'success');
-                console.log('containers/json response: ', res);
-                containers = res['containers'];
-                loadContainers(containers, currentFilter);
-                containersNames = containers.map(c => { 
-                    let name = c.Names[0];
-                    return name.substr(1, name.length);
-                });
-                localStorage.setItem('containers_list', containersNames);
+                showAlert('Container new image successfully commited!', 'success');
+                console.log('Commit Response: ', res);
             }
         },
         (error) => {

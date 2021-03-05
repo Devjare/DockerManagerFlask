@@ -298,15 +298,20 @@ function createListForArray(array) {
     return list;
 }
 
-let onDeleteProperty, onAddProperty;
+let data;
 function deleteDataRow(event, onDeleteProp) {
+    console.log('deleting property');
     let rowToDelete = event.target.parentNode.closest('tr');
     let propToDelete = rowToDelete.children[0].children[0].value;
+    
+    // remove row from table
+    rowToDelete.remove();
 
-    onDeleteProperty(propToDelete);
+    // delete property from dictionary 'data'
+    if(propToDelete in data) delete data[propToDelete];
 }
 
-function addNewDataRow(onAddProp) {
+function addNewDataRow() {
     // serch prev new row
     let prevNewRow = $('.new-row');
     let key = $('.new-row').find('.key-input').val();
@@ -328,7 +333,8 @@ function addNewDataRow(onAddProp) {
             <td><input class="form-control value-input" type="text" placeholder="Data Value"></td>
             <td><button class="btn btn-sm btn-primary" onclick="addNewDataRow()">Add</a></td>
         </tr>`); 
-        onAddProperty(key, value);
+        // adds the data to the dictionary 'data'
+        if(!(key in data)) data[key] = value;
     } else {
         showAlert('Cannot add an empty key property!', 'danger');
     }
@@ -344,9 +350,10 @@ function addNewDataRow(onAddProp) {
 // 
 // NOTE: Both examples can be found on the container_creation page.
 
-function getDynamicDictTemplate(dict, onAddProp, onDeleteProp) {
-    onDeleteProperty = onDeleteProp;
-    onAddProperty = onDeleteProp;
+function getDynamicDictTemplate(dict) {
+    
+    data = dict;
+
     let table = `<table id="tableBody" class="table table-sm"> <thead class="thead-dark">
     <tr><th>Label Key</th><th>Label Value</th><th>Delete</th>
     </tr></thead><tbody id="tableBody">`;
@@ -355,7 +362,7 @@ function getDynamicDictTemplate(dict, onAddProp, onDeleteProp) {
         <tr>
             <td><input class="form-control lkey-input" type="text" value="${key}" disabled></td>
             <td><input class="form-control lvalue-input" type="text" value="${dict[key]}"></td>
-            <td><a href="#" onclick="deleteDataRow(event)">delete</a></td>
+            <td><button class="btn btn-sm btn-danger" onclick="deleteDataRow(event)">Delete</a></td>
         </tr>`;
     }
     table += `

@@ -38,6 +38,9 @@ def login():
             for x in userContainers:
                 session[USERCONTAINERS].append(x.Container.id)
 
+            print('logged in as: ', username)
+            print('containers for user: ', session)
+
             return { 'login': True }
         else:
             return { 'error': 'User does not exist' } 
