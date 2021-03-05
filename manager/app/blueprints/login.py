@@ -11,8 +11,10 @@ def loginscreen():
 
 @login_bp.route('/logout', methods=['GET'])
 def logout():
+    print('session before logout: ', session)
     try:
         [session.pop(key) for key in list(session.keys())]
+        print('session after logout: ', session)
     except Exception as e:
         return { 'error': e }
 
@@ -31,15 +33,14 @@ def login():
         if(exists): 
             session[USERNAME] = username
 
-            userContainers = db.session.query(Container, User).filter(
-                    UsersContainers.container_id == Container.id,
-                    UsersContainers.user_id == User.uid).order_by(UsersContainers.user_id).all()
-            session[USERCONTAINERS] = []
-            for x in userContainers:
-                session[USERCONTAINERS].append(x.Container.id)
-
-            print('logged in as: ', username)
-            print('containers for user: ', session)
+            try:
+                conts = db.session.query(UsersContainers).filter(UsersContainers.user_id == session[USERID]).all()
+                session[USERCONTAINERS] = []
+                for x in conts:
+                    # adds each container id to array of containers for that user.
+                    session[USERCONTAINERS].append(x.container_id)
+            except Exception as err:
+                print('error: ', err)
 
             return { 'login': True }
         else:
@@ -70,11 +71,17 @@ def signup():
             return { 'error': 'User already exists, login instead'}
         else:
             session[USERNAME] = username
+            session[USERCONTAINERS] = []
             # insert to db user, and login
             user = User(username, password)
             
             db.session.add(user)
             db.session.commit()
+    
+            user = User.query.filter(User.username == username).first()
+            print('user: ', user.uid);
+            session[USERID] = user.uid
+
             return { 'signup': True } 
     
     return { 'error': 'An error occurred, failed to authenticate.' } 

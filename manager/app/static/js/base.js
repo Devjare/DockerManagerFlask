@@ -20,9 +20,12 @@ function logout() {
     sendRequest(reqObj, null, 
         (response) => { 
             let res = JSON.parse(response.srcElement.response);
-            if('error' in res) showAlert('An error occurred trying to logout! Check logs.', 'danger');
+            if('error' in res) {
+                showAlert('An error occurred trying to logout! Check logs.', 'danger');
+                console.log('error: ', res['error']);
+            }
             else {
-                console.log('successfully logged out!');
+                console.log('Successfully logged out!');
                 showAlert('Successfully logged out!', 'success');
                 window.location.href = '/';
             }

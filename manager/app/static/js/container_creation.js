@@ -69,54 +69,6 @@ function dataUpdated(dictName) {
     $(`#${dictName}`)[0].value = JSON.stringify(dictionaries[dictName]);
 }
 
-function updateDataValue(event, dictName) {
-    // get value from key input of the changed value input event
-    let target = $(event.target);
-    let key = $(target.closest('tr')).find('.key-input')[0].value;
-    let newValue = target[0].value;
-
-    dictionaries[dictName][key] = newValue;
-    dataUpdated();
-}
-
-function addNewDataRow() {
-    $('#tableBody').append(`
-    <tr class="new-row">
-        <td><input class="form-control key-input" type="text" placeholder="Data Key"></td>
-        <td><input class="form-control value-input" type="text" placeholder="Data Value"></td>
-    </tr>`); 
-}
-
-function addNewData(dictName) {
-    let newDataKeys = $('.new-row').find('.key-input');
-    let newDataValues = $('.new-row').find('.value-input');
-
-    // keys and values should have the same lengt, so it's the same use one or another.
-    rowsCount = newDataKeys.length;
-    for(let i = 0;i < rowsCount;i++) {
-        key = newDataKeys[i].value;
-        value = newDataValues[i].value;
-
-        // if the key is not empty, add to dictionary with it's value
-        if(key != "") dictionaries[dictName][key] = value; 
-    }
-
-    dataUpdated(dictName);
-}
-
-function deleteDataRow(event, dictName) {
-    let rowToDelete = event.target.parentNode.closest('tr');
-    let propToDelete = rowToDelete.children[0].children[0].value;
-
-    if(propToDelete in dictionaries[dictName]) {
-        delete dictionaries[dictName][propToDelete];
-        rowToDelete.remove();
-    }
-    else alert(`property ${propToDelete} is not on labels object.`);
-
-    dataUpdated(dictName);
-}
-
 function listUpdated(listName) {
     $(`#${listName}`)[0].value = lists[listName].toString();
 }
@@ -219,21 +171,6 @@ function showDictionaryModal(dictName) {
 
     let body = `<div class="d-flex flex-column">`;
     body += getDynamicDictTemplate(dictionaries[dictName]);
-    body += `<table id="tableBody" class="table table-sm"> <thead class="thead-dark">
-    <tr><th>Label Key</th><th>Label Value</th><th>Delete</th>
-    </tr></thead><tbody id="tableBody">`
-    for(key in data) {
-        body += `
-        <tr>
-            <td><input class="form-control lkey-input" type="text" value="${key}" disabled></td>
-            <td><input class="form-control lvalue-input" type="text" value="${data[key]}"></td>
-            <td><a href="#" onclick="deleteDataRow(event, '${dictName}')">delete</a></td>
-        </tr>
-        `;
-    }
-    body += `</tbody></table>
-    <button class="btn btn-sm btn-primary align-self-end" onclick="addNewDataRow()">new</button>
-    </div>`;
 
     let footer = `<div class="d-flex justify-content-end">
     <button class="btn btn-sm btn-secondary mx-1" data-dismiss="modal">Close</button>

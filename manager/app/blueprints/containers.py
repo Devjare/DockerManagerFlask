@@ -16,15 +16,14 @@ def showContainerCreation():
 @containers_bp.route('/create', methods=['POST'])
 def createContainer():
     print('------------- TRYING TO CREATE CONTAINER ----------------------')
+    print('session before create container: ', session)
     data = request.json
     container = {}
   
     # if the parameters is not on the data from client object
     # then it's gonna be passed as None(null for docker)
     if('advancedCreation' in data):
-        print('data: ', data);
         if(not data['run']):
-            print('create without running')
             try:
                 container = client.containers.create(
                     image = data['image'], 
@@ -114,14 +113,12 @@ def createContainer():
                     oom_score_adj = int(data['oom_score_adj']) if 'oom_score_adj' in data else None,
                     pids_limit = int(data['pids_limit']) if 'pids_limit' in data else None
                 )
-                print('created container', container)
                 addContainerToUser(container.id)
             except docker.errors.APIError as api_error:
                 return { 'error': str(api_error) }
             except docker.errors.ImageNotFound as error:
                 return { 'error': str(error) }
         else:        
-            print('create running')
             try:
                 container = client.containers.create(
                     image = data['image'], 
@@ -212,7 +209,6 @@ def createContainer():
                  # since run() doesnt return the new created container id, 
                  # make a query to look up for the last created container on API
 
-                print('created container', container)
                 addContainerToUser(container.id)
             except docker.errors.APIError as api_error:
                 # since there's no way on knowing on client side, what caused the error
@@ -223,7 +219,6 @@ def createContainer():
                 return { 'error': str(error) }
     else:
         # if not advanced
-        print('basic data: ', data)
         volumeData = data['volume'].split(':') if 'volume' in data else None
         volume = None
         if(volumeData != None):
@@ -232,7 +227,6 @@ def createContainer():
                 'mode': volumeData[2] if volumeData[2] != None else ''
             }
        
-        print('volume: ', volume)
 
         ports = data['ports'].split(':') if 'ports' in data else None
         ports = { ports[0]: ports[1] } if ports != None else None
@@ -257,16 +251,13 @@ def createContainer():
     new_container = Container(container.id, container.name, container.image.id)
     db.session.add(new_container)
     db.session.commit()
+    print('session after creating container: ', session)
     
     # add recently created container to user session containers array.
     
-    print('container id to append: ', container.id)
-
     current_containers = session[USERCONTAINERS]
     current_containers.append(container.id)
     session[USERCONTAINERS] = current_containers
-
-    print('session after adding container: ', session)
 
     return { 'containerid': container.short_id }
 
@@ -285,8 +276,6 @@ def deleteContainer():
         
         # delete row on UserContainerTable
         usercontainer = UsersContainers.query.filter_by(user_id=session[USERID], container_id=container.id).first()
-        print('usercontainer to delete: ', usercontainer)
-        print('usercontainer to delete: ', usercontainer.id)
         db.session.delete(usercontainer)
         db.session.commit()
 
@@ -298,14 +287,10 @@ def deleteContainer():
         return { 'error': str(e) }
 
     # delete container id from session
-    print('container id to remove: ', container.id)
-    
     current_containers = session[USERCONTAINERS]
     current_containers.remove(container.id)
     session[USERCONTAINERS] = current_containers
     
-    print('session after deleting container: ', session)
-
     return { 'deleted': True }
 
 @containers_bp.route('/commit', methods=['POST'])
@@ -334,9 +319,16 @@ def showContainerDetails():
 @containers_bp.route('/json')
 def getContainers():
     containers = dockercli.containers(all=True)
-    print('current session data: ', session)
-    containers = filter(lambda c: c['Id'] in session[USERCONTAINERS], containers) 
-    print('container list filtered: ', containers)
+    if session[USERCONTAINERS]:
+        try:
+            print('BEFORE filtering containers: ', containers)
+            containers = filter(lambda c: c['Id'] in session[USERCONTAINERS], containers) 
+            print('AFTER filtering containers: ', containers)
+        except Exception as err:
+            print('Exception while filtering containers: ', err)
+    else:
+        return { 'containers': [] }
+
     return {'containers': containers}
 
 @containers_bp.route('/')
@@ -345,7 +337,6 @@ def listContainers():
     # list containers only of the given user.
     containerslist = getContainers()['containers']
 
-    print('container list: ', containerslist)
     # allcontainers = client.containers.list(all=True);
     # formattedContainers = map(containerToJson, allcontainers)
     jsonArray = { "containers": containerslist }
@@ -409,9 +400,7 @@ def containerToJson(container):
     return json.dumps(c)
 
 def addContainerToUser(idcontainer):
-    print('adding: ', idcontainer)
-    print('to user: ', session[USERNAME])
+    print('session adding container: ', session)
     userContainer = UsersContainers(session[USERID], idcontainer)
     db.session.add(userContainer)
     db.session.commit()
-
