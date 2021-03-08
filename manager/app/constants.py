@@ -1,5 +1,6 @@
 import os
 # CONSTANTS
+# used to identify properties on the session object from flask.`
 USERCONTAINERS = 'usercontainers'
 USERNAME = 'username'
 USERID = 'userid'

@@ -3,19 +3,19 @@ $('.site-content').ready((e) => {
     loadRegistry();
 });
 
+
 var images = [];
 var repositories = [];
 var dockerhubRepositories = [];
 
 function findImagesBy(pattern) {
     return images.filter(i => 
-       i.Id.includes(pattern)  
-       || i.RepoDigests.toString().includes(pattern) 
-       || i.RepoTags.toString().includes(pattern));
+        i.Id.includes(pattern)  
+        || i.RepoDigests.toString().includes(pattern) 
+        || i.RepoTags.toString().includes(pattern));
 }
 
 function goToDetailsOf(image, textType) {
-    console.log('image to detail name: ', image);
     // split text in case multiple tags are loaded.
     // any tag used will result on the same data.
     if(textType == 'tag') localStorage.setItem('image', image);
@@ -43,7 +43,7 @@ function loadAllImages() {
                 images = res.images;
                 loadImages(images);
                 showAlert('Images loaded succesfully', 'success');
-                
+
                 imagesNames = images.map(i => i.RepoTags.toString());
                 localStorage.setItem('images_list', imagesNames);
             }
@@ -121,7 +121,7 @@ function showImageModal(imageid, action) {
             </div>
             </div>
         `;
-        
+
         $('#modalBody').ready(e => {
             // Add tags when the modal loads.
             images.find(img => img.Id == imageid).RepoTags.forEach(tag => {
@@ -131,14 +131,14 @@ function showImageModal(imageid, action) {
     } else {
         title = 'Save image';
     }
-    
+
     showModal(title, body, footer);
 }
 
 function createContainerFrom(imageid) {
     // get all image data.
     showConfirmationModal(
-        '<h5>If a field is left empty, container will be created anyway but without that argument. Do you want to continue?</h5>',
+        'If a field is left empty, container will be created anyway but without that argument. Do you want to continue?',
         (e) => { 
             let data = { 'image': $('#selectTag')[0].value.toString() };
 
@@ -151,12 +151,10 @@ function createContainerFrom(imageid) {
             if(ports) data['ports'] = ports;
             if(volume) data['volume'] = volume;
             if(command) data['command'] = command;
-            
+
             data['tty'] = $('#chkTty')[0].checked;
             data['run'] = $('#chkRun')[0].checked;
 
-            console.log('data: ', data);
-                
             let reqObj = {
                 'type': 'POST',
                 'url': `/containers/create`,
@@ -167,16 +165,23 @@ function createContainerFrom(imageid) {
 
             sendRequest(reqObj, null,
                 (response) => {
+                    console.log('create response: ', response);
                     let res = JSON.parse(response.srcElement.response);
-                    if('error' in res) showAlert('An error occurred creating container!', 'danger');
+                    if('error' in res) {
+                        showAlert('An error occurred creating container!', 'danger');
+                        console.log('error: ', res['error']);
+                    }
                     else {
                         hideModal();
                         showAlert('Container created successfully!', 'success');
                         location.href = '/containers';
                     }
                 },
-                (error) => console.log('error: ', error));
-            
+                (error) => {
+                    showAlert('An error occurred making a request!', 'danger');
+                    console.log('error: ', error);
+                });
+
             hideConfirmationModal();
             hideModal();
         }, 
@@ -222,7 +227,7 @@ function searchOn() {
         $('#rep-dockerhub').toggle();
         $('#rep-1-tab').toggle();
     }
-    
+
     currentView = searchFor;
 }
 
@@ -242,7 +247,6 @@ function searchRegistry() {
             if(key.includes(text) || repositories[key].toString().includes(text)) 
                 filteredRepos[key] = repositories[key];
         }
-        console.log('filtered repos: ', filteredRepos);
         loadRegistryRepositories(filteredRepos);
     }
 }
@@ -261,9 +265,11 @@ function deleteImage() {
 
     sendRequest(reqObj, null,
         (response) => {
-            console.log('response after delete tryy: ', response);
             let res = JSON.parse(response.srcElement.response);
-            if('error' in res) showAlert('An error occurred deleting the image.', 'danger');
+            if('error' in res) {
+                showAlert('An error occurred deleting the image.', 'danger');
+                console.log('error: ', res['error']);
+            }
             else {
                 showAlert('Image deleted successfully!', 'success');
                 refreshImageTable();
@@ -277,7 +283,7 @@ function deleteImage() {
 
 function showDeleteImageModal(imageid) {
     let title = 'Delete image';
-    
+
     let body = `<h5>Select tag to delete: </h5><select id="imageTag">`;
     images.find(i => i.Id == imageid).RepoTags.forEach(t => body += `<option value="${t}">${t}</option>`);
     body += `</select>
@@ -289,11 +295,11 @@ function showDeleteImageModal(imageid) {
         <input type="checkbox" class="form-check-input" id="chkForce">
         <label class="form-check-label mt-1" for="chkForce">Force removal?</label>
     </div>`;
-    
+
     let footer = `
         <button onclick="deleteImage()" class="btn btn-primary" data-dismiss="modal">Delete</button>
          <button class="btn btn-secondary" data-dismiss="modal">Cancel</button>`;   
-    
+
     showModal(title, body, footer);
 }
 
@@ -305,16 +311,16 @@ function showPullImageModal(imageName, source) {
         body += `
         <div class="input-form">
         ${imageName}: 
-        <select id="imageTag">`;
+        <select id="imageTag" class="form-control w-25">`;
         dockerhubRepositories[imageName].tags.forEach(t => body += `<option value="${t}">${t}</option>`);
         body += '</select></div>'
     } else {
         body += `
-        <div class="input-form">${imageName}: <select id="imageTag">`;
+        <div class="input-form">${imageName}: <select id="imageTag" class="form-control w-25">`;
         repositories[imageName].forEach(t => body += `<option value="${t}">${t}</option>`);
         body += '</select></div>'
     }
-    
+
     let footer = `
         <button onclick="pullImage('${imageName}', '${source}')" class="btn btn-primary" data-dismiss="modal">Pull</button>
          <button class="btn btn-secondary" data-dismiss="modal">Cancel</button>`;   
@@ -325,7 +331,7 @@ function showPullImageModal(imageName, source) {
 function pullImage(imageRep, source) {
     // rep + tag = imageToPull
     let imageToPull = `${source=='registry'?'localhost:5000/':''}${imageRep}:${$('#imageTag')[0].value}`;
- 
+
     let reqObj = {
         'type': 'GET',
         'url': `/images/pull?repname=${imageToPull}&source=${source}`,
@@ -409,7 +415,6 @@ function loadRegistry() {
             }
             else {
                 repositories = res.repositories;
-                console.log('repos: ', repositories);
                 loadRegistryRepositories(repositories);
                 showAlert('Registry loaded succesfully', 'success');
             } 

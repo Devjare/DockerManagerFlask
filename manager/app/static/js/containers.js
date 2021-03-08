@@ -266,7 +266,6 @@ function refresh() {
             if('error' in res) showAlert('An error ocurred obtaining containers, check server logs.', 'danger');
             else {
                 showAlert('Containers obtained successfully!, refreshing list!', 'success');
-                console.log('containers/json response: ', res);
                 containers = res['containers'];
                 loadContainers(containers, currentFilter);
                 containersNames = containers.map(c => { 
@@ -341,6 +340,7 @@ function deleteContainer(container) {
             }
         },
         (error) => {
+            console.log('error: ', error);
             showAlert('An error occurred trying to make a request, check console for more info.', 'danger');
         });
 }
@@ -370,6 +370,5 @@ function showDeleteContainerModal(container) {
 }
 
 $('.site-content').ready((e) => {
-    console.log('site ready!');
     refresh();
 });

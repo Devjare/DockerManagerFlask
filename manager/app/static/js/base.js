@@ -1,7 +1,6 @@
 // check if the invalidity popup should show after the
 // content of an input changed
 $('input[type=text]:not([readonly])').on('change', (e) => {
-    console.log('changed: ', e);
     let id = e.target.id;
     if(!document.getElementById(id).checkValidity()) {
         document.getElementById(id).setCustomValidity(fieldsMessages[id]);
@@ -25,7 +24,6 @@ function logout() {
                 console.log('error: ', res['error']);
             }
             else {
-                console.log('Successfully logged out!');
                 showAlert('Successfully logged out!', 'success');
                 window.location.href = '/';
                 localStorage.clear();

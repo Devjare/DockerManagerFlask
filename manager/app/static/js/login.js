@@ -170,7 +170,6 @@ $('form').ready((e) => {
 
 function setValidities() { 
     $('input:not([readonly])').on('change', (e) => {
-        console.log('changed: ', e);
         let id = e.target.id;
         if(!document.getElementById(id).checkValidity()) {
             document.getElementById(id).setCustomValidity(loginFieldsMessages[id]);

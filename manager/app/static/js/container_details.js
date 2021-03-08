@@ -30,7 +30,6 @@ function loadContainerInfo(container) {
                 console.log('error: ', res['error']);
             }
             else {
-                console.log('container info raw: ', res.container);
                 containerInfo = res.container;
 
                 containerData.hostconfig = containerInfo.HostConfig;
@@ -132,10 +131,12 @@ $('main').ready((e) => {
         sendRequest(reqObj, null,
             (response) => {
                 let res = JSON.parse(response.srcElement.response);
-                if('error' in res) showAlert('An error ocurred obtaining containers, check server logs.', 'danger');
+                if('error' in res) {
+                    console.log('error: ', res['error']);
+                    showAlert('An error ocurred obtaining containers, check server logs.', 'danger');
+                }
                 else {
                     showAlert('Containers obtained successfully!, refreshing list!', 'success');
-                    console.log('containers/json response: ', res);
                     containers = res['containers'];
                     containers.forEach(c => { 
                         name = c.Names[0];
@@ -156,7 +157,6 @@ $('main').ready((e) => {
         container = $('#selectContainer')[0].value;
     }
     loadContainerInfo(container);
-    console.log('main is ready!');
 
     $('#selectContainer').on('change', (e) => {
         loadContainerInfo($('#selectContainer')[0].value);

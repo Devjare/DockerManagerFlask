@@ -66,7 +66,6 @@ let lists = {
 }
 
 function dataUpdated(dictName) {
-    console.log('updated: ', dictName);
     $(`#${dictName}`)[0].value = JSON.stringify(dictionaries[dictName]);
 }
 
@@ -78,7 +77,6 @@ function addNewItem(listName) {
     let newItemData = $('.new-list-item').find('.list-item-input');
     newItemData.each(index => {
         let value = newItemData[index].value;
-        console.log('newItemData[', index, '] = ', value); 
         if(value) lists[listName].push(value);
     }) 
 
@@ -142,7 +140,6 @@ function showListModal(listName) {
                     showConfirmationModal(
                         `Are you sure to leave with blank fields?, if a key field is blank, it wont be added.`, 
                         (e) => { 
-                            console.log('list name to add at: ', listName);
                             addNewItem(listName);
                             hideConfirmationModal();
                             hideModal();
@@ -230,7 +227,6 @@ $('#chkRun').change(() => {
 
 function invalidParamsExists() {
     for(key in containersFieldsMessages) {
-        console.log('checking validity for: ', key);
         if(!document.getElementById(key).checkValidity()) {
             document.getElementById(key).setCustomValidity(containersFieldsMessages[key]);
             document.getElementById(key).reportValidity();
@@ -468,8 +464,6 @@ function createContainer() {
     if(oomScoreAdj) params['oom_score_adj'] = oomScoreAdj;
     if(pidsLimit) params['pids_limit'] = pidsLimit;
 
-    console.log('params: ', params);
-
     let reqObj = {
         'type': 'POST',
         'url': '/containers/create',
@@ -481,9 +475,7 @@ function createContainer() {
     sendRequest(reqObj, 
         (e) => console.log('loading request...'),
         (response) => {
-            console.log('response: ', response);
             let res = JSON.parse(response.srcElement.response);
-            console.log('response for container creation: ', res);
             if('error' in res) {
                 showAlert('An error ocurred creating the container, check server logs.', 'danger');
                 console.log('error: ', res.error);

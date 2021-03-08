@@ -1,6 +1,10 @@
 from sqlalchemy import ForeignKey
 from app import db, ma
 
+# Define all the Database models that are gonna be used.
+# The main three models using through all project, are
+# User, Container, and UsersContainers, up to March 4th 2021.
+
 ##### MODELS #####
 class Service(db.Model):
     __tablename__ = 'services'

@@ -1,5 +1,8 @@
+# Config file sets all configurations for the project on diferent
+# classess, which can be loaded on the main file.
+
 class Config(object):
-    DEBUG = False
+    DEBUG = True
     TESTING = False
     SECRET_KEY = "\xa8\xe8\xa4\xd0\x1f\xab-\xd5%\x0e\x0f/\xff\xddp\x08\x81 \xb60$\xe7NE"
 
@@ -11,7 +14,7 @@ class ProductionConfig(Config):
     pass
 
 class DevelopmentConfig(Config):
-    DEBUG = False
+    DEBUG = True
     TESTING = False
     SECRET_KEY = "\xa8\xe8\xa4\xd0\x1f\xab-\xd5%\x0e\x0f/\xff\xddp\x08\x81 \xb60$\xe7NE"
 

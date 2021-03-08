@@ -12,7 +12,6 @@ var imageData = {
 };
 
 function loadImageInfo(image) {
-    console.log('loading image: ', image);
     let reqObj = {
         'type': 'GET',
         'url': `/images/inspect?id=${image.split(',')[0]}`,
@@ -24,7 +23,6 @@ function loadImageInfo(image) {
             let res = JSON.parse(response.srcElement.response);
             if('error' in res) showAlert('An error occurred loading image info!', 'danger');
             else {
-                console.log('image info raw: ', res.image);
                 imageInfo = res.image;
 
                 imageData.hostconfig = imageInfo.ContainerConfig;
@@ -62,7 +60,6 @@ function loadImageInfo(image) {
 
 $('main').ready((e) => {
     image = '';
-    console.log('localStorage: ', localStorage);
     if(localStorage['images_list']) {
         let imagesNames = localStorage['images_list'].split(',')
         imagesNames.forEach(name => $('#selectImage').append(new Option(name, name)));
@@ -76,12 +73,13 @@ $('main').ready((e) => {
         };
         sendRequest(reqObj, null,
             (response) => {
-                console.log('response: ', response);
                 let res = JSON.parse(response.srcElement.response);
-                if('error' in res) showAlert('An error ocurred obtaining images, check server logs.', 'danger');
+                if('error' in res) {
+                    showAlert('An error ocurred obtaining images, check server logs.', 'danger');
+                    console.log('error: ', res['error']);
+                }
                 else {
                     showAlert('Images obtained successfully!', 'success');
-                    console.log('images/json response: ', res);
                     images = res['images'];
                     images.forEach(i => { 
                         name = i.RepoTags.toString();
@@ -95,7 +93,6 @@ $('main').ready((e) => {
             });
     }
     if(localStorage['image']) {
-        console.log('local storage: ', localStorage);
         image = localStorage.getItem('image');
         $('#selectImage').val(image.split(',')[0]);
     } else {
@@ -103,7 +100,6 @@ $('main').ready((e) => {
         image = $('#selectImage')[0].value;
     }
     loadImageInfo(image);
-    console.log('main is ready!');
 
     $('#selectImage').on('change', (e) => {
         loadImageInfo($('#selectImage')[0].value);

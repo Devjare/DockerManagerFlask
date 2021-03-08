@@ -6,22 +6,32 @@ import requests
 import simplejson as json
 import docker
 
+# static_folder, and template_folder, indicate where to search
+# for static files(js, css, images, etc), and html templates, respectively.
+# blueprint for containers
 containers_bp = Blueprint("containers", __name__, static_folder="url_for('static')", template_folder="url_for('templates')")
 
+# returns the container creator template, with the list of images
+# needed to select one as base.
 @containers_bp.route('/creation')
 def showContainerCreation():
     images = dockercli.images() 
     return render_template('containers/creator.html', images=images)
 
+# when this route is called, all the args to create a container
+# are retrieved and it's used the containers.create method.
+# returns a json indicating if the operations was a success
+# or it has an error, and which error was.
 @containers_bp.route('/create', methods=['POST'])
 def createContainer():
-    print('------------- TRYING TO CREATE CONTAINER ----------------------')
-    print('session before create container: ', session)
     data = request.json
     container = {}
   
     # if the parameters is not on the data from client object
     # then it's gonna be passed as None(null for docker)
+    
+    # some parameters for some reason don't work, those are commented.
+    # check later on newer versions, maybe is just some incompatibility.
     if('advancedCreation' in data):
         if(not data['run']):
             try:
@@ -206,26 +216,26 @@ def createContainer():
                     oom_score_adj = int(data['oom_score_adj']) if 'oom_score_adj' in data else None,
                     pids_limit = int(data['pids_limit']) if 'pids_limit' in data else None
                  )
-                 # since run() doesnt return the new created container id, 
-                 # make a query to look up for the last created container on API
 
+                # after the container is created, it's registered on the database
+                # alone and with the user it was created.
                 addContainerToUser(container.id)
             except docker.errors.APIError as api_error:
-                # since there's no way on knowing on client side, what caused the error
-                # just return that there was an error, hoping for the sdk to implement something
-                # for that.
                 return { 'error': str(api_error) }
             except docker.errors.ImageNotFound as error:
                 return { 'error': str(error) }
     else:
-        # if not advanced
+        # if not advanced creation, (i.e. create from a modal on images page)
         volumeData = data['volume'].split(':') if 'volume' in data else None
-        volume = None
+        print('volumeData: ', volumeData)
+        volume = {}
         if(volumeData != None):
+            print('theres volume!')
             volume[volumeData[0]] = {
                 'bind': volumeData[1],
                 'mode': volumeData[2] if volumeData[2] != None else ''
             }
+            print('volume: ', volume)
        
 
         ports = data['ports'].split(':') if 'ports' in data else None
@@ -242,25 +252,26 @@ def createContainer():
 
         addContainerToUser(container.id)
    
+    # if while creating container it was specified to run after creating it, the call start() from the API
     if(data['run']):
         try:
             container.start()
         except docker.errors.APIError as err:
             return { 'error': str(err) }
+    
     # Add container info to database
     new_container = Container(container.id, container.name, container.image.id)
     db.session.add(new_container)
     db.session.commit()
-    print('session after creating container: ', session)
     
-    # add recently created container to user session containers array.
-    
+    # add recently created container to user session containers array. 
     current_containers = session[USERCONTAINERS]
     current_containers.append(container.id)
     session[USERCONTAINERS] = current_containers
 
     return { 'containerid': container.short_id }
 
+# remove container from docker and from DB.
 @containers_bp.route('/delete', methods=["GET"])
 def deleteContainer():
     container = request.args.get('container')
@@ -293,6 +304,7 @@ def deleteContainer():
     
     return { 'deleted': True }
 
+# create new image from container
 @containers_bp.route('/commit', methods=['POST'])
 def commitContainer():
     data = request.json
@@ -321,11 +333,10 @@ def getContainers():
     containers = dockercli.containers(all=True)
     if session[USERCONTAINERS]:
         try:
-            print('BEFORE filtering containers: ', containers)
             containers = filter(lambda c: c['Id'] in session[USERCONTAINERS], containers) 
-            print('AFTER filtering containers: ', containers)
         except Exception as err:
             print('Exception while filtering containers: ', err)
+            return { 'error': 'An error ocurred, check server logs.' }
     else:
         return { 'containers': [] }
 

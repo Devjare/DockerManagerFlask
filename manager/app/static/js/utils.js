@@ -57,7 +57,6 @@ function showAlert(msg, type) {
    
     // set timeout to disappear the alert after 5 secs.
     setTimeout(() => {
-        console.log('alert count: ', alertCount);    
         $(`.alert#alert-${alertCount}`).alert('close');
         alertCount--;
     }, 5000);
@@ -300,7 +299,6 @@ function createListForArray(array) {
 
 let data;
 function deleteDataRow(event, onDeleteProp) {
-    console.log('deleting property');
     let rowToDelete = event.target.parentNode.closest('tr');
     let propToDelete = rowToDelete.children[0].children[0].value;
     
