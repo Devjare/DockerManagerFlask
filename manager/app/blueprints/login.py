@@ -29,8 +29,9 @@ def login():
         username = params.get('username')
         password = params.get('password')
 
-        exists = authenticate(username, password)
-        if(exists): 
+        res = authenticate(username, password)
+        print('result: ', res)
+        if(res == True): 
             session[USERNAME] = username
 
             try:
@@ -44,18 +45,21 @@ def login():
 
             return { 'login': True }
         else:
-            return { 'error': 'User does not exist' } 
+            return { 'error': res } 
 
     return { 'error': 'An error occurred, failed to authenticate.' } 
 
 def authenticate(username, password):
     allusers = User.query.all()
     for user in allusers:
-        if(user.username == username and user.password == password):
-            session[USERID] = user.uid
-            return True
+        if(user.username == username):
+            if(user.password == password):
+                session[USERID] = user.uid
+                return True
+            else:
+                return 'Incorret password.'
     
-    return False
+    return "User doesn't exist"
 
 @login_bp.route('/signup', methods=['POST'])
 def signup():

@@ -118,10 +118,8 @@ function loadContainerInfo(container) {
 
 $('main').ready((e) => {
     container = '';
-    console.log('localStorage: ', localStorage);
     if(localStorage['containers_list']) {
         let containersNames = localStorage['containers_list'].split(',')
-        console.log('names: ', containersNames);
         containersNames.forEach(name => $('#selectContainer').append(new Option(name, name)));
     } else {
         // make a request to flask server and get only containers names
@@ -151,7 +149,6 @@ $('main').ready((e) => {
             });
     }
     if(localStorage['container']) {
-        console.log('local storage: ', localStorage);
         container = localStorage.getItem('container');
         $('#selectContainer').val(container);
     } else {

@@ -1,117 +1,146 @@
 {% extends 'base.html' %} {% block title %} Image Builder {% endblock %} {% block head %} {{ super() }} {% endblock %} {%block content %}
+<link href="{{url_for('static', filename='css/details_page.css')}}" rel="stylesheet"> 
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4 py-1 position-relative">
-    <div class="site-content">
-        <div class="content m-0">
-            <div class="row titlebar p-3">
-                <div class="d-flex p-2 justify-content-between align-items-center">
-                    <h4 class="m-2">Image Builder</h4>
-                </div>
-            </div>
-            <div class="d-flex">
-                <div id="dockerfile-content">
-                    <div class="">
-                        <input type="text" placeholder="Dockerfile path"> Or
-                        <button class="btn btn-sm btn-primary">Make a dockerfile</button>
+    <div class="row titlebar p-3">
+        <div class="d-flex p-2 justify-content-between align-items-center">
+            <h4 class="m-2">Image Bulider</h4>
+        </div>
+    </div>
+    <div class="page d-flex flex-column p-3">
+        <div class="page-body d-flex flex-wrap p-2">
+            <div class="d-flex w-100">
+                <div id="dockerfile-content" class="bg-light w-100">
+                    <div class="tabs bg-dark shadow-sm d-flex w-100 p-0 m-0">
+                        <button id="btnToggleFile" class="btn btn-sm rounded-0 btn-primary" onclick="toggleDockerfileUpload('file')">Upload file</button>
+                        <button id="btnTogglePath" class="btn btn-sm rounded-0 bg-light" onclick="toggleDockerfileUpload('path')">Use path</button>
                     </div>
-                    <div class="form-group">
-                        <label for="exampleFormControlFile1">Example file input</label>
-                        <input type="file" class="form-control-file" id="exampleFormControlFile1">
+                    <div class="tabs-content p-2">
+                        <div id="file-tab" class="">
+                            <div class="form-group">
+                                <label for="exampleFormControlFile1">Example file input</label>
+                                <input type="file" class="form-control-file" id="exampleFormControlFile1">
+                            </div>
+                            <div class="input-group-sm m-2 d-flex align-items-center p-2 w-25 bg-light shadow-sm">
+                                <input id="chkCustomContext" class="mr-1" id="custom-context" type="checkbox">
+                                <label class="m-0 p-0" for="chkCustomContext">Custom context?</label>
+                            </div>
+                            <input id="customContext" class="form-control d-none" type="text" placeholder="Custom context path(Optional)">
+                        </div>
+                        <div id="path-tab" class="d-none">
+                            <div class="p-2 d-flex flex-column">
+                                <input type="text" class="form-control w-50" placeholder="Dockerfile path"> Or
+                                <button class="btn btn-sm btn-primary w-25">Make a dockerfile</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
             <!-- STRS -->
-            <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                <label for="path">Path to directory containing dockerfile(Context):</label>
-                <input autocomplete="off" id="path" type="file" placeholder="Directory path" class="form-control">
-                <button class="btn btn-sm">Or make your dockerfile</button>
-            </div>
-            <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                <label for="tag">Tag:</label>
-                <input autocomplete="off" id="tag" type="text" placeholder="Tag" class="form-control" pattern="[\w_-]+$" oninput="setCustomValidity('')">
-            </div>
-            <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                <label for="enconding">Encoding:</label>
-                <input autocomplete="off" id="enconding" type="text" placeholder="Encoding" class="form-control" pattern="[\w_-]+$" oninput="setCustomValidity('')">
-            </div>
-            <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                <label for="dockerile">Dockerfile path:</label>
-                <input autocomplete="off" id="dockerfile" type="text" placeholder="Docker file path within the build context" class="form-control" pattern="[\w_-]+$" oninput="setCustomValidity('')">
-            </div>
-            <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                <label for="network-mode">Network Mode:</label>
-                <input autocomplete="off" id="network-mode" type="text" placeholder="Network mode" class="form-control" pattern="[\w_-]+$" oninput="setCustomValidity('')">
-            </div>
-            <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                <label for="platform">Platform:</label>
-                <input autocomplete="off" id="Platform" type="text" placeholder="Platform" class="form-control" pattern="[\w_-]+$" oninput="setCustomValidity('')">
-            </div>
-            <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                <label for="isolation">Isolation:</label>
-                <input autocomplete="off" id="isolation" type="text" placeholder="Isolation" class="form-control" pattern="[\w_-]+$" oninput="setCustomValidity('')">
+            <div class="d-flex flex-wrap">
+                <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                    <label for="path">Path to directory containing dockerfile(Context):</label>
+                    <input autocomplete="off" id="path" type="text" placeholder="Directory path" class="form-control">
+                </div>
+                <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                    <label for="tag">Tag:</label>
+                    <input autocomplete="off" id="tag" type="text" placeholder="Tag" class="form-control" pattern="[\w_-]+$" oninput="setCustomValidity('')">
+                </div>
+                <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                    <label for="enconding">Encoding:</label>
+                    <input autocomplete="off" id="enconding" type="text" placeholder="Encoding" class="form-control" pattern="[\w_-]+$" oninput="setCustomValidity('')">
+                </div>
+                <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                    <label for="dockerile">Dockerfile path:</label>
+                    <input autocomplete="off" id="dockerfile" type="text" placeholder="Docker file path within the build context" class="form-control" pattern="[\w_-]+$" oninput="setCustomValidity('')">
+                </div>
+                <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                    <label for="network-mode">Network Mode:</label>
+                    <input autocomplete="off" id="network-mode" type="text" placeholder="Network mode" class="form-control" pattern="[\w_-]+$" oninput="setCustomValidity('')">
+                </div>
+                <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                    <label for="platform">Platform:</label>
+                    <input autocomplete="off" id="Platform" type="text" placeholder="Platform" class="form-control" pattern="[\w_-]+$" oninput="setCustomValidity('')">
+                </div>
+                <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                    <label for="isolation">Isolation:</label>
+                    <input autocomplete="off" id="isolation" type="text" placeholder="Isolation" class="form-control" pattern="[\w_-]+$" oninput="setCustomValidity('')">
+                </div>
             </div>
             <!-- NUMBERS -->
-            <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                <label for="timeout">Timeout: </label>
-                <input autocomplete="off" id="timeout" type="number" placeholder="Time out" class="form-control">
-            </div>
-            <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                <label for="shmsize">SHM Size: </label>
-                <input autocomplete="off" id="shmsize" type="number" placeholder="SHM Size" class="form-control">
+            <div class="d-flex flex-wrap">
+                <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                    <label for="timeout">Timeout: </label>
+                    <input autocomplete="off" id="timeout" type="number" placeholder="Time out" class="form-control">
+                </div>
+                <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                    <label for="shmsize">SHM Size: </label>
+                    <input autocomplete="off" id="shmsize" type="number" placeholder="SHM Size" class="form-control">
+                </div>
             </div>
             <!-- LISTS -->
-            <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                <div class="d-flex justify-content-between align-items-center">
-                    <label class="py-0 my-0" for="volumes">Volumes:</label>
-                    <button onclick="showListModal('volumes')" class="btn btn-sm btn-primary my-1" >add</button>
+            <div class="d-flex flex-wrap">
+                <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <label class="py-0 my-0" for="volumes">Volumes:</label>
+                        <button onclick="showListModal('volumes')" class="btn btn-sm btn-primary my-1" >add</button>
+                    </div>
+                    <input autocomplete="off" id="volumes" type="text" placeholder="Volumes" class="form-control" readonly>
                 </div>
-                <input autocomplete="off" id="volumes" type="text" placeholder="Volumes" class="form-control" readonly>
             </div>
             <!-- DICTS -->
-            <div class="input-group-sm m-2">
-                <div class="d-flex justify-content-between align-items-center">
-                    <label class="py-0 my-0" for="ports">Ports binds:</label>
-                    <button onclick="showDictionaryModal('ports')" class="btn btn-sm btn-primary my-1" >add</button>
+            <div class="d-flex flex-wrap">
+                <div class="input-group-sm m-2">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <label class="py-0 my-0" for="ports">Ports binds:</label>
+                        <button onclick="showDictionaryModal('ports')" class="btn btn-sm btn-primary my-1" >add</button>
+                    </div>
+                    <input autocomplete="off" id="ports" type="text" placeholder="Ports" class="form-control" readonly oninput="setCustomValidity('')">
                 </div>
-                <input autocomplete="off" id="ports" type="text" placeholder="Ports" class="form-control" readonly oninput="setCustomValidity('')">
             </div>
             <!-- BOOLS -->
-            <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
-                <input autocomplete="off" id="chkTty" type="checkbox">
-                <label for="chkTty" class="ml-1 mb-0 mr-2">Enable tty?</label>
-            </div>
-            <div class="">
-                <input id="quiet" type="checkbox">
-                <label for="quiet">Quiet?</label>
-            </div>
-            <div class="">
-                <input id="no-cache" type="checkbox">
-                <label for="no-cache">No Cache?</label>
-            </div>
-            <div class="">
-                <input id="rm" type="checkbox">
-                <label for="rm">Remove intermediate containers?</label>
-            </div>
-            <div class="">
-                <input id="rm" type="checkbox">
-                <label for="rm">Force remove intermediate containers?</label>
-            </div>
-            <div class="">
-                <input id="custom-context" type="checkbox">
-                <label for="custom-context">Custom context?</label>
-            </div>
-            <div class="">
-                <input id="pull" type="checkbox">
-                <label for="pull">Pull updates?</label>
-            </div>
-            <div class="">
-                <input id="squash" type="checkbox">
-                <label for="squash">Squash?</label>
-            </div>
-            <div class="">
-                <input id="use-config-proxy" type="checkbox">
-                <label for="use-config-proxy">Use config proxy?</label>
+            <div class="d-flex flex-wrap">
+                <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
+                    <input class="mr-1" autocomplete="off" id="chkTty" type="checkbox">
+                    <label class="m-0 p-0" for="chkTty" class="ml-1 mb-0 mr-2">Enable tty?</label>
+                </div>
+                <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
+                    <input class="mr-1" id="quiet" type="checkbox">
+                    <label class="m-0 p-0" for="quiet">Quiet?</label>
+                </div>
+                <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
+                    <input class="mr-1" id="no-cache" type="checkbox">
+                    <label class="m-0 p-0" for="no-cache">No Cache?</label>
+                </div>
+                <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
+                    <input class="mr-1" id="rm" type="checkbox">
+                    <label class="m-0 p-0" for="rm">Remove intermediate containers?</label>
+                </div>
+                <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
+                    <input class="mr-1" id="rm" type="checkbox">
+                    <label class="m-0 p-0" for="rm">Force remove intermediate containers?</label>
+                </div>
+                <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
+                    <input class="mr-1" id="pull" type="checkbox">
+                    <label class="m-0 p-0" for="pull">Pull updates?</label>
+                </div>
+                <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
+                    <input class="mr-1" id="squash" type="checkbox">
+                    <label class="m-0 p-0" for="squash">Squash?</label>
+                </div>
+                <div class="input-group-sm m-2 d-flex align-items-center p-2 bg-light shadow-sm">
+                    <input class="mr-1" id="use-config-proxy" type="checkbox">
+                    <label class="m-0 p-0" for="use-config-proxy">Use config proxy?</label>
+                </div>
             </div>
         </div>
+        <div class="fixed-bottom bg-primary w-100 text-white page-footer d-flex flex-row justify-content-around align-items-center">
+            <div class="form-group m-1 d-flex justify-content-center align-items-center">
+                <input autocomplete="off" id="chkRun" type="checkbox">
+                <label for="chkRun" class="ml-1 mb-0">Run after create?</label>
+            </div>
+            <button class="btn btn-sm btn-success m-1" onclick="buildImage()">Build</button>
+        </div>
     </div>
+    <script src="{{url_for('static', filename='js/image_builder.js')}}"></script>
 </main>
 {% endblock %} {% block footer %} {{ super() }} {% endblock %}

@@ -313,9 +313,9 @@ function deleteDataRow(event, onDeleteProp) {
 
 function addNewDataRow() {
     // serch prev new row
-    let prevNewRow = $('.new-row');
-    let key = $('.new-row').find('.key-input').val();
-    let value = $('.new-row').find('.value-input').val();
+    let prevNewRow = $('.empty-row');
+    let key = $('.empty-row').find('.key-input').val();
+    let value = $('.empty-row').find('.value-input').val();
     // if key is not empty, procceed to remove prev new row and add new empty row.
     if(key != '') {
         // change add button to remove button
@@ -323,12 +323,14 @@ function addNewDataRow() {
         prevNewRow.find('button')[0].classList.remove('btn-primary');
         prevNewRow.find('button')[0].classList.add('btn-danger');
         prevNewRow.find('button').text('Delete');
-        // delete 'new-row' class from prev new row
-        prevNewRow[0].classList.remove('new-row');
+        // delete 'empty-row' class from prev new row
+        prevNewRow[0].classList.remove('empty-row');
+        // add new-row class, for further validation use.
+        prevNewRow[0].classList.add('new-row');
         // REVIEW: maybe make the fields read only(?)
-        // get prev 'new-row' data and pass to onAddProp
+        // get prev 'empty-row' data and pass to onAddProp
         $('#tableBody').append(`
-        <tr class="new-row">
+        <tr class="empty-row">
             <td><input class="form-control key-input" type="text" placeholder="Data Key"></td>
             <td><input class="form-control value-input" type="text" placeholder="Data Value"></td>
             <td><button class="btn btn-sm btn-primary" onclick="addNewDataRow()">Add</a></td>
@@ -366,7 +368,7 @@ function getDynamicDictTemplate(dict) {
         </tr>`;
     }
     table += `
-    <tr class="new-row">
+    <tr class="empty-row">
         <td><input class="form-control key-input" type="text" placeholder="Data Key"></td>
         <td><input class="form-control value-input" type="text" placeholder="Data Value"></td>
         <td><button class="btn btn-sm btn-primary" onclick="addNewDataRow()">Add</a></td>

@@ -66,6 +66,7 @@ let lists = {
 }
 
 function dataUpdated(dictName) {
+    console.log('updated: ', dictName);
     $(`#${dictName}`)[0].value = JSON.stringify(dictionaries[dictName]);
 }
 
@@ -187,19 +188,21 @@ function showDictionaryModal(dictName) {
             if(inputsToValidate.length > 0) {
                 if(validateInputs($('#modal input')) == false) {
                     showConfirmationModal(
-                        `Are you sure to leave with blank fields?, if a key field is blank, it wont be added.
-                    if a value is blank, the key will be added with no value.`, 
+                        `Are you sure to leave with blank fields?, if a value is blank, the key will be added with no value.`, 
                         (e) => { 
-                            addNewData(dictName);
+                            dataUpdated(dictName);
                             hideConfirmationModal();
                             hideModal();
                         }, 
                         (e) => hideConfirmationModal());
                 } else {
-                    addNewData(dictName);
+                    dataUpdated(dictName);
                     hideModal();
                 }
-            } else hideModal();
+            } else {
+                dataUpdated(dictName);
+                hideModal();
+            }
 
             return false;
         });

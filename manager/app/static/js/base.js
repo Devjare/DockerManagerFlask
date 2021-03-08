@@ -28,6 +28,7 @@ function logout() {
                 console.log('Successfully logged out!');
                 showAlert('Successfully logged out!', 'success');
                 window.location.href = '/';
+                localStorage.clear();
             }
         },
         (error) => {
