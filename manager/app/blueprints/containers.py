@@ -293,8 +293,13 @@ def deleteContainer():
         # remove on docker
         container.remove(v=volumes, link=links, force=force)
     except docker.errors.ImageNotFound as e: 
+        print('error: ', e)
         return { 'error': str(e) }
     except docker.errors.APIError as e: 
+        print('error: ', e)
+        return { 'error': str(e) }
+    except Exception as e: 
+        print('error: ', e)
         return { 'error': str(e) }
 
     # delete container id from session
@@ -359,6 +364,7 @@ def getContainerInfo(id):
     try:
         container = dockercli.inspect_container(id)
     except docker.errors.APIError as err:
+        print('error: ', err)
         return { "error": str(err) }
     return {"container": container} 
 
@@ -367,6 +373,7 @@ def startContainer(id):
     try:
         dockercli.start(id)
     except docker.errors.APIError as err:
+        print('error: ', err.errno)
         return { 'error': str(err) }
     return { 'started': True }
 

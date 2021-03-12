@@ -14,7 +14,10 @@ function triggerContainerAction(id, action) {
     sendRequest(reqObj, null,
         (response) => {
             let res = JSON.parse(response.srcElement.response);
-            if('error' in res) showAlert('An error occurred triggering container action.', 'danger');
+            if('error' in res) {
+                showAlert('An error occurred triggering container action, check console logs.', 'danger');
+                console.log('error: ', res['error']);
+            }
             else { 
                 refresh();
                 showAlert(`Action executed successfully!`, 'success');
@@ -334,7 +337,10 @@ function deleteContainer(container) {
     sendRequest(reqObj, null,
         (response) => {
             let res = JSON.parse(response.srcElement.response);
-            if('error' in res) showAlert('An error ocurred deleting the container, check server logs.', 'danger');
+            if('error' in res) {
+                showAlert('An error ocurred deleting the container, check server logs.', 'danger');
+                console.log('error: ', res['error']);
+            }
             else {
                 showAlert('Container deleted successfully!', 'success');
                 refresh();
