@@ -6,6 +6,4 @@ RUN pip install -r /manager/requirements.txt
 
 WORKDIR /manager
 
-EXPOSE 46000
-
 CMD ["python", "run.py"]
