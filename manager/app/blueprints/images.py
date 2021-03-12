@@ -160,30 +160,6 @@ def buildImage():
     squash = (args['squash'] == 'on') if 'squash' in args else None
     use_config_proxy = (args['useConfigProxy'] == 'on') if 'useConfigProxy' in args else None
 
-    print('use config proxy: ', use_config_proxy)
-    print('timeout: ', timeout)
-    
-    print('build_args: ', build_args)
-    print('container_limits: ', container_limits)
-    print('labels: ', labels)
-    print('extra_host: ', extra_hosts)
-    print('tag: ', tag)
-    print('dockerfile: ', dockerfile)
-    print('quiet: ', quiet)
-    print('nocache: ', nocache)
-    print('timeout: ', timeout)
-    print('encoding: ', encoding)
-    print('shmsize: ', shmsize)
-    print('cache_from: ', cache_from)
-    print('target: ', target)
-    print('network_mode: ', network_mode)
-    print('platform: ', platform)
-    print('isolation: ', isolation)
-    print('rm: ', rm)
-    print('forcerm: ', forcerm)
-    print('squash: ', squash)
-    print('use_config_prox: ', use_config_proxy)
-
     try:
         # path = args['path'] if 'path' in data else None, 
         client.images.build(tag = tag, fileobj = f, custom_context=True, dockerfile = dockerfile, quiet = quiet,

@@ -276,8 +276,13 @@ def createContainer():
 def deleteContainer():
     container = request.args.get('container')
     volumes = request.args.get('volumes')
-    links = request.args.get('links')
+    # links = request.args.get('links')
     force = request.args.get('force')
+
+    # try making some kind of rollback,
+    # in case some operatioin fails, like deleting the container id from DB
+    # but not from docker, rollback to before deleing id from DB
+    # to prevent errors.
     try:
         container = client.containers.get(str(container))
         
@@ -291,16 +296,18 @@ def deleteContainer():
         db.session.commit()
 
         # remove on docker
-        container.remove(v=volumes, link=links, force=force)
-    except docker.errors.ImageNotFound as e: 
-        print('error: ', e)
-        return { 'error': str(e) }
-    except docker.errors.APIError as e: 
-        print('error: ', e)
-        return { 'error': str(e) }
-    except Exception as e: 
-        print('error: ', e)
-        return { 'error': str(e) }
+        # container.remove(v=volumes, link=links, force=force)
+        # look for a way to remove links too. Not working.
+        container.remove(v=volumes, force=force)
+    except docker.errors.ImageNotFound as inferr: 
+        print('error: ', inferr)
+        return { 'error': str(inferr) }
+    except docker.errors.APIError as apierr: 
+        print('error: ', apierr)
+        return { 'error': str(apierr) }
+    except Exception as err: 
+        print('error: ', err)
+        return { 'error': str(err) }
 
     # delete container id from session
     current_containers = session[USERCONTAINERS]
