@@ -37,14 +37,14 @@ block content %}
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <div class="d-flex justify-content-between align-items-center">
                                 <label class="py-0 my-0" for="command">Commands to run:</label>
-                                <button onclick="showListModal('command')" class="btn btn-sm btn-primary my-1" >add</button>
+                                <button onclick="showLModal('command')" class="btn btn-sm btn-primary my-1" >add</button>
                             </div>
                             <input autocomplete="off" id="command" type="text" placeholder="Commands" class="form-control" readonly oninput="setCustomValidity('')">
                         </div>
                         <div class="input-group-sm m-2">
                             <div class="d-flex justify-content-between align-items-center">
                                 <label class="py-0 my-0" for="ports">Ports binds:</label>
-                                <button onclick="showDictionaryModal('ports')" class="btn btn-sm btn-primary my-1" >add</button>
+                                <button onclick="showDictModal('ports')" class="btn btn-sm btn-primary my-1" >add</button>
                             </div>
                             <input autocomplete="off" id="ports" type="text" placeholder="Ports" class="form-control" readonly oninput="setCustomValidity('')">
                         </div>
@@ -59,7 +59,7 @@ block content %}
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <div class="d-flex justify-content-between align-items-center">
                                 <label class="py-0 my-0" for="entrypoint">Entrypoint:</label>
-                                <button onclick="showListModal('entrypoint')" class="btn btn-sm btn-primary my-1" >add</button>
+                                <button onclick="showLModal('entrypoint')" class="btn btn-sm btn-primary my-1" >add</button>
                             </div>
                             <input autocomplete="off" id="entrypoint" type="text" placeholder="Entrypoint" class="form-control" readonly>
                         </div>
@@ -80,14 +80,14 @@ block content %}
                         <div class="input-group-sm m-2">
                             <div class="d-flex justify-content-between align-items-center">
                                 <label class="py-0 my-0" for="environment">Environment:</label>
-                                <button onclick="showDictionaryModal('environment')" class="btn btn-sm btn-primary my-1" >add</button>
+                                <button onclick="showDictModal('environment')" class="btn btn-sm btn-primary my-1" >add</button>
                             </div>
                             <input autocomplete="off" id="environment" type="text" placeholder="Environment" class="form-control" readonly>
                         </div>
                         <div class="input-group-sm m-2">
                             <div class="d-flex justify-content-between align-items-center">
                                 <label class="py-0 my-0" for="labels">Labels:</label>
-                                <button onclick="showDictionaryModal('labels')" class="btn btn-sm btn-primary my-1" >add</button>
+                                <button onclick="showDictModal('labels')" class="btn btn-sm btn-primary my-1" >add</button>
                             </div>
                             <input autocomplete="off" id="labels" type="text" placeholder="Labels" class="form-control" readonly>
                         </div>
@@ -239,21 +239,21 @@ block content %}
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <div class="d-flex justify-content-between align-items-center">
                                 <label class="py-0 my-0" for="volumes">Volumes:</label>
-                                <button onclick="showListModal('volumes')" class="btn btn-sm btn-primary my-1" >add</button>
+                                <button onclick="showLModal('volumes')" class="btn btn-sm btn-primary my-1" >add</button>
                             </div>
                             <input autocomplete="off" id="volumes" type="text" placeholder="Volumes" class="form-control" readonly>
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <div class="d-flex justify-content-between align-items-center">
                                 <label class="py-0 my-0" for="volumes_from">Volumes From:</label>
-                                <button onclick="showListModal('volumes_from')" class="btn btn-sm btn-primary my-1" >add</button>
+                                <button onclick="showLModal('volumes_from')" class="btn btn-sm btn-primary my-1" >add</button>
                             </div>
                             <input autocomplete="off" id="volumes_from" type="text" placeholder="Volumes From" class="form-control" readonly>
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <div class="d-flex justify-content-between align-items-center">
                                 <label class="py-0 my-0" for="mounts">Mounts:</label>
-                                <button onclick="showListModal('mounts')" class="btn btn-sm btn-primary my-1" >add</button>
+                                <button onclick="showLModal('mounts')" class="btn btn-sm btn-primary my-1" >add</button>
                             </div>
                             <input autocomplete="off" id="mounts" type="text" placeholder="Mounts" class="form-control" readonly>
                         </div>
@@ -291,21 +291,21 @@ block content %}
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <div class="d-flex justify-content-between align-items-center">
                                 <label class="py-0 my-0" for="cap_add">Add Capabilities:</label>
-                                <button onclick="showListModal('cap_add')" class="btn btn-sm btn-primary my-1" >add</button>
+                                <button onclick="showLModal('cap_add')" class="btn btn-sm btn-primary my-1" >add</button>
                             </div>
                             <input autocomplete="off" id="cap_add" type="text" placeholder="Add Capabilities" class="form-control" readonly>
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <div class="d-flex justify-content-between align-items-center">
                                 <label class="py-0 my-0" for="cap_drop">Drop Capabilities:</label>
-                                <button onclick="showListModal('cap_drop')" class="btn btn-sm btn-primary my-1" >add</button>
+                                <button onclick="showLModal('cap_drop')" class="btn btn-sm btn-primary my-1" >add</button>
                             </div>
                             <input autocomplete="off" id="cap_drop" type="text" placeholder="Drop Capabilities" class="form-control" readonly>
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <div class="d-flex justify-content-between align-items-center">
                                 <label class="py-0 my-0" for="domainname">Domain Name:</label>
-                                <button onclick="showListModal('domainname')" class="btn btn-sm btn-primary my-1" >add</button>
+                                <button onclick="showLModal('domainname')" class="btn btn-sm btn-primary my-1" >add</button>
                             </div>
                             <input autocomplete="off" id="domainname" type="text" placeholder="Domain Name" class="form-control" readonly>
                         </div>
@@ -364,63 +364,63 @@ block content %}
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <div class="d-flex justify-content-between align-items-center">
                                 <label class="py-0 my-0" for="device_cgroup_rules">Device CGroup Rules:</label>
-                                <button onclick="showListModal('device_cgroup_rules')" class="btn btn-sm btn-primary my-1" >add</button>
+                                <button onclick="showLModal('device_cgroup_rules')" class="btn btn-sm btn-primary my-1" >add</button>
                             </div>
                             <input autocomplete="off" id="device_cgroup_rules" type="text" placeholder="Device CGroup Rules" class="form-control" readonly>
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <div class="d-flex justify-content-between align-items-center">
                                 <label class="py-0 my-0" for="devices">Devices:</label>
-                                <button onclick="showListModal('devices')" class="btn btn-sm btn-primary my-1" >add</button>
+                                <button onclick="showLModal('devices')" class="btn btn-sm btn-primary my-1" >add</button>
                             </div>
                             <input autocomplete="off" id="devices" type="text" placeholder="Devices" class="form-control" readonly>
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <div class="d-flex justify-content-between align-items-center">
                                 <label class="py-0 my-0" for="device_requests">Device Requests:</label>
-                                <button onclick="showListModal('device_requests')" class="btn btn-sm btn-primary my-1" >add</button>
+                                <button onclick="showLModal('device_requests')" class="btn btn-sm btn-primary my-1" >add</button>
                             </div>
                             <input autocomplete="off" id="device_requests" type="text" placeholder="Device Requests" class="form-control" readonly>
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <div class="d-flex justify-content-between align-items-center">
                                 <label class="py-0 my-0" for="dns">DNS:</label>
-                                <button onclick="showListModal('dns')" class="btn btn-sm btn-primary my-1" >add</button>
+                                <button onclick="showLModal('dns')" class="btn btn-sm btn-primary my-1" >add</button>
                             </div>
                             <input autocomplete="off" id="dns" type="text" placeholder="DNS" class="form-control" readonly>
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <div class="d-flex justify-content-between align-items-center">
                                 <label class="py-0 my-0" for="dns_opt">DNS Options:</label>
-                                <button onclick="showListModal('dns_opt')" class="btn btn-sm btn-primary my-1" >add</button>
+                                <button onclick="showLModal('dns_opt')" class="btn btn-sm btn-primary my-1" >add</button>
                             </div>
                             <input autocomplete="off" id="dns_opt" type="text" placeholder="DNS Options" class="form-control" readonly>
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <div class="d-flex justify-content-between align-items-center">
                                 <label class="py-0 my-0" for="dns_search">DNS Search:</label>
-                                <button onclick="showListModal('dns_search')" class="btn btn-sm btn-primary my-1" >add</button>
+                                <button onclick="showLModal('dns_search')" class="btn btn-sm btn-primary my-1" >add</button>
                             </div>
                             <input autocomplete="off" id="dns_search" type="text" placeholder="DNS Search" class="form-control" readonly>
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <div class="d-flex justify-content-between align-items-center">
                                 <label class="py-0 my-0" for="group_add">Group Add:</label>
-                                <button onclick="showListModal('group_add')" class="btn btn-sm btn-primary my-1" >add</button>
+                                <button onclick="showLModal('group_add')" class="btn btn-sm btn-primary my-1" >add</button>
                             </div>
                             <input autocomplete="off" id="group_add" type="text" placeholder="Group Add" class="form-control" readonly>
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <div class="d-flex justify-content-between align-items-center">
                                 <label class="py-0 my-0" for="security_opt">Security Options:</label>
-                                <button onclick="showListModal('security_opt')" class="btn btn-sm btn-primary my-1" >add</button>
+                                <button onclick="showLModal('security_opt')" class="btn btn-sm btn-primary my-1" >add</button>
                             </div>
                             <input autocomplete="off" id="security_opt" type="text" placeholder="Security Options" class="form-control" readonly>
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <div class="d-flex justify-content-between align-items-center">
                                 <label class="py-0 my-0" for="ulimits">ULimits:</label>
-                                <button onclick="showListModal('ulimits')" class="btn btn-sm btn-primary my-1" >add</button>
+                                <button onclick="showLModal('ulimits')" class="btn btn-sm btn-primary my-1" >add</button>
                             </div>
                             <input autocomplete="off" id="ulimits" type="text" placeholder="ULimits" class="form-control" readonly>
                         </div>
@@ -428,7 +428,7 @@ block content %}
                         <div class="input-group-sm m-2">
                             <div class="d-flex justify-content-between align-items-center">
                                 <label class="py-0 my-0" for="lxc_conf">LXC Config:</label>
-                                <button onclick="showDictionaryModal('lxc_conf')" class="btn btn-sm btn-primary my-1" >add</button>
+                                <button onclick="showDictModal('lxc_conf')" class="btn btn-sm btn-primary my-1" >add</button>
                             </div>
                             <input autocomplete="off" id="lxc_conf" type="text" placeholder="LXC Config" class="form-control" readonly>
                         </div>
@@ -436,7 +436,7 @@ block content %}
                         <div class="input-group-sm m-2">
                             <div class="d-flex justify-content-between align-items-center">
                                 <label class="py-0 my-0" for="healthcheck">Healthcheck:</label>
-                                <button onclick="showDictionaryModal('healthcheck')" class="btn btn-sm btn-primary my-1" >add</button>
+                                <button onclick="showDictModal('healthcheck')" class="btn btn-sm btn-primary my-1" >add</button>
                             </div>
                             <input autocomplete="off" id="healthcheck" type="text" placeholder="Healthcheck" class="form-control" readonly>
                         </div>
@@ -444,7 +444,7 @@ block content %}
                         <div class="input-group-sm m-2">
                             <div class="d-flex justify-content-between align-items-center">
                                 <label class="py-0 my-0" for="extraHosts">Extra hosts:</label>
-                                <button onclick="showDictionaryModal('extraHosts')" class="btn btn-sm btn-primary my-1" >add</button>
+                                <button onclick="showDictModal('extraHosts')" class="btn btn-sm btn-primary my-1" >add</button>
                             </div>
                             <input autocomplete="off" id="extraHosts" type="text" placeholder="Extra hosts" class="form-control" readonly>
                         </div>
@@ -452,7 +452,7 @@ block content %}
                         <div class="input-group-sm m-2">
                             <div class="d-flex justify-content-between align-items-center">
                                 <label class="py-0 my-0" for="links">Link:</label>
-                                <button onclick="showDictionaryModal('links')" class="btn btn-sm btn-primary my-1" >add</button>
+                                <button onclick="showDictModal('links')" class="btn btn-sm btn-primary my-1" >add</button>
                             </div>
                             <input autocomplete="off" id="links" type="text" placeholder="Links" class="form-control" readonly>
                         </div>
@@ -460,7 +460,7 @@ block content %}
                         <div class="input-group-sm m-2">
                             <div class="d-flex justify-content-between align-items-center">
                                 <label class="py-0 my-0" for="logConfig">Log Config:</label>
-                                <button onclick="showDictionaryModal('logConfig')" class="btn btn-sm btn-primary my-1" >add</button>
+                                <button onclick="showDictModal('logConfig')" class="btn btn-sm btn-primary my-1" >add</button>
                             </div>
                             <input autocomplete="off" id="logConfig" type="text" placeholder="Log Config" class="form-control" readonly>
                         </div>
@@ -468,7 +468,7 @@ block content %}
                         <div class="input-group-sm m-2">
                             <div class="d-flex justify-content-between align-items-center">
                                 <label class="py-0 my-0" for="storageOpt">Storage Options:</label>
-                                <button onclick="showDictionaryModal('storageOpt')" class="btn btn-sm btn-primary my-1" >add</button>
+                                <button onclick="showDictModal('storageOpt')" class="btn btn-sm btn-primary my-1" >add</button>
                             </div>
                             <input autocomplete="off" id="storageOpt" type="text" placeholder="Storage Options" class="form-control" readonly>
                         </div>
@@ -476,7 +476,7 @@ block content %}
                         <div class="input-group-sm m-2">
                             <div class="d-flex justify-content-between align-items-center">
                                 <label class="py-0 my-0" for="sysctls">System CTLS:</label>
-                                <button onclick="showDictionaryModal('sysctls')" class="btn btn-sm btn-primary my-1" >add</button>
+                                <button onclick="showDictModal('sysctls')" class="btn btn-sm btn-primary my-1" >add</button>
                             </div>
                             <input autocomplete="off" id="sysctls" type="text" placeholder="System CTLS" class="form-control" readonly>
                         </div>
@@ -484,7 +484,7 @@ block content %}
                         <div class="input-group-sm m-2">
                             <div class="d-flex justify-content-between align-items-center">
                                 <label class="py-0 my-0" for="tmpfs">Temporary Filesystems:</label>
-                                <button onclick="showDictionaryModal('tmpfs')" class="btn btn-sm btn-primary my-1" >add</button>
+                                <button onclick="showDictModal('tmpfs')" class="btn btn-sm btn-primary my-1" >add</button>
                             </div>
                             <input autocomplete="off" id="tmpfs" type="text" placeholder="Temporary Filesystems" class="form-control" readonly>
                         </div>
@@ -529,6 +529,6 @@ block content %}
             <button class="btn btn-sm btn-success m-1" onclick="createContainer()">Create</button>
         </div>
     </div>
-    <script src="{{url_for('static', filename='js/container_creation.js')}}"></script>
+    <script src="{{url_for('static', filename='js/containers/creator.js')}}"></script>
 </main>
 {% endblock %} {% block footer %} {{ super() }} {% endblock %}

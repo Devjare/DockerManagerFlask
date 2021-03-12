@@ -1,10 +1,21 @@
 let dictionaries = {
-    'ports': {}
+    'containerLimits': {},
+    'buildargs': {},
+    'extraHosts': {}
+};
+
+let lists = {
+    'cacheFrom': []
 };
 
 function showDictModal(dictname) {
     let data = dictionaries[dictname];
     showDictionaryModal(data, dictname);
+}
+
+function showLModal(listname) {
+    let data = lists[listname];
+    showListModal(data, listname);
 }
 
 $('#btnToggleFile').click((e) => {
@@ -33,6 +44,14 @@ $('#btnTogglePath').click((e) => {
 $('#chkCustomContext').change(() => {
     $('#customContext')[0].classList.toggle('d-none');
 });
+
+$('#btnSubmit').click((e) => {
+    if($('#fileInput')[0].files.length == 0) {
+        e.preventDefault();
+        showAlert('A file must be provided, a tarball containing the files which to create the image with.', 'danger');
+    }
+});
+
 
 // Commit params
 // Hostname 	

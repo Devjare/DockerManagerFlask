@@ -53,7 +53,7 @@ function showAlert(msg, type) {
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
     <span aria-hidden="true">&times;</span></button></div>`
     $('body').append(alertEl);
-   
+
     // set timeout to disappear the alert after 5 secs.
     setTimeout(() => {
         $(`.alert#alert-${alertCount}`).alert('close');
@@ -154,7 +154,7 @@ let confirmationModalTemplate = `
 // modal.
 function showConfirmationModal(msg, onConfirm, onCancel) {
     $('body').append(confirmationModalTemplate);
-    
+
     // set the current modal to the back
     $('#modal').css({'z-index': '0'}); 
 
@@ -165,7 +165,7 @@ function showConfirmationModal(msg, onConfirm, onCancel) {
         $('#modalConfirm #btnCancel').on('click', (e) => onCancel(e));
         $('#modalConfirm #btnConfirm').on('click', (e) => onConfirm(e));
     });
-    
+
     // when the confirmation hides, show again the modal on front.
     $('#modalConfirm').on('hidden.bs.modal', (e) => {
         $('#modal').css({'z-index': ''});
@@ -255,15 +255,15 @@ function fillTableWithJSON(tableid, jsonObject) {
         let value = jsonObject[key];
         if(Array.isArray(value)) {
             newRow += 
-            `<td class="col-4"><strong>${key}</strong></td>
+                `<td class="col-4"><strong>${key}</strong></td>
             <td class="col-8">${createListForArray(value)}</td></tr>`;
         } else if(isObject(value)) {
             newRow += 
-            `<td class="col-4"><strong>${key}</strong></td>
+                `<td class="col-4"><strong>${key}</strong></td>
             <td class="col-8">${createTableForJSON(value)}</td></tr>`;
         } else {
             newRow += 
-            `<td class="col-4"><strong>${key}</strong></td>
+                `<td class="col-4"><strong>${key}</strong></td>
             <td class="col-8">${value}</td>
             </tr>`;
         }
@@ -279,7 +279,7 @@ function createTableForJSON(obj) {
     for(key in obj) {
         value = obj[key];
         table += 
-        `<tr><td><strong>${key}</strong></td><td>
+            `<tr><td><strong>${key}</strong></td><td>
          ${isObject(value) ? createTableForJSON(value) : (Array.isArray(value) ? createListForArray(value) : value)}
          </td></tr>`;
     }
@@ -296,11 +296,11 @@ function createListForArray(array) {
     return list;
 }
 
-let data;
+var data, listData;
 function deleteDataRow(event, onDeleteProp) {
     let rowToDelete = event.target.parentNode.closest('tr');
     let propToDelete = rowToDelete.children[0].children[0].value;
-    
+
     // remove row from table
     rowToDelete.remove();
 
@@ -350,7 +350,7 @@ function addNewDataRow() {
 // NOTE: Both examples can be found on the container_creation page.
 
 function getDynamicDictTemplate(dict) {
-    
+
     data = dict;
 
     let table = `<table id="tableBody" class="table table-sm"> <thead class="thead-dark">
@@ -370,10 +370,99 @@ function getDynamicDictTemplate(dict) {
         <td><input class="form-control value-input" type="text" placeholder="Data Value"></td>
         <td><button class="btn btn-sm btn-primary" onclick="addNewDataRow()">Add</a></td>
     </tr></tbody></table>`; 
-   return table; 
+    return table; 
 }
 
-function getDynamicListTemplate() {
+function addNewListItem() {
+    $('#list').append(`
+    <li class="new-list-item">
+        <input class="form-control list-item-input" type="text" placeholder="Item data">
+    </li>`); 
+}
+
+function deleteListItem(event, value) {
+    let index = listData.indexOf(value);
+    let liToDelete = event.target.parentNode;
+
+    if(index < listData.length) {
+        listData.splice(index, 1);
+        liToDelete.remove();
+    } else showAlert(`Index not on limits of array`);
+}
+
+function getDynamicListTemplate(list) {
+    listData = list;
+    let body = `<div class="d-flex flex-column justify-content-center">
+        <ul id="list" class="list-group m-2">`
+
+    for(let i = 0;i < list.length;i++) {
+        body += 
+            `<li id="${i}" class="list-group-item d-flex justify-content-between align-items-center">
+        ${list[i]}
+        <span class="icon" onclick="deleteListItem(event, '${list[i]}')" data-feather="trash"></span>
+    </li>`
+    }
+    body += `</ul>
+    <button class="btn btn-sm btn-primary align-self-end" onclick="addNewListItem()">new</button></div>`;
+
+    return body;
+}
+
+function addNewItemToList() {
+    let newItemData = $('.new-list-item').find('.list-item-input');
+    newItemData.each(index => {
+        let value = newItemData[index].value;
+        if(value) listData.push(value);
+    });
+}
+
+function showListModal(list, listName) {
+    listData = list;
+
+    let title = `Manage ${listName} data.`;
+
+    let body = getDynamicListTemplate(listData);
+
+    let footer = `<div class="d-flex justify-content-end">
+    <button class="btn btn-sm btn-secondary mx-1" data-dismiss="modal">Close</button>
+    </div>`;
+
+    showModal(title, body, footer, 
+        (e) => {
+            // onHide modal
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
+            // send modal to back to show the confirmation above all;
+            let inputsToValidate = $('.new-list-item');
+            if(inputsToValidate.length > 0) {
+                if(validateInputs($('#modal input')) == false) {
+                    showConfirmationModal(
+                        `Are you sure to leave with blank fields?, if a key field is blank, it wont be added.`, 
+                        (e) => { 
+                            addNewItemToList();
+                            updateListDisplay(listName);
+                            hideConfirmationModal();
+                            hideModal();
+                        }, 
+                        (e) => hideConfirmationModal());
+                } else {
+                    addNewItemToList();
+                    updateListDisplay(listName);
+                    hideModal();
+                }
+            } else {
+                updateListDisplay(listName);
+                hideModal();
+            }
+
+            return false;
+        }, null,
+        (e) => {
+            // on modal show load delete icon.
+            feather.replace();
+        }
+    );
 
 }
 
@@ -387,6 +476,9 @@ function validateInputs(inputs) {
 function updateDictionaryDisplay(dictName) {
     $(`#${dictName}`)[0].value = JSON.stringify(data);
 }
+
+function updateListDisplay(listName) {
+    $(`#${listName}`)[0].value = listData.toString();}
 
 // shows a modal with a generated html table for json
 // inputs.

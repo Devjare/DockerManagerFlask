@@ -65,150 +65,15 @@ let lists = {
     'ulimits': []
 }
 
-function dataUpdated(dictName) {
-    $(`#${dictName}`)[0].value = JSON.stringify(dictionaries[dictName]);
-}
-
-function listUpdated(listName) {
-    $(`#${listName}`)[0].value = lists[listName].toString();
-}
-
-function addNewItem(listName) {
-    let newItemData = $('.new-list-item').find('.list-item-input');
-    newItemData.each(index => {
-        let value = newItemData[index].value;
-        if(value) lists[listName].push(value);
-    }) 
-
-    listUpdated(listName);
-}
-
-function addNewListItem() {
-    $('#list').append(`
-    <li class="new-list-item">
-        <input class="form-control list-item-input" type="text" placeholder="Item data">
-    </li>`); 
-}
-
-function deleteListItem(event, value, listName) {
-    let index = lists[listName].indexOf(value);
-    let liToDelete = event.target.parentNode;
-
-    if(index < lists[listName].length) {
-        lists[listName].splice(index, 1);
-        liToDelete.remove();
-    } else showAlert(`Index not on limits of array`);
-
-    listUpdated(listName);
-}
-
-function showListModal(listName) {
-    let data = lists[listName];
-
-    let counter = 0;
-    let title = `Manage ${listName} data.`;
-
-    let body = 
-        `<div class="d-flex flex-column justify-content-center">
-    <h5>${listName} items</h5>
-        <ul id="list" class="list-group m-2">`
-
-    for(let i = 0;i < data.length;i++) {
-        body += 
-            `<li id="${i}" class="list-group-item d-flex justify-content-between align-items-center">
-        ${data[i]}
-        <span class="icon" onclick="deleteListItem(event, '${data[i]}', '${listName}')" data-feather="trash"></span>
-    </li>`
-    }
-    body += `</ul>
-    <button class="btn btn-sm btn-primary align-self-end" onclick="addNewListItem()">new</button></div>`;
-
-    let footer = `<div class="d-flex justify-content-end">
-    <button class="btn btn-sm btn-secondary mx-1" data-dismiss="modal">Close</button>
-    </div>`;
-
-    showModal(title, body, footer, 
-        (e) => {
-            // onHide modal
-            e.preventDefault();
-            e.stopImmediatePropagation();
-
-            // send modal to back to show the confirmation above all;
-            let inputsToValidate = $('.new-list-item');
-            if(inputsToValidate.length > 0) {
-                if(validateInputs($('#modal input')) == false) {
-                    showConfirmationModal(
-                        `Are you sure to leave with blank fields?, if a key field is blank, it wont be added.`, 
-                        (e) => { 
-                            addNewItem(listName);
-                            hideConfirmationModal();
-                            hideModal();
-                        }, 
-                        (e) => hideConfirmationModal());
-                } else {
-                    addNewItem(listName);
-                    hideModal();
-                }
-            } else hideModal();
-
-            return false;
-        }, null,
-        (e) => {
-            // on modal show load delete icon.
-            feather.replace();
-        }
-    );
-
-}
-
-function showDictionaryModal(dictName) {
-    let data = dictionaries[dictName];
-
-    let title = `Mananage ${dictName} data`;
-
-    let body = `<div class="d-flex flex-column">`;
-    body += getDynamicDictTemplate(dictionaries[dictName]);
-
-    let footer = `<div class="d-flex justify-content-end">
-    <button class="btn btn-sm btn-secondary mx-1" data-dismiss="modal">Close</button>
-    </div>`;
-
-    showModal(title, body, footer,
-        (e) => {
-            // onHide modal
-            e.preventDefault();
-            e.stopImmediatePropagation();
-
-            // send modal to back to show the confirmation above all;
-            let inputsToValidate = $('.new-row');
-            if(inputsToValidate.length > 0) {
-                if(validateInputs($('#modal input')) == false) {
-                    showConfirmationModal(
-                        `Are you sure to leave with blank fields?, if a value is blank, the key will be added with no value.`, 
-                        (e) => { 
-                            dataUpdated(dictName);
-                            hideConfirmationModal();
-                            hideModal();
-                        }, 
-                        (e) => hideConfirmationModal());
-                } else {
-                    dataUpdated(dictName);
-                    hideModal();
-                }
-            } else {
-                dataUpdated(dictName);
-                hideModal();
-            }
-
-            return false;
-        });
-}
-
 function showDictModal(dictname) {
     let data = dictionaries[dictname];
     showDictionaryModal(data, dictname);
 }
 
+function showLModal(listname) {
+    let data = lists[listname];
+    showListModal(data, listname);
+}
 
 $('#chkRun').change(() => {
     if($('#chkRun')[0].checked) {

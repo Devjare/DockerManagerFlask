@@ -5,6 +5,7 @@ import requests
 import docker
 from werkzeug.utils import secure_filename
 import zipfile
+import simplejson as json
 
 images_bp = Blueprint("images", __name__, static_folder="url_for('static')", template_folder="url_for('templates')")
 
@@ -134,39 +135,68 @@ def getImageInfo():
 
 @images_bp.route('/build', methods=["POST"])
 def buildImage():
-    print('parameters form: ', request.form)
     f = request.files['file'].read() 
     args = request.form
+  
+    build_args = json.loads(args['buildargs']) if (('buildargs' in args) and args['buildargs'] != '') else None
+    container_limits = json.loads(args['containerLimits']) if (('containerLimits' in args) and args['containerLimits'] != '') else None
+    labels = json.loads(args['labels']) if (('labels' in args) and args['labels'] != '') else None
+    extra_hosts = args['extraHosts'] if ('extraHosts' in args and args['extraHosts'] != '')  else None
+
+    tag = args['tag'] if ('tag' in args and args['tag'] != '')  else None
+    dockerfile = args['dockerfile'] if ('dockerfile' in args and args['dockerfile'] != '') else None
+    quiet = (args['quiet'] == 'on') if 'quiet' in args else None
+    nocache = (args['noCache'] == 'on') if 'noCache' in args else None
+    timeout = args['timeout'] if ('timeout' in args and args['timeout'] != '') else None
+    encoding = args['encodig'] if ('encodig' in args and args['encoding'] != '') else None
+    shmsize = args['shmsize'] if ('shmsize' in args and args['shmsize'] != '')  else None
+    cache_from = args['cacheFrom'].split(',') if ('cacheFrom' in args and args['cacheFrom'] != '')  else None
+    target = args['target'] if ('target' in args and args['target'] != '')  else None
+    network_mode = args['networkMode'] if ('networkMode' in args and args['networkMode'] != '')  else None
+    platform = args['platform'] if ('platform' in args and args['platform'] != '')  else None
+    isolation = args['isolation'] if ('isolation' in args and args['isolation'] != '')  else None
+    rm = (args['rm'] == 'on') if 'rm' in args else None
+    forcerm = (args['forceRm'] == 'on') if 'forceRm' in args else None
+    squash = (args['squash'] == 'on') if 'squash' in args else None
+    use_config_proxy = (args['useConfigProxy'] == 'on') if 'useConfigProxy' in args else None
+
+    print('use config proxy: ', use_config_proxy)
+    print('timeout: ', timeout)
     
+    print('build_args: ', build_args)
+    print('container_limits: ', container_limits)
+    print('labels: ', labels)
+    print('extra_host: ', extra_hosts)
+    print('tag: ', tag)
+    print('dockerfile: ', dockerfile)
+    print('quiet: ', quiet)
+    print('nocache: ', nocache)
+    print('timeout: ', timeout)
+    print('encoding: ', encoding)
+    print('shmsize: ', shmsize)
+    print('cache_from: ', cache_from)
+    print('target: ', target)
+    print('network_mode: ', network_mode)
+    print('platform: ', platform)
+    print('isolation: ', isolation)
+    print('rm: ', rm)
+    print('forcerm: ', forcerm)
+    print('squash: ', squash)
+    print('use_config_prox: ', use_config_proxy)
+
     try:
-        client.images.build(
-                # path = args['path'] if 'path' in data else None, 
-                tag = args['tag'] if 'tag' in args else None, 
-                fileobj=f, 
-                custom_context=True,
-                dockerfile = args['dockerfile'] if 'dockerfile' in args else None,
-                quiet = (args['quiet'] == 'on') if 'quiet' in args else None, 
-                nocache = (args['quiet'] == 'on') if 'quiet' in args else None,
-                timeout = args['timeout'] if 'timeout' in args else None,
-                encoding = args['encodig'] if 'encodig' in args else None,
-                buildargs = args['buildargs'] if 'buildargs' in args else None,
-                container_limits = args['containerLimits'] if 'containerLimits' in args else None,
-                shmsize = args['shmsize'] if 'shmsize' in args else None,
-                labels = args['labels'] if 'labels' in args else None,
-                cache_from = args['cacheFrom'] if 'cacheFrom' in args else None,
-                target = args['target'] if 'target' in args else None,
-                network_mode = args['networkMode'] if 'networkMode' in args else None,
-                extra_hosts = args['extraHosts'] if 'extraHosts' in args else None,
-                platform = args['platform'] if 'platform' in args else None,
-                isolation = args['isolation'] if 'isolation' in args else None,
-                rm = (args['rm'] == 'on') if 'rm' in args else None,
-                squash = (args['squash'] == 'on') if 'squash' in args else None,
-                use_config_proxy = (args['useConfigProxy'] == 'on') if 'useConfigProxy' in args else None,
-                )
+        # path = args['path'] if 'path' in data else None, 
+        client.images.build(tag = tag, fileobj = f, custom_context=True, dockerfile = dockerfile, quiet = quiet,
+        nocache = nocache, timeout = timeout, encoding = encoding, buildargs = build_args, container_limits = container_limits,
+        shmsize = shmsize, labels = labels, cache_from = cache_from, target = target, network_mode = network_mode,
+        extra_hosts = extra_hosts, platform = platform, isolation = isolation, rm = rm, forcerm = forcerm, squash = squash,
+        use_config_proxy = use_config_proxy)
     except docker.errors.BuildError as berr:
+        print('build error: ', berr)
         error = { 'error': str(berr) }
         return render_template('/images/builder.html', error=error)
     except docker.errors.APIError as apierr:
+        print('API error: ', apierr)
         error = { 'error': str(apierr) }
         return render_template('/images/builder.html', error=error)
 

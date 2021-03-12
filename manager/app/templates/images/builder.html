@@ -46,7 +46,7 @@
                     </div>
                     <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                         <label for="tag">Tag:</label>
-                        <input autocomplete="off" id="tag" name="tag" type="text" placeholder="Tag" class="form-control" pattern="[\w_-]+$" oninput="setCustomValidity('')">
+                        <input autocomplete="off" id="tag" name="tag" type="text" placeholder="Tag" class="form-control" pattern="[\w_-\:\w_-]+$" oninput="setCustomValidity('')">
                     </div>
                     <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                         <label for="enconding">Encoding:</label>
@@ -54,7 +54,7 @@
                     </div>
                     <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                         <label for="dockerile">Dockerfile path:</label>
-                        <input autocomplete="off" id="dockerfile" name="dockerfile" type="text" placeholder="Docker file path within the build context" class="form-control" pattern="[\w_-]+$" oninput="setCustomValidity('')">
+                        <input autocomplete="off" id="dockerfile" name="dockerfile" type="text" placeholder="Docker file path within the build context" class="form-control" pattern="[\w_-/]+$" oninput="setCustomValidity('')">
                     </div>
                     <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                         <label for="network-mode">Network Mode:</label>
@@ -81,23 +81,39 @@
                     </div>
                 </div>
                 <!-- LISTS -->
+                <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <label class="py-0 my-0" for="cacheFrom">Cache From:</label>
+                        <button type="button" onclick="showLModal('cacheFrom')" class="btn btn-sm btn-primary my-1" >add</button>
+                    </div>
+                    <input autocomplete="off" id="cacheFrom" name="cacheFrom" type="text" placeholder="Cache From" class="form-control" readonly oninput="setCustomValidity('')">
+                </div>
+                <!-- DICTIONARIES -->
                 <div class="d-flex flex-wrap">
                     <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                         <div class="d-flex justify-content-between align-items-center">
-                            <label class="py-0 my-0" for="volumes">Volumes:</label>
-                            <button onclick="showListModal('volumes')" class="btn btn-sm btn-primary my-1" >add</button>
+                            <label class="py-0 my-0" for="buildargs">Build args:</label>
+                            <button type="button" onclick="showDictModal('buildargs')" class="btn btn-sm btn-primary my-1" >add</button>
                         </div>
-                        <input autocomplete="off" id="volumes" name="volumes" type="text" placeholder="Volumes" class="form-control" readonly>
+                        <input autocomplete="off" id="buildargs" name="buildargs" type="text" placeholder="Build Args" class="form-control" readonly>
                     </div>
                 </div>
-                <!-- DICTS -->
                 <div class="d-flex flex-wrap">
                     <div class="input-group-sm m-2">
                         <div class="d-flex justify-content-between align-items-center">
-                            <label class="py-0 my-0" for="ports">Ports binds:</label>
-                            <button type="button" onclick="showDictModal('ports')" class="btn btn-sm btn-primary my-1" >add</button>
+                            <label class="py-0 my-0" for="containerLimits">Container Limits:</label>
+                            <button type="button" onclick="showDictModal('containerLimits')" class="btn btn-sm btn-primary my-1" >add</button>
                         </div>
-                        <input autocomplete="off" id="ports" name="ports" type="text" placeholder="Ports" class="form-control" readonly oninput="setCustomValidity('')">
+                        <input autocomplete="off" id="containerLimits" name="containerLimits" type="text" placeholder="Container Limits" class="form-control" readonly oninput="setCustomValidity('')">
+                    </div>
+                </div>
+                <div class="d-flex flex-wrap">
+                    <div class="input-group-sm m-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <label class="py-0 my-0" for="extraHosts">Extra Hosts:</label>
+                            <button type="button" onclick="showDictModal('extraHosts')" class="btn btn-sm btn-primary my-1" >add</button>
+                        </div>
+                        <input autocomplete="off" id="extraHosts" name="extraHosts" type="text" placeholder="Extra hosts" class="form-control" readonly oninput="setCustomValidity('')">
                     </div>
                 </div>
                 <!-- BOOLS -->
@@ -137,11 +153,11 @@
                 </div>
             </div>
             <div class="fixed-bottom bg-primary w-100 text-white page-footer d-flex flex-row justify-content-end align-items-center px-5">
-                <input type="submit" class="btn btn-sm btn-success m-1">
+                <input id="btnSubmit" type="submit" class="btn btn-sm btn-success m-1">
             </div>
         </div>
     </form>
-    <script src="{{url_for('static', filename='js/image_builder.js')}}"></script>
+    <script src="{{url_for('static', filename='js/images/builder.js')}}"></script>
     {% if error %}
     <script>
         error('{{ error["error"] }}');

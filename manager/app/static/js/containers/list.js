@@ -239,6 +239,7 @@ function loadContainers(containers, filter) {
         <tr><td colspan="10"><div class="d-flex justify-content-center">
         No containers created,&nbsp;<a href="/containers/creation">Create one
         </a>!</div></td></tr>`;
+        return;
     }
     else if(filter != 'all') filtered = filterContainersBy(filter);
     else filtered = containers;
