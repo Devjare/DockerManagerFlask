@@ -1,10 +1,18 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, redirect, url_for
 from app import dockercli, client
 from app.constants import PRIVATE_REGISTRY 
 import requests
 import docker
+from werkzeug.utils import secure_filename
+import zipfile
 
 images_bp = Blueprint("images", __name__, static_folder="url_for('static')", template_folder="url_for('templates')")
+
+# Routes
+@images_bp.route('/')
+@images_bp.route('/images')
+def listImages():
+    return render_template('images/list.html')
 
 @images_bp.route('/builder')
 def showImageBuilder():
@@ -13,6 +21,8 @@ def showImageBuilder():
 @images_bp.route('/details')
 def showImageDetails():
     return render_template('images/details.html')
+
+# utils
 
 @images_bp.route('/json')
 def getAllImages():
@@ -112,15 +122,6 @@ def pullImageFrom():
     return { 'id': imageid }
 
 
-@images_bp.route('/rep/<repname>/push/<id>')
-def pushToRepo(repname, id):
-    pass
-
-@images_bp.route('/')
-@images_bp.route('/images')
-def listImages():
-    return render_template('images/list.html')
-
 @images_bp.route('/inspect', methods=["GET"])
 def getImageInfo():
     id = request.args['id']
@@ -131,3 +132,42 @@ def getImageInfo():
         return { "error": str(err) }
     return {"image": image} 
 
+@images_bp.route('/build', methods=["POST"])
+def buildImage():
+    print('parameters form: ', request.form)
+    f = request.files['file'].read() 
+    args = request.form
+    
+    try:
+        client.images.build(
+                # path = args['path'] if 'path' in data else None, 
+                tag = args['tag'] if 'tag' in args else None, 
+                fileobj=f, 
+                custom_context=True,
+                dockerfile = args['dockerfile'] if 'dockerfile' in args else None,
+                quiet = (args['quiet'] == 'on') if 'quiet' in args else None, 
+                nocache = (args['quiet'] == 'on') if 'quiet' in args else None,
+                timeout = args['timeout'] if 'timeout' in args else None,
+                encoding = args['encodig'] if 'encodig' in args else None,
+                buildargs = args['buildargs'] if 'buildargs' in args else None,
+                container_limits = args['containerLimits'] if 'containerLimits' in args else None,
+                shmsize = args['shmsize'] if 'shmsize' in args else None,
+                labels = args['labels'] if 'labels' in args else None,
+                cache_from = args['cacheFrom'] if 'cacheFrom' in args else None,
+                target = args['target'] if 'target' in args else None,
+                network_mode = args['networkMode'] if 'networkMode' in args else None,
+                extra_hosts = args['extraHosts'] if 'extraHosts' in args else None,
+                platform = args['platform'] if 'platform' in args else None,
+                isolation = args['isolation'] if 'isolation' in args else None,
+                rm = (args['rm'] == 'on') if 'rm' in args else None,
+                squash = (args['squash'] == 'on') if 'squash' in args else None,
+                use_config_proxy = (args['useConfigProxy'] == 'on') if 'useConfigProxy' in args else None,
+                )
+    except docker.errors.BuildError as berr:
+        error = { 'error': str(berr) }
+        return render_template('/images/builder.html', error=error)
+    except docker.errors.APIError as apierr:
+        error = { 'error': str(apierr) }
+        return render_template('/images/builder.html', error=error)
+
+    return render_template('/images/list.html')

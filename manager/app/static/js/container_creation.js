@@ -164,7 +164,6 @@ function showListModal(listName) {
 function showDictionaryModal(dictName) {
     let data = dictionaries[dictName];
 
-    let counter = 0;
     let title = `Mananage ${dictName} data`;
 
     let body = `<div class="d-flex flex-column">`;
@@ -205,12 +204,11 @@ function showDictionaryModal(dictName) {
         });
 }
 
-function validateInputs(inputs) {
-    for(key in inputs) 
-        if(inputs[key].value == '') 
-            return false;
-    return true;
+function showDictModal(dictname) {
+    let data = dictionaries[dictname];
+    showDictionaryModal(data, dictname);
 }
+
 
 $('#chkRun').change(() => {
     if($('#chkRun')[0].checked) {

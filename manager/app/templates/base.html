@@ -27,6 +27,10 @@
         <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
         <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
         <!-- <script src="http://getbootstrap.com/docs/4.1/assets/js/vendor/popper.min.js"></script> -->
+        
+        <!-- Custom JS Files -->
+        <script src="{{url_for('static', filename='js/utils.js')}}"></script>
+        <script src="{{url_for('static', filename='js/base.js')}}"></script>
         {% endblock %}
     </head>
 
@@ -152,24 +156,21 @@
                 {% block content %}{% endblock %} 
                 {% block footer %}
                 <!-- ======================== Bootstrap core JavaScript ========================== -->
-                    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
+                <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
 
-                    <!-- Icons -->
-                    <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
-                    <script>
-                        feather.replace()
-                    </script>
-
-                    <!-- Custom JS Files -->
-                    <script src="{{url_for('static', filename='js/utils.js')}}"></script>
-                    <script src="{{url_for('static', filename='js/base.js')}}"></script>
+                <!-- Icons -->
+                <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+                <script>
+                    feather.replace()
+                </script>
 
 
-                    <!-- Graphs 
-                        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.0.0/Chart.min.js" 
-                            integrity="sha512-oPvxMUC37WigeVCeZVcU9IoRJjR3xg5/XQaautxFc0rCWJZgQ625mTEPz2nfp7/papNkImutg4thPHf6ok/Fwg==" 
+
+                <!-- Graphs 
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.0.0/Chart.min.js" 
+                        integrity="sha512-oPvxMUC37WigeVCeZVcU9IoRJjR3xg5/XQaautxFc0rCWJZgQ625mTEPz2nfp7/papNkImutg4thPHf6ok/Fwg==" 
                             crossorigin="anonymous"></script> -->
-                        {% endblock %} 
+                    {% endblock %} 
     </body>
 
 </html>

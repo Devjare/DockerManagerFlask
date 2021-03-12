@@ -1,4 +1,3 @@
-
 // Description: Object containing the default messages
 // that are shown on login fields when invalid input is
 // entered.`
@@ -376,4 +375,58 @@ function getDynamicDictTemplate(dict) {
 
 function getDynamicListTemplate() {
 
+}
+
+function validateInputs(inputs) {
+    for(key in inputs) 
+        if(inputs[key].value == '') 
+            return false;
+    return true;
+}
+
+function updateDictionaryDisplay(dictName) {
+    $(`#${dictName}`)[0].value = JSON.stringify(data);
+}
+
+// shows a modal with a generated html table for json
+// inputs.
+function showDictionaryModal(dict, dictName) {
+    let title = `Mananage ${dictName} data`;
+
+    let body = `<div class="d-flex flex-column">`;
+    body += getDynamicDictTemplate(dict);
+
+    let footer = `<div class="d-flex justify-content-end">
+    <button class="btn btn-sm btn-secondary mx-1" data-dismiss="modal">Close</button>
+    </div>`;
+
+    showModal(title, body, footer,
+        (e) => {
+            // onHide modal
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
+            // send modal to back to show the confirmation above all;
+            let inputsToValidate = $('.new-row');
+            if(inputsToValidate.length > 0) {
+                if(validateInputs($('#modal input')) == false) {
+                    showConfirmationModal(
+                        `Are you sure to leave with blank fields?, if a value is blank, the key will be added with no value.`, 
+                        (e) => { 
+                            updateDictionaryDisplay(dictName);
+                            hideConfirmationModal();
+                            hideModal();
+                        }, 
+                        (e) => hideConfirmationModal());
+                } else {
+                    updateDictionaryDisplay(dictName);
+                    hideModal();
+                }
+            } else {
+                updateDictionaryDisplay(dictName);
+                hideModal();
+            }
+
+            return false;
+        });
 }
