@@ -90,7 +90,8 @@ function getContainerCommitTemplate(containerid) {
     <div><input id="author" type="text" class="m-1 form-control" placeholder="Default user name"></div>
     <div><textarea id="changes" class="m-1 form-control" placeholder="Changes" rows="4" columns="50"></textarea></div>
     <div>`;
-    body += getDynamicDictTemplate(commitConfs);
+    // COMMIT CONFIGS ARE PENDING.
+    // body += getDynamicDictTemplate(commitConfs,);
     body += `</div></div>`;
 
     return body;
@@ -379,3 +380,5 @@ function showDeleteContainerModal(container) {
 $('.site-content').ready((e) => {
     refresh();
 });
+
+

@@ -351,6 +351,7 @@ function pullImage(imageRep, source) {
                 console.log('Error while pulling image: ', res['error']);
             }
             else {
+                showAlert('Image from dockerhub pulled succesfully!', 'success')
                 refreshImageTable();
             }
         },
@@ -359,7 +360,6 @@ function pullImage(imageRep, source) {
             showAlert(`An error occurred, check console.`, 'danger')
         });
 
-    showAlert('Pulling image from dockerhub...', 'info');
 }
 
 function loadRegistryRepositories(repositories) {
