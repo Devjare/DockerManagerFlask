@@ -1,38 +1,5 @@
 from sqlalchemy import ForeignKey
-from app import db, ma
-
-# Define all the Database models that are gonna be used.
-# The main three models using through all project, are
-# User, Container, and UsersContainers, up to March 4th 2021.
-
-##### MODELS #####
-class Service(db.Model):
-    __tablename__ = 'services'
-    id = db.Column(db.String(255), primary_key=True)
-    name = db.Column(db.String(255))
-    image = db.Column(db.String(255))
-    replicas = db.Column(db.Integer)
-
-    def __init__(self, id, name, image, replicas):
-        self.id = id
-        self.name = name
-        self.image = image
-        self.replicas = replicas
-
-class Piece(db.Model):
-    __tablename__ = 'pieces'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255))
-    host = db.Column(db.String(255))
-
-    def __init__(self, id, name, host):
-        self.id = id
-        self.name = name
-        self.host = host
-
-    def __repr__(self):
-        return '<UC %d>' % self.id
-
+from app import db
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -72,35 +39,3 @@ class UsersContainers(db.Model):
     def __init__(self, user_id, container_id):
         self.user_id = user_id
         self.container_id = container_id
-
-
-##### SCHEMAS #####
-class ServiceSchema(ma.Schema):
-    class Meta:
-        # Fields to expose
-        fields = ('id', 'name', 'image', 'replicas')
-    #id = fields.Str()
-    #name = fields.Str()
-    #image = fields.Str()
-    #replicas = fields.Int()
-
-    #@post_dump
-    #def wrap_with_envelope(self, in_data):
-    #    in_data['image'] = in_data['image'].split('/')[1]
-    #    return in_data
-
-class PieceSchema(ma.Schema):
-    class Meta:
-        fields = ('id', 'name', 'host')
-    #id = fields.Int()
-    #name = fields.Str()
-    #host = fields.Str()
-
-class UserSchema(ma.Schema):
-    class Meta:
-        fields = ('uid', 'username', 'password')
-
-service_schema = ServiceSchema()
-services_schema = ServiceSchema(many=True)
-piece_schema = PieceSchema()
-pieces_schema = PieceSchema(many=True)

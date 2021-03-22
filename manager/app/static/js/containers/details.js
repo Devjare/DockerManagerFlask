@@ -1,4 +1,3 @@
-// containerData has the separated data from the result of docker inspect.
 var containerData = {
     'basics': {},
     'hostconfig': {},

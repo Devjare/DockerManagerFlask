@@ -6,32 +6,18 @@ import requests
 import simplejson as json
 import docker
 
-# static_folder, and template_folder, indicate where to search
-# for static files(js, css, images, etc), and html templates, respectively.
-# blueprint for containers
 containers_bp = Blueprint("containers", __name__, static_folder="url_for('static')", template_folder="url_for('templates')")
 
-# returns the container creator template, with the list of images
-# needed to select one as base.
 @containers_bp.route('/creation')
 def showContainerCreation():
     images = dockercli.images() 
     return render_template('containers/creator.html', images=images)
 
-# when this route is called, all the args to create a container
-# are retrieved and it's used the containers.create method.
-# returns a json indicating if the operations was a success
-# or it has an error, and which error was.
 @containers_bp.route('/create', methods=['POST'])
 def createContainer():
     data = request.json
     container = {}
-  
-    # if the parameters is not on the data from client object
-    # then it's gonna be passed as None(null for docker)
-    
-    # some parameters for some reason don't work, those are commented.
-    # check later on newer versions, maybe is just some incompatibility.
+
     if('advancedCreation' in data):
         if(not data['run']):
             try:
@@ -53,7 +39,6 @@ def createContainer():
                     read_only = data['read_only'] if 'read_only' in data else None,
                     privileged = data['privileged'] if 'privileged' in data else None,
                     publish_all_ports = data['publish_all_ports'] if 'publish_all_ports' in data else None,
-
                     cgroup_parent = data['cgroup_parent'] if 'cgroup_parent' in data else None,
                     cpu_count = int(data['cpu_count']) if 'cpu_count' in data else None,
                     cpu_percent = int(data['cpu_percent']) if 'cpu_percent' in data else None,
@@ -91,8 +76,6 @@ def createContainer():
                     kernel_memory = data['kernel_memory'] if 'kernel_memory' in data else None,
                     mac_address = data['mac_address'] if 'mac_address' in data else None,
                     pid_mode = data['pid_mode'] if 'pid_mode' in data else None,
-                    # platform = data['platform'], apparently platform, and stream are not valid paramters
-                    # maybe the version of python or docker is causing the problem.
                     runtime = data['runtime'] if 'runtime' in data else None,
                     shm_size = data['shm_size'] if 'shm_size' in data else None,
                     stop_signal = data['stop_signal'] if 'stop_signal' in data else None,
@@ -118,7 +101,6 @@ def createContainer():
                     oom_kill_disable = data['oom_kill_disable'] if 'oom_kill_disable' in data else None,
                     init = data['init'] if 'init' in data else None,
                     stdin_open = data['stdin_open'] if 'stdin_open' in data else None,
-                    # stream = data['stream'],
                     use_config_proxy = data['use_config_proxy'] if 'use_config_proxy' in data else None,
                     oom_score_adj = int(data['oom_score_adj']) if 'oom_score_adj' in data else None,
                     pids_limit = int(data['pids_limit']) if 'pids_limit' in data else None
@@ -185,7 +167,6 @@ def createContainer():
                     kernel_memory = data['kernel_memory'] if 'kernel_memory' in data else None,
                     mac_address = data['mac_address'] if 'mac_address' in data else None,
                     pid_mode = data['pid_mode'] if 'pid_mode' in data else None,
-                    # platform = data['platform'] if 'platform' in data else None,
                     runtime = data['runtime'] if 'runtime' in data else None,
                     shm_size = data['shm_size'] if 'shm_size' in data else None,
                     stop_signal = data['stop_signal'] if 'stop_signal' in data else None,
@@ -211,32 +192,23 @@ def createContainer():
                     oom_kill_disable = data['oom_kill_disable'] if 'oom_kill_disable' in data else None,
                     init = data['init'] if 'init' in data else None,
                     stdin_open = data['stdin_open'] if 'stdin_open' in data else None,
-                    # stream = data['stream'] if 'stream' in data else None,
                     use_config_proxy = data['use_config_proxy'] if 'use_config_proxy' in data else None,
                     oom_score_adj = int(data['oom_score_adj']) if 'oom_score_adj' in data else None,
                     pids_limit = int(data['pids_limit']) if 'pids_limit' in data else None
                  )
-
-                # after the container is created, it's registered on the database
-                # alone and with the user it was created.
                 addContainerToUser(container.id)
             except docker.errors.APIError as api_error:
                 return { 'error': str(api_error) }
             except docker.errors.ImageNotFound as error:
                 return { 'error': str(error) }
     else:
-        # if not advanced creation, (i.e. create from a modal on images page)
         volumeData = data['volume'].split(':') if 'volume' in data else None
-        print('volumeData: ', volumeData)
         volume = {}
         if(volumeData != None):
-            print('theres volume!')
             volume[volumeData[0]] = {
                 'bind': volumeData[1],
                 'mode': volumeData[2] if volumeData[2] != None else ''
             }
-            print('volume: ', volume)
-       
 
         ports = data['ports'].split(':') if 'ports' in data else None
         ports = { ports[0]: ports[1] } if ports != None else None
@@ -252,26 +224,22 @@ def createContainer():
 
         addContainerToUser(container.id)
    
-    # if while creating container it was specified to run after creating it, the call start() from the API
     if(data['run']):
         try:
             container.start()
         except docker.errors.APIError as err:
             return { 'error': str(err) }
     
-    # Add container info to database
     new_container = Container(container.id, container.name, container.image.id)
     db.session.add(new_container)
     db.session.commit()
     
-    # add recently created container to user session containers array. 
     current_containers = session[USERCONTAINERS]
     current_containers.append(container.id)
     session[USERCONTAINERS] = current_containers
 
     return { 'containerid': container.short_id }
 
-# remove container from docker and from DB.
 @containers_bp.route('/delete', methods=["GET"])
 def deleteContainer():
     container = request.args.get('container')
@@ -280,18 +248,14 @@ def deleteContainer():
     force = request.args.get('force')
     try:
         container = client.containers.get(str(container))
-        
-        # delete from db, Container
         containerDb = Container.query.get(container.id)
         db.session.delete(containerDb)
         
-        # delete row on UserContainerTable
         usercontainer = UsersContainers.query.filter_by(user_id=session[USERID], container_id=container.id).first()
         db.session.delete(usercontainer)
         db.session.commit()
-
-        # remove on docker
         container.remove(v=volumes, link=links, force=force)
+
     except docker.errors.ImageNotFound as e: 
         print('error: ', e)
         return { 'error': str(e) }
@@ -302,7 +266,6 @@ def deleteContainer():
         print('error: ', e)
         return { 'error': str(e) }
 
-    # delete container id from session
     current_containers = session[USERCONTAINERS]
     current_containers.remove(container.id)
     session[USERCONTAINERS] = current_containers
@@ -316,7 +279,6 @@ def commitContainer():
     container = client.containers.get(str(data['id']))
     confing = json.loads(data['conf']) if 'conf' in data else None
     try:
-        # first 2 args are obligatory
         container.commit(
                 repository = data['repository'], 
                 tag = data['tag'],
@@ -326,6 +288,7 @@ def commitContainer():
                 conf = config)
 
     except docker.errors.APIError as e: 
+        print('error: ', e)
         return { 'error': str(e) }
     return { 'success': True } 
 
@@ -350,11 +313,8 @@ def getContainers():
 @containers_bp.route('/')
 @containers_bp.route('/containers')
 def listContainers():
-    # list containers only of the given user.
     containerslist = getContainers()['containers']
 
-    # allcontainers = client.containers.list(all=True);
-    # formattedContainers = map(containerToJson, allcontainers)
     jsonArray = { "containers": containerslist }
     return render_template('containers/list.html', containers=json.dumps(jsonArray))
 
@@ -373,7 +333,7 @@ def startContainer(id):
     try:
         dockercli.start(id)
     except docker.errors.APIError as err:
-        print('error: ', err.errno)
+        print('error: ', err)
         return { 'error': str(err) }
     return { 'started': True }
 
@@ -382,6 +342,7 @@ def stopContainer(id):
     try:
         dockercli.stop(id)
     except docker.errors.APIError as err:
+        print('error: ', err)
         return { 'error': str(err) }
     return { 'stopped': True }
 
@@ -390,6 +351,7 @@ def restartContainer(id):
     try:
         dockercli.restart(id)
     except docker.errors.APIError as err:
+        print('error: ', err)
         return { 'error': str(err) }
     return { 'restarting': True }
 
@@ -398,6 +360,7 @@ def pauseContainer(id):
     try:
         dockercli.pause(id)
     except docker.errors.APIError as err:
+        print('error: ', err)
         return { 'error': str(err) }
     return { 'paused': True }
 
@@ -406,12 +369,10 @@ def unpauseContainer(id):
     try:
         dockercli.unpause(id)
     except docker.errors.APIError as err:
+        print('error: ', err)
         return { 'error': str(err) }
     return { 'unpaused': True }
 
-# Helper function
-
-# Function to map Containers objet to json, in order to use themo on JS
 def containerToJson(container):
     image = {"id": container.image.id, "tags": container.image.tags}
     c = {"id": container.short_id, "name": container.name, "status": container.status, "image": image}

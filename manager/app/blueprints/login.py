@@ -11,11 +11,10 @@ def loginscreen():
 
 @login_bp.route('/logout', methods=['GET'])
 def logout():
-    print('session before logout: ', session)
     try:
         [session.pop(key) for key in list(session.keys())]
-        print('session after logout: ', session)
     except Exception as e:
+        print('Failed to logout, error: ', str(e))
         return { 'error': e }
 
     return { 'success': True } 
@@ -25,12 +24,10 @@ def login():
     params = request.json;
     
     if(len(params) > 0):
-        # authenticate
         username = params.get('username')
         password = params.get('password')
 
         res = authenticate(username, password)
-        print('result: ', res)
         if(res == True): 
             session[USERNAME] = username
 
@@ -38,7 +35,6 @@ def login():
                 conts = db.session.query(UsersContainers).filter(UsersContainers.user_id == session[USERID]).all()
                 session[USERCONTAINERS] = []
                 for x in conts:
-                    # adds each container id to array of containers for that user.
                     session[USERCONTAINERS].append(x.container_id)
             except Exception as err:
                 print('error: ', err)
@@ -66,7 +62,6 @@ def signup():
     params = request.json;
     
     if(len(params) > 0):
-        # authenticate
         username = params.get('username')
         password = params.get('password')
 
@@ -76,14 +71,12 @@ def signup():
         else:
             session[USERNAME] = username
             session[USERCONTAINERS] = []
-            # insert to db user, and login
             user = User(username, password)
             
             db.session.add(user)
             db.session.commit()
     
             user = User.query.filter(User.username == username).first()
-            print('user: ', user.uid);
             session[USERID] = user.uid
 
             return { 'signup': True } 

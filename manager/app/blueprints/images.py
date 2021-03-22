@@ -9,7 +9,6 @@ import simplejson as json
 
 images_bp = Blueprint("images", __name__, static_folder="url_for('static')", template_folder="url_for('templates')")
 
-# Routes
 @images_bp.route('/')
 @images_bp.route('/images')
 def listImages():
@@ -23,8 +22,6 @@ def showImageBuilder():
 def showImageDetails():
     return render_template('images/details.html')
 
-# utils
-
 @images_bp.route('/json')
 def getAllImages():
     images = dockercli.images()
@@ -34,25 +31,24 @@ def getTagsOf(repname, source):
     url = ''
     tags = []
     if(source == 'dockerhub'):
-        # FROM DOCKERHUB, TAGS CAN BE OBTAINED WITH THE FOLLOW INSTRUCTION:
         url = 'https://registry.hub.docker.com/v1/repositories/{}/tags'.format(repname)
         try:
             data = requests.get(url).json()
         except Exception as err:
+            print('Error while getting tags(dockerhub): ', err)
             return { 'error': str(err) }
 
         for t in data:
             tags.append(t['name'])
     else: 
-        # FROM LOCAL REGISTRY, TAGS ARE OBTAINED WITH:
         url = (PRIVATE_REGISTRY + '/v2/{}/tags/list').format(repname)
         try:
             data = requests.get(url).json();
         except Exception as err:
+            print('Error while getting tags(registry): ', err)
             return { 'error': str(err) }
         tags = data['tags']
-
-    # Return only the array of tags
+    
     return tags
 
 @images_bp.route('/registry')
@@ -64,11 +60,13 @@ def getImagesFromRegistry():
         try:
             repositories = client.images.search(text)
         except docker.errors.APIError as err:
+            print('Error while getting images from dockerhub: ', err)
             return { 'error': str(err) }
     else:
         try:
             repositories = requests.get(PRIVATE_REGISTRY + '/v2/_catalog').json()['repositories']
         except Exception as err:
+            print('Error while getting images from registry: ', err)
             return { 'error': str(err) }
        
     repsWithTags = dict()
@@ -104,6 +102,7 @@ def deleteImage():
     try: 
         client.images.remove(image=image, force=force, noprune=noprune) 
     except docker.errors.APIError as err:
+        print('Failed to delete image, error: ', str(err))
         return { "error": str(err) }
     return { 'success': True }
 
@@ -130,6 +129,7 @@ def getImageInfo():
     try:
         image = dockercli.inspect_image(id)
     except docker.errors.APIError as err:
+        print('Failed to get image info, error: ', str(err))
         return { "error": str(err) }
     return {"image": image} 
 
@@ -161,18 +161,17 @@ def buildImage():
     use_config_proxy = (args['useConfigProxy'] == 'on') if 'useConfigProxy' in args else None
 
     try:
-        # path = args['path'] if 'path' in data else None, 
         client.images.build(tag = tag, fileobj = f, custom_context=True, dockerfile = dockerfile, quiet = quiet,
         nocache = nocache, timeout = timeout, encoding = encoding, buildargs = build_args, container_limits = container_limits,
         shmsize = shmsize, labels = labels, cache_from = cache_from, target = target, network_mode = network_mode,
         extra_hosts = extra_hosts, platform = platform, isolation = isolation, rm = rm, forcerm = forcerm, squash = squash,
         use_config_proxy = use_config_proxy)
     except docker.errors.BuildError as berr:
-        print('build error: ', berr)
+        print('Failed to build, error: ', berr)
         error = { 'error': str(berr) }
         return render_template('/images/builder.html', error=error)
     except docker.errors.APIError as apierr:
-        print('API error: ', apierr)
+        print('Failed to build, error: ', apierr)
         error = { 'error': str(apierr) }
         return render_template('/images/builder.html', error=error)
 

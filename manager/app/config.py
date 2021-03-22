@@ -1,6 +1,3 @@
-# Config file sets all configurations for the project on diferent
-# classess, which can be loaded on the main file.
-
 class Config(object):
     DEBUG = True
     TESTING = False
