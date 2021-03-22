@@ -13,6 +13,36 @@ def showContainerCreation():
     images = dockercli.images() 
     return render_template('containers/creator.html', images=images)
 
+<<<<<<< HEAD
+=======
+@containers_bp.route('/commit', methods=["GET", "POST"])
+def showContainerCommit():
+    if request.method == 'GET':
+        return render_template('containers/commit.html')
+    
+    data = request.json
+    container = client.containers.get(str(data['id']))
+    confing = json.loads(data['conf']) if 'conf' in data else None
+    try:
+        # first 2 args are obligatory
+        container.commit(
+                repository = data['repository'], 
+                tag = data['tag'],
+                message = data['message'] if 'message' in data else None,
+                author = data['author'] if 'author' in data else None,
+                change = data['changes'] if 'changes' in data else None,
+                conf = config)
+
+    except docker.errors.APIError as e: 
+        return { 'error': str(e) }
+    return { 'success': True } 
+
+
+# when this route is called, all the args to create a container
+# are retrieved and it's used the containers.create method.
+# returns a json indicating if the operations was a success
+# or it has an error, and which error was.
+>>>>>>> andres-frontend
 @containers_bp.route('/create', methods=['POST'])
 def createContainer():
     data = request.json
@@ -244,8 +274,13 @@ def createContainer():
 def deleteContainer():
     container = request.args.get('container')
     volumes = request.args.get('volumes')
-    links = request.args.get('links')
+    # links = request.args.get('links')
     force = request.args.get('force')
+
+    # try making some kind of rollback,
+    # in case some operatioin fails, like deleting the container id from DB
+    # but not from docker, rollback to before deleing id from DB
+    # to prevent errors.
     try:
         container = client.containers.get(str(container))
         containerDb = Container.query.get(container.id)
@@ -254,6 +289,7 @@ def deleteContainer():
         usercontainer = UsersContainers.query.filter_by(user_id=session[USERID], container_id=container.id).first()
         db.session.delete(usercontainer)
         db.session.commit()
+<<<<<<< HEAD
         container.remove(v=volumes, link=links, force=force)
 
     except docker.errors.ImageNotFound as e: 
@@ -265,6 +301,22 @@ def deleteContainer():
     except Exception as e: 
         print('error: ', e)
         return { 'error': str(e) }
+=======
+
+        # remove on docker
+        # container.remove(v=volumes, link=links, force=force)
+        # look for a way to remove links too. Not working.
+        container.remove(v=volumes, force=force)
+    except docker.errors.ImageNotFound as inferr: 
+        print('error: ', inferr)
+        return { 'error': str(inferr) }
+    except docker.errors.APIError as apierr: 
+        print('error: ', apierr)
+        return { 'error': str(apierr) }
+    except Exception as err: 
+        print('error: ', err)
+        return { 'error': str(err) }
+>>>>>>> andres-frontend
 
     current_containers = session[USERCONTAINERS]
     current_containers.remove(container.id)
@@ -272,6 +324,7 @@ def deleteContainer():
     
     return { 'deleted': True }
 
+<<<<<<< HEAD
 # create new image from container
 @containers_bp.route('/commit', methods=['POST'])
 def commitContainer():
@@ -292,6 +345,8 @@ def commitContainer():
         return { 'error': str(e) }
     return { 'success': True } 
 
+=======
+>>>>>>> andres-frontend
 @containers_bp.route('/details')
 def showContainerDetails():
     return render_template('containers/details.html')

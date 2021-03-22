@@ -224,7 +224,7 @@ function isObjectEmpty(obj) {
 // check if an element is an object,
 // NOTE: null is also considered an object.
 function isObject(obj) {
-    return typeof obj === 'object' && obj !== null;
+    return typeof obj === 'object' && obj !== null && !Array.isArray(obj);
 }
 
 function isEmptyString(str) {

@@ -52,31 +52,3 @@ $('#btnSubmit').click((e) => {
     }
 });
 
-
-// Commit params
-// Hostname 	
-// Domainname 	
-// User 	
-// ExposedPorts
-// Env 	
-// Cmd 	
-// Healthcheck
-// HealthConfig
-// Image 	
-// Volumes
-// WorkingDir 	
-// Entrypoint 	
-// MacAddress 	
-// OnBuild 	
-// Labels
-// StopSignal 	
-// StopTimeout 	
-// Shell 
-// AttachStdin 	
-// AttachStdout 	
-// AttachStderr 	
-// Tty 	
-// OpenStdin 	
-// StdinOnce 	
-// ArgsEscaped 	
-// NetworkDisabled 	

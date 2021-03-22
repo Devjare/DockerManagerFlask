@@ -38,7 +38,10 @@ function loadAllImages() {
     sendRequest(reqObj, null,
         (response) => {
             let res = JSON.parse(response.srcElement.response);
-            if('error' in res) showAlert('An error occurred loading image info!', 'danger');
+            if('error' in res) {
+                showAlert('An error occurred loading image info! Check console logs.', 'danger');
+                console.log('Error loading image info: ', res['error']);
+            }
             else {
                 images = res.images;
                 loadImages(images);
@@ -168,7 +171,7 @@ function createContainerFrom(imageid) {
                     console.log('create response: ', response);
                     let res = JSON.parse(response.srcElement.response);
                     if('error' in res) {
-                        showAlert('An error occurred creating container!', 'danger');
+                        showAlert('An error occurred creating container! Check console logs.', 'danger');
                         console.log('error: ', res['error']);
                     }
                     else {
@@ -267,7 +270,7 @@ function deleteImage() {
         (response) => {
             let res = JSON.parse(response.srcElement.response);
             if('error' in res) {
-                showAlert('An error occurred deleting the image.', 'danger');
+                showAlert('An error occurred deleting the image! Check console logs.', 'danger');
                 console.log('error: ', res['error']);
             }
             else {
@@ -343,8 +346,12 @@ function pullImage(imageRep, source) {
         (e) => showAlert('Pulling image from dockerhub...', 'info'),
         (response) => {
             let res = JSON.parse(response.srcElement.response);
-            if('error' in res) showAlert('An error occurred pulling image.', 'danger');
+            if('error' in res) { 
+                showAlert('An error occurred pulling image! Check console logs.', 'danger');
+                console.log('Error while pulling image: ', res['error']);
+            }
             else {
+                showAlert('Image from dockerhub pulled succesfully!', 'success')
                 refreshImageTable();
             }
         },
@@ -353,7 +360,6 @@ function pullImage(imageRep, source) {
             showAlert(`An error occurred, check console.`, 'danger')
         });
 
-    showAlert('Pulling image from dockerhub...', 'info');
 }
 
 function loadRegistryRepositories(repositories) {
@@ -410,8 +416,8 @@ function loadRegistry() {
         (response) => {
             let res = JSON.parse(response.srcElement.response);
             if('error' in res) {
-                showAlert('An error occurred loading registry!', 'danger');
-                console.log('error: ', res['error']);
+                showAlert('An error occurred loading registry! Check console logs.', 'danger');
+                console.log('Error loading registry: ', res['error']);
             }
             else {
                 repositories = res.repositories;
@@ -436,7 +442,10 @@ function searchOnDockerhub(text) {
     sendRequest(reqObj, null,
         (response) => {
             let res = JSON.parse(response.srcElement.response);
-            if('error' in res) showAlert('An error occurred trying to search on dockerhub!', 'danger');
+            if('error' in res) {
+                showAlert('An error occurred trying to search on dockerhub! Check console logs.', 'danger');
+                console.log('Error trying to search on dockerhub: ', res['error']); 
+            }
             else {
                 dockerhubRepositories = res.repositories;
                 loadDockerhubRepositories(dockerhubRepositories);

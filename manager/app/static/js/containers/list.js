@@ -90,7 +90,8 @@ function getContainerCommitTemplate(containerid) {
     <div><input id="author" type="text" class="m-1 form-control" placeholder="Default user name"></div>
     <div><textarea id="changes" class="m-1 form-control" placeholder="Changes" rows="4" columns="50"></textarea></div>
     <div>`;
-    body += getDynamicDictTemplate(commitConfs);
+    // COMMIT CONFIGS ARE PENDING.
+    // body += getDynamicDictTemplate(commitConfs,);
     body += `</div></div>`;
 
     return body;
@@ -324,12 +325,12 @@ function clearContainersPanel() {
 
 function deleteContainer(container) {
     let volumes = $('#chkVolumes')[0].checked;
-    let links = $('#chkLink')[0].checked;
+    //  let links = $('#chkLink')[0].checked;
     let force = $('#chkForce')[0].checked;
 
     let reqObj = {
         'type': 'GET',
-        'url': `/containers/delete?container=${container}&volumes=${volumes}&links=${links}&force=${force}`,
+        'url': `/containers/delete?container=${container}&volumes=${volumes}&force=${force}`,
         'isAsync': true,
         'params': null
     };
@@ -356,17 +357,17 @@ function showDeleteContainerModal(container) {
     let title = 'Delete container';
 
     let body = `<h5>Deleting: ${container}</h5>
-    <div class="form-check">
+    <div class="form-check m-1">
         <input type="checkbox" class="form-check-input" id="chkVolumes">
-        <label class="form-check-label mt-2 ml-2" for="chkVolumes">Delete Associated Volumes</label>
+        <label class="form-check-label ml-1" for="chkVolumes">Delete Associated Volumes</label>
     </div>
-    <div class="form-check">
+    <!-- <div class="form-check">
         <input type="checkbox" class="form-check-input" id="chkLink">
         <label class="form-check-label mt-2 ml-2" for="chkLink">Delete Links</label>
-    </div>
-    <div class="form-check">
+    </div> -->
+    <div class="form-check m-1">
         <input type="checkbox" class="form-check-input" id="chkForce">
-        <label class="form-check-label mt-2 ml-2" for="chkForce">Force removal(SIGKILL)?</label>
+        <label class="form-check-label ml-1" for="chkForce">Force removal(SIGKILL)?</label>
     </div>`;
 
     let footer = `
@@ -379,3 +380,5 @@ function showDeleteContainerModal(container) {
 $('.site-content').ready((e) => {
     refresh();
 });
+
+
