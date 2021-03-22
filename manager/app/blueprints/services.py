@@ -8,10 +8,6 @@ images = {
     "children": []
 }
 
-@services_bp.route('/home')
-def main():
-    return render_template('index.html')
-
 @services_bp.route('/health')
 def health():
     return 'El gestor global es saludable'

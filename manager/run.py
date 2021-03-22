@@ -12,4 +12,9 @@ if __name__ == '__main__':
     if("PORT" in os.environ):
         p = os.environ["PORT"]
 
+    # set the main route
+    @app.route('/home')
+    def main():
+        return render_template('index.html')
+
     app.run(host="0.0.0.0", port=p, debug=True, threaded=True)
