@@ -46,12 +46,10 @@ def login():
     return { 'error': 'An error occurred, failed to authenticate.' } 
 
 def authenticate(username, password):
-    print("------------------------------------ AUTHENTICATING ------------------------------")
     try:
         allusers = User.query.all()
     except Exception as ex:
         print('FAILED TO QUERY USERS: ', str(ex))
-    print('all users: ', allusers)
     for user in allusers:
         if(user.username == username):
             if(user.password == password):
