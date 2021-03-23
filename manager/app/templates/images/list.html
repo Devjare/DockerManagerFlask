@@ -24,11 +24,11 @@ block content %}
                     </div>
                     <div id="imagesList" class="images-list images">
                         <div class="list-group">
-                            <table class="table table-bordered table-stripped table-responsive table-hover">
+                            <table class="table table-bordered table-stripped table-responsive table-hover m-0 h-100">
                                 <thead class="thead-dark">
                                     <tr class="d-flex">
                                         <th class="col-s-1" scope="col">#</th>
-                                        <th class="col-s-1" scope="col">DEL</th>
+                                        <th class="col-s-1" scope="col">RM</th>
                                         <th class="col-5" scope="col">Image ID</th>
                                         <th class="col-3" scope="col">Image Tags</th>
                                         <th class="col-1" scope="col">Created</th>
@@ -55,16 +55,11 @@ block content %}
                         <div class="searchbar">
                             <input oninput="searchRegistry()" type="text" id="searchRegistryText" class="form-control" placeholder="Search" autocomplete="off">
                         </div>
-                        <div class="view-format">
-                            <span onclick="refresh()" data-feather="refresh-cw"></span>
-                        </div>
                     </div>
                 </div>
                 <div class="repositories">
                     <div id="rep-1-tab">
-                        <!-- TODO: ADD PULL FROM REGISTRY(DOCKERHUB) AND PUSH TO LOCAL REGISTRY ACTION -->
-                        <!-- CONTENT EXAMPLE, CHANGE WITH JS-->
-                        <table class="table table-bordered table-stripped table-responsive-sm table-hover">
+                        <table class="table table-bordered table-stripped table-responsive-sm table-hover m-0 h-100">
                             <thead class="thead-dark">
                                 <tr class="d-flex">
                                     <th class="col-s-2" scope="col">#</th>

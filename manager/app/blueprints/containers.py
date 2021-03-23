@@ -10,7 +10,7 @@ containers_bp = Blueprint("containers", __name__, static_folder="url_for('static
 
 @containers_bp.route('/creation')
 def showContainerCreation():
-    images = dockercli.images() 
+    images = dockercli.images(filters={"dangling": False}) 
     return render_template('containers/creator.html', images=images)
 
 @containers_bp.route('/create', methods=['POST'])
@@ -254,7 +254,7 @@ def deleteContainer():
         usercontainer = UsersContainers.query.filter_by(user_id=session[USERID], container_id=container.id).first()
         db.session.delete(usercontainer)
         db.session.commit()
-        container.remove(v=volumes, link=links, force=force)
+        container.remove(v=volumes, force=force)
 
     except docker.errors.ImageNotFound as e: 
         print('error: ', e)

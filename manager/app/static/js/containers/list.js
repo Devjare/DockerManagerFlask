@@ -1,1 +1,382 @@
-var currentFilter="all";function triggerContainerAction(e,t){sendRequest({type:"GET",url:`/containers/${t}/${e}`,isAsync:!0,params:null},null,e=>{let t=JSON.parse(e.srcElement.response);"error"in t?(showAlert("An error occurred triggering container action, check console logs.","danger"),console.log("error: ",t.error)):(refresh(),showAlert("Action executed successfully!","success"))},e=>{console.log("error: ",e),showAlert("An error occurred trying to make a request, check console for more info.","danger")})}function goToDetailsOf(e){localStorage.setItem("container",e.substr(1,e.length)),location.href="/containers/details"}function goToDetailsOfImage(e){localStorage.setItem("image",e),location.href="/images/details"}var modalContentType="information";function changeContainerModalBody(e){"information"==e?($("#containerInformation").text("Container Information"),$("#containerInformation")[0].classList.toggle("text-muted"),$("#commitContainer").text("Commit container >"),$("#commitContainer")[0].classList.toggle("text-muted")):($("#containerInformation").text("< Container Information"),$("#containerInformation")[0].classList.toggle("text-muted"),$("#commitContainer").text("Commit container"),$("#commitContainer")[0].classList.toggle("text-muted")),$("#mbContainerInfo")[0].classList.toggle("d-none"),$("#mbContainerCommit")[0].classList.toggle("d-none"),$("#mfContainerAction")[0].classList.toggle("d-none"),$("#mfContainerCommit")[0].classList.toggle("d-none"),modalContentType=e}function getContainerModalInfo(e){return`\n    <div id="mbContainerInfo">\n    <div class="row"><strong>ID: ${e.Id}</strong><p id="container-id"></p></div>\n    <div class="row"><strong>Name: ${e.Names}</strong><p id="container-name"></p></div>\n    <div class="row"><strong>IP/Ports: ${portsArrayToString(e.Ports)}</strong><p id="container-ipport"></p></div>\n    <div class="row"><strong>State: ${e.State}</strong><p id="container-state"></p></div>\n    <div class="row"><strong>Status: ${e.Status}</strong><p id="container-status"></p></div>\n    <div class="row"><strong>Image: ${e.Image}</strong><a href="#" id="container-image"></a></div>\n    <div class="row"><strong>Created: ${timeConverter(e.Created)}</strong><p id="container-created"></p></div>\n    </div>`}var containersIds,containers,commitConfs={};function getContainerCommitTemplate(e){let t='\n    <div id="mbContainerCommit" class="d-none">\n    <div><input id="tag" type="text" class="m-1 form-control" placeholder="Commit tag"></div>\n    <div><input id="repository" type="text" class="m-1 form-control" placeholder="Repository tag"></div>\n    <div><textarea id="message" class="m-1 form-control" placeholder="Message" rows="4" columns="50"></textarea></div>\n    <div><input id="author" type="text" class="m-1 form-control" placeholder="Default user name"></div>\n    <div><textarea id="changes" class="m-1 form-control" placeholder="Changes" rows="4" columns="50"></textarea></div>\n    <div>';return t+="</div></div>",'\n    <div id="mbContainerCommit" class="d-none">\n    <div><input id="tag" type="text" class="m-1 form-control" placeholder="Commit tag"></div>\n    <div><input id="repository" type="text" class="m-1 form-control" placeholder="Repository tag"></div>\n    <div><textarea id="message" class="m-1 form-control" placeholder="Message" rows="4" columns="50"></textarea></div>\n    <div><input id="author" type="text" class="m-1 form-control" placeholder="Default user name"></div>\n    <div><textarea id="changes" class="m-1 form-control" placeholder="Changes" rows="4" columns="50"></textarea></div>\n    <div></div></div>'}function commitContainer(e){let t={id:e,tag:$("#tag").val(),repository:$("#repository").val(),message:$("#message").val(),author:$("#author").val(),changes:$("#changes").val(),conf:commitConfs},n={type:"POST",url:"/containers/commit",isAsync:!0,params:JSON.stringify(t),requestHeaders:{"Content-Type":"application/json"}};sendRequest(n,null,e=>{let t=JSON.parse(e.srcElement.response);"error"in t?(showAlert("An error ocurred obtaining containers, check console logs.","danger"),console.log("error: ",t.error)):(showAlert("Container new image successfully commited!","success"),console.log("Commit Response: ",t))},e=>{console.log("error: ",e),showAlert("An error occurred trying to make a request, check console for more info.","danger")})}function showContainerModal(e){let t=e.State,n=e.Id,o='\n    <div class="mb-2 d-flex align-items-start justify-content-between">\n    <a id="containerInformation" href="#" class="text-muted" onclick="changeContainerModalBody(\'information\')">Container Information</a>\n    <a id="commitContainer" href="#" onclick="changeContainerModalBody(\'commit\')">Commit Container &gt;</a></div>\n    <div id="bodyContent" class="container-fluid bg-light">';o+=getContainerModalInfo(e),o+=getContainerCommitTemplate(n);let r=`\n        <div class="w-100 d-flex justify-content-between">\n        <div class="d-flex flex-column">\n        <a class="d-flex" href="#" onclick="goToDetailsOf('${e.Names[0]}')">Container details</a>\n        </div>`;r+=`\n        <div id="mfContainerCommit" class="d-none">\n        <button type="button" class="btn btn-secondary mx-1" data-dismiss="modal">Close</button>\n        <button onclick="commitContainer('${n}')" type="button" class="btn btn-primary mx-1" data-dismiss="modal">Commit</button>\n        </div>`,"exited"==t||"created"==t?r+=`\n        <div id="mfContainerAction" class="">\n        <button type="button" class="btn btn-secondary mx-1" data-dismiss="modal">Close</button>\n        <button onclick="triggerContainerAction('${n}','start')" type="button" class="btn btn-primary mx-1" data-dismiss="modal">Start</button>\n        </div>`:"paused"==t?r+=`\n        <div id="mfContainerAction" class="">\n        <button type="button" class="btn btn-secondary mx-1" data-dismiss="modal">Close</button>\n        <button onclick="triggerContainerAction('${n}','unpause')" type="button" class="btn btn-info mx-1" data-dismiss="modal">Unpause</button>\n        <button onclick="triggerContainerAction('${n}','stop')" type="button" class="btn btn-danger mx-1" data-dismiss="modal">Stop</button>\n        </div>`:"running"==t&&(r+=`\n        <div id="mfContainerAction" class="">\n        <button type="button" class="btn btn-secondary mx-1" data-dismiss="modal">Close</button>\n        <button onclick="triggerContainerAction('${n}','restart')" type="button" class="btn btn-warning mx-1" data-dismiss="modal">Restart</button>\n        <button onclick="triggerContainerAction('${n}','pause')" type="button" class="btn btn-info mx-1" data-dismiss="modal">Pause</button>\n        <button onclick="triggerContainerAction('${n}','stop')" type="button" class="btn btn-danger mx-1" data-dismiss="modal">Stop</button>\n        </div>`),r+="</div>",showModal("Container action",o,r)}function showContainerDetails(e){showContainerModal(containers.find(t=>t.Id==e)),$("#modal").ready(()=>{$("#modalFooter > #btnLaunchContainer").click(t=>{triggerContainerAction(e,"start")})})}function buildContainerTableRow(e,t){let n="",o=e.State,r="";if(e.Ports.length>0){let t=e.Ports[0];r=`${t.IP}:${t.PublicPort}->${t.PrivatePort}/${t.Type}`}return"running"==o?n="success":"paused"==o?n="info":"stopped"==o?n="danger":"restarting"==o&&(n="warning"),`<tr class="table-${n}">\n      <th scope="row">${t}</th>\n      <td scope="row"><span class="icon" onclick="showDeleteContainerModal('${e.Names[0]}')" data-feather="trash"></span></td>\n      <td>${e.Id}</td>\n      <td>${e.Names[0]}</td>\n      <td>${e.State}</td>\n      <td>${""==r?"NONE":r}</td>\n      <td><a href="#" id="${e.Id}" class="popover-item" onclick="goToDetailsOfImage('${e.Image}')" \n      data-placement="bottom" data-toggle="popover" title="Image Info" data-content="ID: \n      ${e.ImageID}">${e.Image}</a></td>\n      <td><a href="#" onclick="showContainerDetails('${e.Id}')">More</a></td>\n    </tr>`}function loadContainers(e,t){let n;if(clearContainersPanel(),0==e.length)return void(document.querySelector(".table-body").innerHTML+='\n        <tr><td colspan="10"><div class="d-flex justify-content-center">\n        No containers created,&nbsp;<a href="/containers/creation">Create one\n        </a>!</div></td></tr>');n="all"!=t?filterContainersBy(t):e;let o=1;n.forEach(e=>{rowsTemplate=buildContainerTableRow(e,o),document.querySelector(".table-body").innerHTML+=rowsTemplate,o++,feather.replace()})}function refresh(){sendRequest({type:"GET",url:"/containers/json",isAsync:!0,params:null},null,e=>{let t=JSON.parse(e.srcElement.response);"error"in t?showAlert("An error ocurred obtaining containers, check server logs.","danger"):(showAlert("Containers obtained successfully!, refreshing list!","success"),loadContainers(containers=t.containers,currentFilter),containersNames=containers.map(e=>{let t=e.Names[0];return t.substr(1,t.length)}),localStorage.setItem("containers_list",containersNames))},e=>{console.log("error: ",e),showAlert("An error occurred trying to make a request, check console for more info.","danger")})}function filterContainersBy(e){return filtered=[],filtered="all"==e?containers:"created/exited"==e?containers.filter(e=>"created"==e.State||"exited"==e.State):containers.filter(t=>t.State==e),filtered}function filterBy(e){clearContainersPanel(),currentFilter=e,$("#btnFilterBy").text(e),filteredContainers=filterContainersBy(e),loadContainers(filteredContainers,currentFilter)}function findContainersBy(e){return containers.filter(t=>t.Id.includes(e)||t.Names.toString().includes(e)||t.Image.includes(e)||t.ImageID.includes(e))}function searchContainers(){loadContainers(findContainersBy($("#searchText")[0].value),currentFilter)}function clearContainersPanel(){document.querySelector(".table-body").innerHTML=""}function deleteContainer(e){let t=$("#chkVolumes")[0].checked,n=$("#chkForce")[0].checked;sendRequest({type:"GET",url:`/containers/delete?container=${e}&volumes=${t}&force=${n}`,isAsync:!0,params:null},null,e=>{let t=JSON.parse(e.srcElement.response);"error"in t?(showAlert("An error ocurred deleting the container, check server logs.","danger"),console.log("error: ",t.error)):(showAlert("Container deleted successfully!","success"),refresh())},e=>{console.log("error: ",e),showAlert("An error occurred trying to make a request, check console for more info.","danger")})}function showDeleteContainerModal(e){let t=`<h5>Deleting: ${e}</h5>\n    <div class="form-check m-1">\n        <input type="checkbox" class="form-check-input" id="chkVolumes">\n        <label class="form-check-label ml-1" for="chkVolumes">Delete Associated Volumes</label>\n    </div>\n    \x3c!-- <div class="form-check">\n        <input type="checkbox" class="form-check-input" id="chkLink">\n        <label class="form-check-label mt-2 ml-2" for="chkLink">Delete Links</label>\n    </div> --\x3e\n    <div class="form-check m-1">\n        <input type="checkbox" class="form-check-input" id="chkForce">\n        <label class="form-check-label ml-1" for="chkForce">Force removal(SIGKILL)?</label>\n    </div>`,n=`\n        <button onclick="deleteContainer('${e.replace("/","")}')" class="btn btn-primary" data-dismiss="modal">Delete</button>\n         <button class="btn btn-secondary" data-dismiss="modal">Cancel</button>`;showModal("Delete container",t,n)}$(".site-content").ready(e=>{refresh()});
+
+// currentFilter defines which containers are listed
+// by state.
+var currentFilter = 'all';
+
+// start, stop, restart, pause, unpause, actions.
+function triggerContainerAction(id, action) {
+    let reqObj = {
+        'type': 'GET',
+        'url': `/containers/${action}/${id}`,
+        'isAsync': true,
+        'params': null
+    };
+
+    sendRequest(reqObj, null,
+        (response) => {
+            let res = JSON.parse(response.srcElement.response);
+            if('error' in res) {
+                showAlert('An error occurred triggering container action, check console logs.', 'danger');
+                console.log('error: ', res['error']);
+            }
+            else { 
+                refresh();
+                showAlert(`Action executed successfully!`, 'success');
+            }
+        },
+        (error) => {
+            console.log('error: ', error);
+            showAlert('An error occurred trying to make a request, check console for more info.', 'danger');
+        });
+}
+
+function goToDetailsOfContainer(containerName) {
+    localStorage.setItem('container', containerName.substr(1, containerName.length));
+    location.href = '/containers/details';
+}
+
+function goToDetailsOfImage(image) {
+    localStorage.setItem('image', image);
+    location.href = '/images/details';
+}
+
+var modalContentType = 'information';
+function changeContainerModalBody(contentType) {
+    if(contentType == 'information') {
+        $('#containerInformation').text('Container Information');
+        $('#containerInformation')[0].classList.toggle('text-muted');
+
+        $('#commitContainer').text('Commit container >');
+        $('#commitContainer')[0].classList.toggle('text-muted');
+    } else {
+        $('#containerInformation').text('< Container Information');
+        $('#containerInformation')[0].classList.toggle('text-muted');
+
+        $('#commitContainer').text('Commit container');
+        $('#commitContainer')[0].classList.toggle('text-muted');
+    }
+
+    // ModalBodyContainer Toggle for Info/Commit template display.
+    $('#mbContainerInfo')[0].classList.toggle('d-none');
+    $('#mbContainerCommit')[0].classList.toggle('d-none');
+
+    // Modal Footer Container Toggle for Info/Commit template display.
+    $('#mfContainerAction')[0].classList.toggle('d-none');
+    $('#mfContainerCommit')[0].classList.toggle('d-none');
+    modalContentType = contentType;
+}
+
+function getContainerModalInfo(container) {
+    let body = `
+    <div id="mbContainerInfo">
+    <div class="row"><strong>ID: ${container.Id}</strong><p id="container-id"></p></div>
+    <div class="row"><strong>Name: ${container.Names}</strong><p href="#" id="container-name"></p></div>
+    <div class="row"><strong>IP/Ports: ${portsArrayToString(container.Ports)}</strong><p id="container-ipport"></p></div>
+    <div class="row"><strong>State: ${container.State}</strong><p id="container-state"></p></div>
+    <div class="row"><strong>Status: ${container.Status}</strong><p id="container-status"></p></div>
+    <div class="row"><strong>Image: ${container.Image}</strong><a href="#" id="container-image"></a></div>
+    <div class="row"><strong>Created: ${timeConverter(container.Created)}</strong><p id="container-created"></p></div>
+    </div>`;
+    return body;
+}
+
+var commitConfs = {};
+
+function getContainerCommitTemplate(containerid) {
+    let body = `
+    <div id="mbContainerCommit" class="d-none">
+    <div><input id="tag" type="text" class="m-1 form-control" placeholder="Commit tag"></div>
+    <div><input id="repository" type="text" class="m-1 form-control" placeholder="Repository tag"></div>
+    <div><textarea id="message" class="m-1 form-control" placeholder="Message" rows="4" columns="50"></textarea></div>
+    <div><input id="author" type="text" class="m-1 form-control" placeholder="Default user name"></div>
+    <div><textarea id="changes" class="m-1 form-control" placeholder="Changes" rows="4" columns="50"></textarea></div>
+    <div>`;
+    // COMMIT CONFIGS ARE PENDING.
+    // body += getDynamicDictTemplate(commitConfs,);
+    body += `</div></div>`;
+
+    return body;
+}
+
+function commitContainer(id) {
+    let params = {
+        'id': id,
+        'tag': $('#tag').val(),
+        'repository': $('#repository').val(),
+        'message': $('#message').val(),
+        'author': $('#author').val(),
+        'changes': $('#changes').val() ,
+        'conf': commitConfs
+    };
+
+    let reqObj = {
+        'type': 'POST',
+        'url': `/containers/commit`,
+        'isAsync': true,
+        'params': JSON.stringify(params),
+        'requestHeaders': { 'Content-Type': 'application/json' }
+    };
+
+    sendRequest(reqObj, null,
+        (response) => {
+            let res = JSON.parse(response.srcElement.response);
+            if('error' in res) {
+                showAlert('An error ocurred obtaining containers, check console logs.', 'danger');
+                console.log('error: ', res['error']);
+            }
+            else {
+                showAlert('Container new image successfully commited!', 'success');
+                console.log('Commit Response: ', res);
+            }
+        },
+        (error) => {
+            console.log('error: ', error);
+            showAlert('An error occurred trying to make a request, check console for more info.', 'danger');
+        });
+}
+
+function showContainerModal(container) {
+    let state = container.State;
+    let id = container.Id;
+
+    let title = 'Container action';
+
+    let body = `
+    <div class="mb-2 d-flex align-items-start justify-content-between">
+    <a id="containerInformation" href="#" class="text-muted" onclick="changeContainerModalBody('information')">Container Information</a>
+    <a id="commitContainer" href="#" onclick="changeContainerModalBody('commit')">Commit Container &gt;</a></div>
+    <div id="bodyContent" class="container-fluid bg-light">`;
+
+    let containerInfo = getContainerModalInfo(container);
+    let commitTemplate = getContainerCommitTemplate(id);
+
+    body += containerInfo;
+    body += commitTemplate;
+
+    let footer = `
+        <div class="w-100 d-flex justify-content-between">
+        <div class="d-flex flex-column">
+        <a class="d-flex" href="#" onclick="goToDetailsOf('${container.Names[0]}')">Container details</a>
+        </div>`;
+    footer += `
+        <div id="mfContainerCommit" class="d-none">
+        <button type="button" class="btn btn-secondary mx-1" data-dismiss="modal">Close</button>
+        <button onclick="commitContainer('${id}')" type="button" class="btn btn-primary mx-1" data-dismiss="modal">Commit</button>
+        </div>`;
+    if(state == 'exited' || state == 'created') {
+        footer += `
+        <div id="mfContainerAction" class="">
+        <button type="button" class="btn btn-secondary mx-1" data-dismiss="modal">Close</button>
+        <button onclick="triggerContainerAction('${id}','start')" type="button" class="btn btn-primary mx-1" data-dismiss="modal">Start</button>
+        </div>`
+    } else if(state == 'paused') {
+        footer += `
+        <div id="mfContainerAction" class="">
+        <button type="button" class="btn btn-secondary mx-1" data-dismiss="modal">Close</button>
+        <button onclick="triggerContainerAction('${id}','unpause')" type="button" class="btn btn-info mx-1" data-dismiss="modal">Unpause</button>
+        <button onclick="triggerContainerAction('${id}','stop')" type="button" class="btn btn-danger mx-1" data-dismiss="modal">Stop</button>
+        </div>`
+    } else if(state == 'running') {
+        footer += `
+        <div id="mfContainerAction" class="">
+        <button type="button" class="btn btn-secondary mx-1" data-dismiss="modal">Close</button>
+        <button onclick="triggerContainerAction('${id}','restart')" type="button" class="btn btn-warning mx-1" data-dismiss="modal">Restart</button>
+        <button onclick="triggerContainerAction('${id}','pause')" type="button" class="btn btn-info mx-1" data-dismiss="modal">Pause</button>
+        <button onclick="triggerContainerAction('${id}','stop')" type="button" class="btn btn-danger mx-1" data-dismiss="modal">Stop</button>
+        </div>`
+    }
+
+    footer += '</div>';
+    showModal(title, body, footer);
+}
+
+// containers actions
+function showContainerDetails(id) {
+    let container = containers.find(c => c.Id == id);
+    showContainerModal(container);
+    $('#modal').ready(() => {
+        $('#modalFooter > #btnLaunchContainer').click((e) => {
+            triggerContainerAction(id, 'start');
+        });
+    });
+}
+
+var containersIds;
+var containers;
+
+function buildContainerTableRow(container, index) {
+    let color = "";
+    let state = container.State;
+    let ipport = "";
+
+    if(container.Ports.length > 0) {
+        let p = container.Ports[0];
+        ipport = `${p.IP}:${p.PublicPort}->${p.PrivatePort}/${p.Type}`;
+    }
+
+    if(state == 'running') color = 'success';
+    else if(state == 'paused') color = 'info';
+    else if(state == 'stopped') color = 'danger';
+    else if(state == 'restarting') color = 'warning';
+    let template = `<tr class="table-${color}">
+      <th scope="row">${index}</th>
+      <td scope="row"><span class="icon" onclick="showDeleteContainerModal('${container.Names[0]}')" data-feather="trash"></span></td>
+      <td>${container.Id}</td>
+      <td><a href="#" id="${container.Names[0]}" class="popover-item" onclick="goToDetailsOfContainer('${container.Names[0]}')">${container.Names[0]}</a></td>
+      <td>${container.State}</td>
+      <td>${ipport == ""?"NONE":ipport}</td>
+      <td><a href="#" id="${container.Id}" class="popover-item" onclick="goToDetailsOfImage('${container.Image}')">${container.Image}</a></td>
+      <td><a href="#" onclick="showContainerDetails('${container.Id}')">More</a></td>
+    </tr>`
+    return template;
+}
+
+function loadContainers(containers, filter) {
+    clearContainersPanel();
+    let filtered;
+
+    if(containers.length == 0) {
+        // adds a html element to say that there's no containers
+        // instead of showing the table of containers.
+        document.querySelector('.table-body').innerHTML += `
+        <tr><td colspan="10"><div class="d-flex justify-content-center">
+        No containers created,&nbsp;<a href="/containers/creation">Create one
+        </a>!</div></td></tr>`;
+        return;
+    }
+    else if(filter != 'all') filtered = filterContainersBy(filter);
+    else filtered = containers;
+
+    let index = 1;
+    filtered.forEach(c => {
+        rowsTemplate = buildContainerTableRow(c, index);
+        document.querySelector('.table-body').innerHTML += rowsTemplate;
+
+        index++;
+        feather.replace();
+    });
+}
+
+function refresh() {
+    let reqObj = {
+        'type': 'GET',
+        'url': `/containers/json`,
+        'isAsync': true,
+        'params': null
+    };
+    sendRequest(reqObj, null,
+        (response) => {
+            let res = JSON.parse(response.srcElement.response);
+            if('error' in res) showAlert('An error ocurred obtaining containers, check server logs.', 'danger');
+            else {
+                showAlert('Containers obtained successfully!, refreshing list!', 'success');
+                containers = res['containers'];
+                loadContainers(containers, currentFilter);
+                containersNames = containers.map(c => { 
+                    let name = c.Names[0];
+                    return name.substr(1, name.length);
+                });
+                localStorage.setItem('containers_list', containersNames);
+            }
+        },
+        (error) => {
+            console.log('error: ', error);
+            showAlert('An error occurred trying to make a request, check console for more info.', 'danger');
+        });
+}
+
+function filterContainersBy(state) {
+    filtered = [];
+    if(state == 'all') filtered = containers;
+    else if(state == 'created/exited') 
+        filtered = containers.filter(c => c.State == 'created' || c.State == 'exited');
+    else 
+        filtered = containers.filter(c => c.State == state);
+
+    return filtered;
+}
+
+function filterBy(state) {
+    clearContainersPanel();
+    currentFilter = state;
+    $('#btnFilterBy').text(state);
+    filteredContainers = filterContainersBy(state);
+    loadContainers(filteredContainers, currentFilter);
+}
+
+function findContainersBy(pattern) {
+    return containers.filter(c => 
+        c.Id.includes(pattern)  
+        || c.Names.toString().includes(pattern) 
+        || c.Image.includes(pattern) 
+        || c.ImageID.includes(pattern));
+}
+
+function searchContainers() {
+    let text = $('#searchText')[0].value;
+    loadContainers(findContainersBy(text), currentFilter);
+}
+
+function clearContainersPanel() {
+    // Delete all cards from container panel.
+    document.querySelector('.table-body').innerHTML = '';
+}
+
+function deleteContainer(container) {
+    let volumes = $('#chkVolumes')[0].checked;
+    //  let links = $('#chkLink')[0].checked;
+    let force = $('#chkForce')[0].checked;
+
+    let reqObj = {
+        'type': 'GET',
+        'url': `/containers/delete?container=${container}&volumes=${volumes}&force=${force}`,
+        'isAsync': true,
+        'params': null
+    };
+
+    sendRequest(reqObj, null,
+        (response) => {
+            let res = JSON.parse(response.srcElement.response);
+            if('error' in res) {
+                showAlert('An error ocurred deleting the container, check server logs.', 'danger');
+                console.log('error: ', res['error']);
+            }
+            else {
+                showAlert('Container deleted successfully!', 'success');
+                refresh();
+            }
+        },
+        (error) => {
+            console.log('error: ', error);
+            showAlert('An error occurred trying to make a request, check console for more info.', 'danger');
+        });
+}
+
+function showDeleteContainerModal(container) {
+    let title = 'Delete container';
+
+    let body = `<h5>Deleting: ${container}</h5>
+    <div class="form-check m-1">
+        <input type="checkbox" class="form-check-input" id="chkVolumes">
+        <label class="form-check-label ml-1" for="chkVolumes">Delete Associated Volumes</label>
+    </div>
+    <!-- <div class="form-check">
+        <input type="checkbox" class="form-check-input" id="chkLink">
+        <label class="form-check-label mt-2 ml-2" for="chkLink">Delete Links</label>
+    </div> -->
+    <div class="form-check m-1">
+        <input type="checkbox" class="form-check-input" id="chkForce">
+        <label class="form-check-label ml-1" for="chkForce">Force removal(SIGKILL)?</label>
+    </div>`;
+
+    let footer = `
+        <button onclick="deleteContainer('${container.replace('/','')}')" class="btn btn-primary" data-dismiss="modal">Delete</button>
+         <button class="btn btn-secondary" data-dismiss="modal">Cancel</button>`;   
+
+    showModal(title, body, footer);
+}
+
+$('.site-content').ready((e) => {
+    refresh();
+});
+

@@ -201,7 +201,7 @@ function buildImageTableTemplate(index, image) {
     <tr class="d-flex">
         <td class="col-s-1 d-flex align-items-center" scope="row">${index}</td>
         <td class="col-s-1 d-flex align-items-center" scope="row">
-            <span class="icon" onclick="showDeleteImageModal('${image.Id}')" data-feather="trash"></span>
+            <span class="icon mx-1" onclick="showDeleteImageModal('${image.Id}')" data-feather="trash"></span>
         </td>
         <td class="col-5 d-flex align-items-center text-truncate">
         <a href="#" onclick="goToDetailsOf('${image['Id']}', 'id')">${image['Id']}</a></td>
@@ -210,9 +210,7 @@ function buildImageTableTemplate(index, image) {
         <td class="col-1 d-flex align-items-center">${created}</td>
         <td class="col-1 d-flex align-items-center">${sizeOnMb} MB</td>
         <td class="col-3 d-flex align-items-center">
-        <a onclick="showImageModal('${image["Id"]}', 'tag_image')">Tag Image</a> |
-        <a onclick="showImageModal('${image["Id"]}', 'create_container')" href="#"> Create Container </a> |
-        <a onclick="showImageModal('${image["Id"]}', 'save_image')">Save Image</a>
+        <a onclick="showImageModal('${image["Id"]}', 'create_container')" href="#"> Create Container </a>
         </td>
     </tr>`
     return template;
@@ -287,7 +285,7 @@ function deleteImage() {
 function showDeleteImageModal(imageid) {
     let title = 'Delete image';
 
-    let body = `<h5>Select tag to delete: </h5><select id="imageTag">`;
+    let body = `<h5>Select tag to delete: </h5><select id="imageTag" class="form-control">`;
     images.find(i => i.Id == imageid).RepoTags.forEach(t => body += `<option value="${t}">${t}</option>`);
     body += `</select>
     <div class="form-check">

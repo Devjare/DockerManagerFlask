@@ -24,7 +24,7 @@ def showImageDetails():
 
 @images_bp.route('/json')
 def getAllImages():
-    images = dockercli.images()
+    images = dockercli.images(filters={"dangling": False})
     return { 'images': images }
 
 def getTagsOf(repname, source):
