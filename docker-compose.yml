@@ -2,6 +2,7 @@ version: "2"
 services: 
     app:
         build: ./manager
+        container_name: prod_manager
         restart: always
         ports:
             - 46000:46000
