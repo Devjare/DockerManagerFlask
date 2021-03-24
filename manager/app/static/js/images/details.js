@@ -99,7 +99,9 @@ $('main').ready((e) => {
         // selects the default image on select input
         image = $('#selectImage')[0].value;
     }
-    loadImageInfo(image);
+    if(image != '') {
+        loadImageInfo(image);
+    } else showAlert('No images to inspect. Try creating one.', 'warning');
 
     $('#selectImage').on('change', (e) => {
         loadImageInfo($('#selectImage')[0].value);

@@ -522,3 +522,13 @@ function showDictionaryModal(dict, dictName) {
             return false;
         });
 }
+
+function isJson(str) {
+    let json;
+    try {
+        json = JSON.parse(str);
+    } catch(e) {
+        return { 'error': str }
+    }
+    return json;
+}

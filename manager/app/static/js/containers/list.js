@@ -41,30 +41,6 @@ function goToDetailsOfImage(image) {
 }
 
 var modalContentType = 'information';
-function changeContainerModalBody(contentType) {
-    if(contentType == 'information') {
-        $('#containerInformation').text('Container Information');
-        $('#containerInformation')[0].classList.toggle('text-muted');
-
-        $('#commitContainer').text('Commit container >');
-        $('#commitContainer')[0].classList.toggle('text-muted');
-    } else {
-        $('#containerInformation').text('< Container Information');
-        $('#containerInformation')[0].classList.toggle('text-muted');
-
-        $('#commitContainer').text('Commit container');
-        $('#commitContainer')[0].classList.toggle('text-muted');
-    }
-
-    // ModalBodyContainer Toggle for Info/Commit template display.
-    $('#mbContainerInfo')[0].classList.toggle('d-none');
-    $('#mbContainerCommit')[0].classList.toggle('d-none');
-
-    // Modal Footer Container Toggle for Info/Commit template display.
-    $('#mfContainerAction')[0].classList.toggle('d-none');
-    $('#mfContainerCommit')[0].classList.toggle('d-none');
-    modalContentType = contentType;
-}
 
 function getContainerModalInfo(container) {
     let body = `
@@ -80,83 +56,22 @@ function getContainerModalInfo(container) {
     return body;
 }
 
-var commitConfs = {};
-
-function getContainerCommitTemplate(containerid) {
-    let body = `
-    <div id="mbContainerCommit" class="d-none">
-    <div><input id="tag" type="text" class="m-1 form-control" placeholder="Commit tag"></div>
-    <div><input id="repository" type="text" class="m-1 form-control" placeholder="Repository tag"></div>
-    <div><textarea id="message" class="m-1 form-control" placeholder="Message" rows="4" columns="50"></textarea></div>
-    <div><input id="author" type="text" class="m-1 form-control" placeholder="Default user name"></div>
-    <div><textarea id="changes" class="m-1 form-control" placeholder="Changes" rows="4" columns="50"></textarea></div>
-    <div>`;
-    // COMMIT CONFIGS ARE PENDING.
-    // body += getDynamicDictTemplate(commitConfs,);
-    body += `</div></div>`;
-
-    return body;
-}
-
-function commitContainer(id) {
-    let params = {
-        'id': id,
-        'tag': $('#tag').val(),
-        'repository': $('#repository').val(),
-        'message': $('#message').val(),
-        'author': $('#author').val(),
-        'changes': $('#changes').val() ,
-        'conf': commitConfs
-    };
-
-    let reqObj = {
-        'type': 'POST',
-        'url': `/containers/commit`,
-        'isAsync': true,
-        'params': JSON.stringify(params),
-        'requestHeaders': { 'Content-Type': 'application/json' }
-    };
-
-    sendRequest(reqObj, null,
-        (response) => {
-            let res = JSON.parse(response.srcElement.response);
-            if('error' in res) {
-                showAlert('An error ocurred obtaining containers, check console logs.', 'danger');
-                console.log('error: ', res['error']);
-            }
-            else {
-                showAlert('Container new image successfully commited!', 'success');
-                console.log('Commit Response: ', res);
-            }
-        },
-        (error) => {
-            console.log('error: ', error);
-            showAlert('An error occurred trying to make a request, check console for more info.', 'danger');
-        });
-}
-
 function showContainerModal(container) {
     let state = container.State;
     let id = container.Id;
 
     let title = 'Container action';
 
-    let body = `
-    <div class="mb-2 d-flex align-items-start justify-content-between">
-    <a id="containerInformation" href="#" class="text-muted" onclick="changeContainerModalBody('information')">Container Information</a>
-    <a id="commitContainer" href="#" onclick="changeContainerModalBody('commit')">Commit Container &gt;</a></div>
-    <div id="bodyContent" class="container-fluid bg-light">`;
+    let body = `<div id="bodyContent" class="container-fluid bg-light">`;
 
     let containerInfo = getContainerModalInfo(container);
-    let commitTemplate = getContainerCommitTemplate(id);
 
     body += containerInfo;
-    body += commitTemplate;
 
     let footer = `
         <div class="w-100 d-flex justify-content-between">
         <div class="d-flex flex-column">
-        <a class="d-flex" href="#" onclick="goToDetailsOf('${container.Names[0]}')">Container details</a>
+        <a class="d-flex" href="#" onclick="goToDetailsOfContainer('${container.Names[0]}')">Container details</a>
         </div>`;
     footer += `
         <div id="mfContainerCommit" class="d-none">

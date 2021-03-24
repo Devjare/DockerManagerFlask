@@ -1,1 +1,165 @@
-var containerData={basics:{},hostconfig:{},config:{},graphdriver:{},networksettings:{},general:{id:"",image:"",status:"",createdAt:"",startedAt:"",finishedAt:""}};function loadContainerInfo(e){sendRequest({type:"GET",url:`/containers/inspect/${e}`,isAsync:!0,params:null},null,e=>{let t=JSON.parse(e.srcElement.response);if("error"in t)showAlert("An error occurred loading containers!","danger"),console.log("error: ",t.error);else{containerInfo=t.container,containerData.hostconfig=containerInfo.HostConfig,delete containerInfo.HostConfig,containerData.config=containerInfo.Config,delete containerInfo.Config,containerData.graphdriver=containerInfo.GraphDriver,delete containerInfo.GraphDriver,containerData.networksettings=containerInfo.NetworkSettings,delete containerInfo.NetworkSettings,containerData.basics=containerInfo,containerData.general.id=containerInfo.Id,containerData.general.image=containerInfo.Image,containerData.general.createdAt=containerInfo.Created,containerData.general.status=containerInfo.State.Status,containerData.general.startedAt=containerInfo.State.StartedAt,containerData.general.finishedAt=containerInfo.State.FinishedAt,$("#containerId").text(containerData.general.id),$("#imageId").text(containerData.general.image),$("#createdAt").text(containerData.general.createdAt),$("#startedAt").text(containerData.general.startedAt),$("#finishedAt").text(containerData.general.finishedAt),$("#status").parent()[0].classList.remove("bg-dark"),$("#status").parent()[0].classList.remove("bg-light"),$("#status").parent()[0].classList.remove("bg-success"),$("#status").parent()[0].classList.remove("bg-danger"),$("#status").parent()[0].classList.remove("bg-info"),$("#status").parent()[0].classList.remove("bg-warning"),$("#status").parent()[0].classList.remove("bg-primary"),$("#status")[0].classList.remove("text-white"),$("#status")[0].classList.remove("text-black");let e="bg-",a="text-white";switch(containerData.general.status){case"running":e+="success",a="text-white";break;case"stopped":case"created":e+="light",a="text-black";break;case"restarting":e+="warning",a="text-black";break;case"paused":e+="info",a="text-white";break;default:e+="danger",a="text-white"}$("#status").parent()[0].classList.add(e),$("#status").text(containerData.general.status),$("#status")[0].classList.add(a),fillTableWithJSON("basics-table",containerData.basics),fillTableWithJSON("hostconfig-table",containerData.hostconfig),fillTableWithJSON("config-table",containerData.config),fillTableWithJSON("graphdriver-table",containerData.graphdriver),fillTableWithJSON("networksettings-table",containerData.networksettings),showAlert("Container info loaded succesfully","success")}},e=>{console.log("error: ",e),showAlert("An error occurred, check console.","danger")})}$("main").ready(e=>{if(container="",localStorage.containers_list){localStorage.containers_list.split(",").forEach(e=>$("#selectContainer").append(new Option(e,e)))}else{sendRequest({type:"GET",url:"/containers/json",isAsync:!0,params:null},null,e=>{let t=JSON.parse(e.srcElement.response);"error"in t?(console.log("error: ",t.error),showAlert("An error ocurred obtaining containers, check server logs.","danger")):(showAlert("Containers obtained successfully!, refreshing list!","success"),containers=t.containers,containers.forEach(e=>{name=e.Names[0],$("#selectContainer").append(new Option(name,name))}))},e=>{console.log("error: ",e),showAlert("An error occurred trying to make a request, check console for more info.","danger")})}localStorage.container?(container=localStorage.getItem("container"),$("#selectContainer").val(container)):container=$("#selectContainer")[0].value,loadContainerInfo(container),$("#selectContainer").on("change",e=>{loadContainerInfo($("#selectContainer")[0].value)})});
+var containerData = {
+    'basics': {},
+    'hostconfig': {},
+    'config': {},
+    'graphdriver': {},
+    'networksettings': {},
+    'general': {
+        'id': '',
+        'image': '',
+        'status': '',
+        'createdAt': '',
+        'startedAt': '',
+        'finishedAt': ''
+    }
+};
+
+function loadContainerInfo(container) {
+    let reqObj = {
+        'type': 'GET',
+        'url': `/containers/inspect/${container}`,
+        'isAsync': true,
+        'params': null
+    };
+    sendRequest(reqObj, null,
+        (response) => {
+            let res = isJson(response.srcElement.response);
+            if('error' in res) {
+                showAlert('An error occurred loading containers!', 'danger');
+                console.log('error: ', res['error']);
+            }
+            else {
+                containerInfo = res.container;
+
+                containerData.hostconfig = containerInfo.HostConfig;
+                delete containerInfo.HostConfig;
+
+                containerData.config = containerInfo.Config;
+                delete containerInfo.Config;
+
+                containerData.graphdriver = containerInfo.GraphDriver;
+                delete containerInfo.GraphDriver;
+
+                containerData.networksettings = containerInfo.NetworkSettings;
+                delete containerInfo.NetworkSettings;
+
+                containerData.basics = containerInfo;
+
+                containerData.general.id = containerInfo.Id;
+                containerData.general.image = containerInfo.Image;
+                containerData.general.createdAt = containerInfo.Created;
+                containerData.general.status = containerInfo.State.Status;
+                containerData.general.startedAt = containerInfo.State.StartedAt;
+                containerData.general.finishedAt = containerInfo.State.FinishedAt;
+
+                $('#containerId').text(containerData.general.id);
+                $('#imageId').text(containerData.general.image);
+                $('#createdAt').text(containerData.general.createdAt);
+                $('#startedAt').text(containerData.general.startedAt);
+                $('#finishedAt').text(containerData.general.finishedAt);
+
+                // remove previous color classess on item
+                // remove from background
+                $('#status').parent()[0].classList.remove('bg-dark');
+                $('#status').parent()[0].classList.remove('bg-light');
+                $('#status').parent()[0].classList.remove('bg-success');
+                $('#status').parent()[0].classList.remove('bg-danger');
+                $('#status').parent()[0].classList.remove('bg-info');
+                $('#status').parent()[0].classList.remove('bg-warning');
+                $('#status').parent()[0].classList.remove('bg-primary');
+                // remove from foreground(text) 
+                $('#status')[0].classList.remove('text-white');
+                $('#status')[0].classList.remove('text-black');
+
+                let stateBg = 'bg-';
+                let stateFg = 'text-white';
+                switch(containerData.general.status) {
+                    case 'running':
+                        stateBg += 'success';
+                        stateFg = 'text-white';
+                        break;
+                    case 'stopped':
+                    case 'created':
+                        stateBg += 'light';
+                        stateFg = 'text-black';
+                        break;
+                    case 'restarting':
+                        stateBg += 'warning';
+                        stateFg = 'text-black';
+                        break;
+                    case 'paused': 
+                        stateBg += 'info';
+                        stateFg = 'text-white';
+                        break;
+                    default:
+                        stateBg += 'danger';
+                        stateFg = 'text-white';
+                }
+                $('#status').parent()[0].classList.add(stateBg);
+                $('#status').text(containerData.general.status); 
+                $('#status')[0].classList.add(stateFg);
+        
+                fillTableWithJSON('basics-table', containerData.basics);
+                fillTableWithJSON('hostconfig-table', containerData.hostconfig);
+                fillTableWithJSON('config-table', containerData.config);
+                fillTableWithJSON('graphdriver-table', containerData.graphdriver);
+                fillTableWithJSON('networksettings-table', containerData.networksettings);
+
+                showAlert('Container info loaded succesfully', 'success');
+            }
+        },
+        (error) => { 
+            console.log('error: ', error);
+            showAlert(`An error occurred, check console.`, 'danger');
+        });
+}
+
+$('main').ready((e) => {
+    container = '';
+    if(localStorage['containers_list']) {
+        let containersNames = localStorage['containers_list'].split(',')
+        containersNames.forEach(name => $('#selectContainer').append(new Option(name, name)));
+    } else {
+        // make a request to flask server and get only containers names
+        let reqObj = {
+            'type': 'GET',
+            'url': `/containers/json`,
+            'isAsync': true,
+            'params': null
+        };
+        sendRequest(reqObj, null,
+            (response) => {
+                let res = JSON.parse(response.srcElement.response);
+                if('error' in res) {
+                    console.log('error: ', res['error']);
+                    showAlert('An error ocurred obtaining containers, check server logs.', 'danger');
+                }
+                else {
+                    showAlert('Containers obtained successfully!, refreshing list!', 'success');
+                    containers = res['containers'];
+                    containers.forEach(c => { 
+                        name = c.Names[0];
+                        $('#selectContainer').append(new Option(name, name))
+                    });
+                }
+            },
+            (error) => {
+                console.log('error: ', error);
+                showAlert('An error occurred trying to make a request, check console for more info.', 'danger');
+            });
+    }
+    if(localStorage['container']) {
+        container = localStorage.getItem('container');
+        $('#selectContainer').val(container);
+    } else {
+        // selects the default container on select input
+        container = $('#selectContainer')[0].value;
+    }
+    if(container != '') {
+        loadContainerInfo(container);
+    } else showAlert('No containers to inspect. Try creating one.', 'warning');
+
+    $('#selectContainer').on('change', (e) => {
+        loadContainerInfo($('#selectContainer')[0].value);
+    });
+});
