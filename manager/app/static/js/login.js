@@ -90,7 +90,7 @@ function login() {
                     showAlert(`Failed to log in, error: ${res['error']}`, 'danger');
                 }
                 else {
-                    showAlert('login successfull!', 'success');
+                    showAlert('Login successfull!', 'success');
                     location.href = '/home';
                 }
             }, 

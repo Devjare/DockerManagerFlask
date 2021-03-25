@@ -209,7 +209,7 @@ function buildImageTableTemplate(index, image) {
         <a href="#" onclick="goToDetailsOf('${tagsStr}', 'tag')">${tagsStr}</a></td>
         <td class="col-1 d-flex align-items-center">${created}</td>
         <td class="col-1 d-flex align-items-center">${sizeOnMb} MB</td>
-        <td class="col-3 d-flex align-items-center">
+        <td class="col-sm-1 d-flex align-items-center">
         <a onclick="showImageModal('${image["Id"]}', 'create_container')" href="#"> Create Container </a>
         </td>
     </tr>`

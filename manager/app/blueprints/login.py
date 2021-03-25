@@ -32,7 +32,12 @@ def login():
             session[USERNAME] = username
 
             try:
-                conts = db.session.query(UsersContainers).filter(UsersContainers.user_id == session[USERID]).all()
+                conts = []
+                if(session[USERNAME] == 'admin'):
+                    conts = db.session.query(UsersContainers).all()
+                else:
+                    conts = db.session.query(UsersContainers).filter(UsersContainers.user_id == session[USERID]).all()
+                print('containers for user: ', conts)
                 session[USERCONTAINERS] = []
                 for x in conts:
                     session[USERCONTAINERS].append(x.container_id)
