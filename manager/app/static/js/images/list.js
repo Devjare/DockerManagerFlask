@@ -217,16 +217,19 @@ function buildImageTableTemplate(index, image) {
 }
 
 var currentView = 'registry';
-// change registry/dockerhub repositroy view.
 function searchOn() {
     let searchFor = $('#registrySearchType')[0].value;
 
     if(searchFor == "dockerhub") {
         $('#rep-dockerhub').toggle();
         $('#rep-1-tab').toggle();
+        $('#searchRegistryText').toggle();
+        $('#searchDockerhubText').toggle();
     } else {
         $('#rep-dockerhub').toggle();
         $('#rep-1-tab').toggle();
+        $('#searchRegistryText').toggle();
+        $('#searchDockerhubText').toggle();
     }
 
     currentView = searchFor;
@@ -240,15 +243,18 @@ function searchImages() {
 function searchRegistry() {
     let text = $('#searchRegistryText')[0].value;
 
-    if(currentView == "dockerhub") {
-        searchOnDockerhub(text);
-    } else {
-        let filteredRepos = {};
-        for(key in repositories) {
-            if(key.includes(text) || repositories[key].toString().includes(text)) 
-                filteredRepos[key] = repositories[key];
-        }
-        loadRegistryRepositories(filteredRepos);
+    let filteredRepos = {};
+    for(key in repositories) {
+        if(key.includes(text) || repositories[key].toString().includes(text)) 
+            filteredRepos[key] = repositories[key];
+    }
+    loadRegistryRepositories(filteredRepos);
+}
+
+function searchDockerhub(event) {
+    if(event.keyCode == 13) {
+        let text = $('#searchDockerhubText')[0].value;
+        searchOnDockerhub(text); 
     }
 }
 
@@ -454,4 +460,5 @@ function searchOnDockerhub(text) {
             console.log(`error:  ${error}`);
             showAlert('An error occurred, check console.', 'danger')
         });    
+    showAlert('Loading dockerhub repositories...', 'info')
 }

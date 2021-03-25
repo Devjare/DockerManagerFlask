@@ -41,7 +41,7 @@ def login():
 
             return { 'login': True }
         else:
-            return { 'error': res } 
+            return { 'error': res }
 
     return { 'error': 'An error occurred, failed to authenticate.' } 
 

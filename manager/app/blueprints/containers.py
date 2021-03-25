@@ -251,7 +251,7 @@ def deleteContainer():
         containerDb = Container.query.get(container.id)
         db.session.delete(containerDb)
         
-        usercontainer = UsersContainers.query.filter_by(user_id=session[USERID], container_id=container.id).first()
+        usercontainer = UsersContainers.query.filter_by(container_id=container.id).first()
         db.session.delete(usercontainer)
         db.session.commit()
         container.remove(v=volumes, force=force)
