@@ -12,7 +12,7 @@ db = SQLAlchemy()
 ma = Marshmallow()
 
 def create_app(config_filename):
-    from blueprints import images, containers, login
+    from blueprints import images, containers, login, settings
     
     app = Flask(__name__)
     app.config.from_object(config_filename)
@@ -20,6 +20,7 @@ def create_app(config_filename):
 
     app.register_blueprint(images.images_bp, url_prefix="/images")
     app.register_blueprint(containers.containers_bp, url_prefix="/containers")
+    app.register_blueprint(settings.settings_bp, url_prefix="/settings")
     app.register_blueprint(login.login_bp)
 
     @app.route('/home')
