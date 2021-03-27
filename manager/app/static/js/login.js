@@ -91,7 +91,8 @@ function login() {
                 }
                 else {
                     showAlert('Login successfull!', 'success');
-                    location.href = '/home';
+                    localStorage['username'] = username;
+                    location.href = '/home'; 
                 }
             }, 
             (error) => {

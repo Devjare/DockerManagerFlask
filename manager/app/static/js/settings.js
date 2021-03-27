@@ -1,7 +1,7 @@
 
 function saveNewUsername(event) {
     if(event && event.keyCode != 13) return;
-    
+
     let newUsername = $('#newUsername').val();
     if(!newUsername) {
         showAlert('Cannot save empty username!', 'warning');
@@ -27,6 +27,7 @@ function saveNewUsername(event) {
             if('error' in res) showAlert(`Error trying to udpate username: ${res['error']}.`, 'danger');
             else {
                 showAlert(`Username updated successfully!`, 'success');
+                localStorage['username'] = newUsername;
                 location.reload();
             }
         },

@@ -3,7 +3,7 @@ from flask import Flask, session, render_template
 from flask_marshmallow import Marshmallow
 from flask_cors import CORS
 import docker
-from constants import LOCALIP
+from constants import LOCALIP, USERNAME
 
 client = docker.DockerClient(base_url=LOCALIP + "/")
 dockercli = docker.APIClient(base_url=LOCALIP)
@@ -25,7 +25,7 @@ def create_app(config_filename):
 
     @app.route('/home')
     def main():
-        return render_template('index.html')
+        return render_template('index.html', username=session[USERNAME])
 
 
     db.init_app(app)
