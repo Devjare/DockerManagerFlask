@@ -11,7 +11,6 @@ var dockerhubRepositories = [];
 function findImagesBy(pattern) {
     return images.filter(i => 
         i.Id.includes(pattern)  
-        || i.RepoDigests.toString().includes(pattern) 
         || i.RepoTags.toString().includes(pattern));
 }
 
