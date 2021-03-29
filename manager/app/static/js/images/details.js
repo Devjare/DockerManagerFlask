@@ -64,7 +64,6 @@ $('main').ready((e) => {
         let imagesNames = localStorage['images_list'].split(',')
         imagesNames.forEach(name => $('#selectImage').append(new Option(name, name)));
     } else {
-        // make a request to flask server and get only images names
         let reqObj = {
             'type': 'GET',
             'url': `/images/json`,
@@ -92,11 +91,11 @@ $('main').ready((e) => {
                 showAlert('An error occurred trying to make a request, check console for more info.', 'danger');
             });
     }
+
     if(localStorage['image']) {
         image = localStorage.getItem('image');
         $('#selectImage').val(image.split(',')[0]);
     } else {
-        // selects the default image on select input
         image = $('#selectImage')[0].value;
     }
     if(image != '') {

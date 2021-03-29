@@ -36,8 +36,34 @@ function goToDetailsOfContainer(containerName) {
 }
 
 function goToDetailsOfImage(image) {
-    localStorage.setItem('image', image);
-    location.href = '/images/details';
+    let params = { 'id': image };
+    let reqObj = {
+        'type': 'POST',
+        'url': `/images/get`,
+        'isAsync': true,
+        'params': JSON.stringify(params),
+        'requestHeaders': { 
+            'Content-Type': 'application/json' 
+        }
+    };
+
+    sendRequest(reqObj, null,
+        (response) => {
+            let res = JSON.parse(response.srcElement.response);
+            if('error' in res) {
+                showAlert('An error occurred fetching image name, check console logs.', 'danger');
+                console.log('error: ', res['error']);
+            }
+            else { 
+                localStorage.setItem('image', res['image']);
+                location.href = '/images/details';
+            }
+        },
+        (error) => {
+            console.log('error: ', error);
+            showAlert('An error occurred trying to make a request, check console for more info.', 'danger');
+        });
+
 }
 
 var modalContentType = 'information';
@@ -137,10 +163,10 @@ function buildContainerTableRow(container, index) {
       <th scope="row">${index}</th>
       <td scope="row"><span class="icon" onclick="showDeleteContainerModal('${container.Names[0]}')" data-feather="trash"></span></td>
       <td>${container.Id}</td>
-      <td><a href="#" id="${container.Names[0]}" class="popover-item" onclick="goToDetailsOfContainer('${container.Names[0]}')">${container.Names[0]}</a></td>
+      <td><a href="#" id="${container.Names[0]}" onclick="goToDetailsOfContainer('${container.Names[0]}')">${container.Names[0]}</a></td>
       <td>${container.State}</td>
       <td>${ipport == ""?"NONE":ipport}</td>
-      <td><a href="#" id="${container.Id}" class="popover-item" onclick="goToDetailsOfImage('${container.Image}')">${container.Image}</a></td>
+      <td><a href="#" id="${container.Id}" onclick="goToDetailsOfImage('${container.Image}')">${container.Image}</a></td>
       <td><a href="#" onclick="showContainerDetails('${container.Id}')">More</a></td>
     </tr>`
     return template;

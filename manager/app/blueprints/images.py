@@ -122,8 +122,21 @@ def pullImageFrom():
     return { 'id': imageid }
 
 
-@images_bp.route('/inspect', methods=["GET"])
+@images_bp.route('/get', methods=["POST"])
 def getImageInfo():
+    print('request json: ', request.json)
+    id = request.json['id']
+    image = {}
+    try:
+        image = client.images.get(id).tags[0]
+    except docker.errors.APIError as err:
+        print('Failed to get image info, error: ', str(err))
+        return { "error": str(err) }
+    return {"image": image} 
+    
+
+@images_bp.route('/inspect', methods=["GET"])
+def inspectImage():
     id = request.args['id']
     image = {}
     try:
