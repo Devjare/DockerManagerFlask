@@ -17,6 +17,10 @@ def showContainerCreation():
 def createContainer():
     data = request.json
     container = {}
+   
+    labels = data['labels'] if 'labels' in data else {}
+    if('author' not in labels):
+        labels['author'] = session[USERNAME]
 
     if('advancedCreation' in data):
         if(not data['run']):
@@ -32,7 +36,7 @@ def createContainer():
                     entrypoint = data['entrypoint'] if 'entrypoint' in data else None,
                     working_dir = data['working_dir'] if 'working_dir' in data else None,
                     restart_policy = data['restart_policy'] if 'restart_policy' in data else None,
-                    labels = data['labels'] if 'labels' in data else None,
+                    labels = labels,
                     environment = data['environment'] if 'environment' in data else None,
                     detach = data['detach'] if 'detach' in data else None,
                     auto_remove = data['auto_remove'] if 'auto_remove' in data else None,
@@ -123,7 +127,7 @@ def createContainer():
                     entrypoint = data['entrypoint'] if 'entrypoint' in data else None,
                     working_dir = data['working_dir'] if 'working_dir' in data else None,
                     restart_policy = data['restart_policy'] if 'restart_policy' in data else None,
-                    labels = data['labels'] if 'labels' in data else None,
+                    labels = labels,
                     environment = data['environment'] if 'environment' in data else None,
                     detach = data['detach'] if 'detach' in data else None,
                     auto_remove = data['auto_remove'] if 'auto_remove' in data else None,
