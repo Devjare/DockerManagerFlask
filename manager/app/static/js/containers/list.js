@@ -28,6 +28,8 @@ function triggerContainerAction(id, action) {
             console.log('error: ', error);
             showAlert('An error occurred trying to make a request, check console for more info.', 'danger');
         });
+
+    showAlert('Executing action...', 'info');
 }
 
 function goToDetailsOfContainer(containerName) {
