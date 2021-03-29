@@ -159,15 +159,16 @@ function buildContainerTableRow(container, index) {
     else if(state == 'paused') color = 'info';
     else if(state == 'stopped') color = 'danger';
     else if(state == 'restarting') color = 'warning';
-    let template = `<tr class="table-${color}">
-      <th scope="row">${index}</th>
-      <td scope="row"><span class="icon" onclick="showDeleteContainerModal('${container.Names[0]}')" data-feather="trash"></span></td>
-      <td>${container.Id}</td>
-      <td><a href="#" id="${container.Names[0]}" onclick="goToDetailsOfContainer('${container.Names[0]}')">${container.Names[0]}</a></td>
-      <td>${container.State}</td>
-      <td>${ipport == ""?"NONE":ipport}</td>
-      <td><a href="#" id="${container.Id}" onclick="goToDetailsOfImage('${container.Image}')">${container.Image}</a></td>
-      <td><a href="#" onclick="showContainerDetails('${container.Id}')">More</a></td>
+    let template = `<tr class="table-${color} d-flex">
+      <th class="col-s-2" scope="row">${index}</th>
+      <td class="col-s-2" scope="row"><span class="icon" onclick="showDeleteContainerModal('${container.Names[0]}')" data-feather="trash"></span></td>
+      <td class="col-3 text-truncate">${container.Id}</td>
+      <td class="col-2"><a href="#" id="${container.Names[0]}" onclick="goToDetailsOfContainer('${container.Names[0]}')">${container.Names[0]}</a></td>
+      <td class="col-1">${container.State}</td>
+      <td class="col-2">${ipport == ""?"NONE":ipport}</td>
+      <td class="col-2">${container.Labels['author']}</td>
+      <td class="col-3"><a href="#" id="${container.Id}" onclick="goToDetailsOfImage('${container.Image}')">${container.Image}</a></td>
+      <td class="col-1"><a href="#" onclick="showContainerDetails('${container.Id}')">More</a></td>
     </tr>`
     return template;
 }
