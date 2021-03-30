@@ -1,6 +1,7 @@
 body,html {
     height: 100%;
 } 
+
 body {
     overflow-x: hidden!important;
 }
@@ -206,16 +207,18 @@ body {
 /* BOOTSTRAP SPECIFIC MODIFICATIONS */
 .card {
     max-width: 450px!important;
-    min-width: 250px!important;
     max-height: 350px!important;
+    min-width: 300px!important; 
+    max-width: 2000px!important; 
+    margin: 10px!important;
 
     transition: height 500ms;
 }
 
 /* BOOSTRAP DASHBOARD FOR NAV TOGGLER */
 .navbar .navbar-toggler {
-  top: .25rem;
-  right: 1rem;
+    top: .25rem;
+    right: 1rem;
 }
 /* 
  * COLLAPSABLE CARDS CLASSESS 
@@ -231,3 +234,14 @@ body {
     .hide {
         display: none!important;
     }
+ 
+.card {
+}
+
+.card-header {
+    cursor: pointer;
+}
+
+.card-body {
+    overflow: auto!important;
+}
