@@ -254,12 +254,8 @@ def deleteContainer():
         container = client.containers.get(str(container))
         if(container.status in ['running', 'paused', 'restarting']):
             return { 'error': 'Cannot delete container try stopping it first' }
-        containerDb = Container.query.get(container.id)
-        db.session.delete(containerDb)
-        
-        usercontainer = UsersContainers.query.filter_by(container_id=container.id).first()
-        db.session.delete(usercontainer)
-        db.session.commit()
+
+        removeContainerFromDB(container.id)
         container.remove(v=volumes, force=force)
 
     except docker.errors.ImageNotFound as e: 
@@ -337,6 +333,9 @@ def startContainer(id):
 @containers_bp.route('/stop/<id>')
 def stopContainer(id):
     try:
+        container = dockercli.inspect_container(id)
+        if(container['HostConfig']['AutoRemove']):
+            removeContainerFromDB(id)
         dockercli.stop(id)
     except docker.errors.APIError as err:
         print('error: ', err)
@@ -378,4 +377,11 @@ def containerToJson(container):
 def addContainerToUser(idcontainer):
     userContainer = UsersContainers(session[USERID], idcontainer)
     db.session.add(userContainer)
+    db.session.commit()
+
+def removeContainerFromDB(id):
+    containerDb = Container.query.get(id)
+    db.session.delete(containerDb)
+    usercontainer = UsersContainers.query.filter_by(container_id=id).first()
+    db.session.delete(usercontainer)
     db.session.commit()
