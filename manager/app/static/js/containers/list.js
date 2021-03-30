@@ -282,8 +282,7 @@ function deleteContainer(container) {
         (response) => {
             let res = JSON.parse(response.srcElement.response);
             if('error' in res) {
-                showAlert('An error ocurred deleting the container, check server logs.', 'danger');
-                console.log('error: ', res['error']);
+                showAlert(res['error'], 'danger');
             }
             else {
                 showAlert('Container deleted successfully!', 'success');

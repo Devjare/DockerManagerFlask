@@ -252,6 +252,8 @@ def deleteContainer():
 
     try:
         container = client.containers.get(str(container))
+        if(container.status in ['running', 'paused', 'restarting']):
+            return { 'error': 'Cannot delete container try stopping it first' }
         containerDb = Container.query.get(container.id)
         db.session.delete(containerDb)
         
