@@ -41,3 +41,4 @@ class UsersContainers(db.Model):
     def __init__(self, user_id, container_id):
         self.user_id = user_id
         self.container_id = container_id
+
