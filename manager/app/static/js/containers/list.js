@@ -1,9 +1,4 @@
-
-// currentFilter defines which containers are listed
-// by state.
 var currentFilter = 'all';
-
-// start, stop, restart, pause, unpause, actions.
 function triggerContainerAction(id, action) {
     let reqObj = {
         'type': 'GET',
@@ -133,7 +128,6 @@ function showContainerModal(container) {
     showModal(title, body, footer);
 }
 
-// containers actions
 function showContainerDetails(id) {
     let container = containers.find(c => c.Id == id);
     showContainerModal(container);
@@ -180,8 +174,6 @@ function loadContainers(containers, filter) {
     let filtered;
 
     if(containers.length == 0) {
-        // adds a html element to say that there's no containers
-        // instead of showing the table of containers.
         document.querySelector('.table-body').innerHTML += `
         <tr><td colspan="10"><div class="d-flex justify-content-center">
         No containers created,&nbsp;<a href="/containers/creation">Create one
@@ -262,13 +254,11 @@ function searchContainers() {
 }
 
 function clearContainersPanel() {
-    // Delete all cards from container panel.
     document.querySelector('.table-body').innerHTML = '';
 }
 
 function deleteContainer(container) {
     let volumes = $('#chkVolumes')[0].checked;
-    //  let links = $('#chkLink')[0].checked;
     let force = $('#chkForce')[0].checked;
 
     let reqObj = {

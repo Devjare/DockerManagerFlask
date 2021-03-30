@@ -58,8 +58,6 @@ function loadContainerInfo(container) {
                 $('#startedAt').text(containerData.general.startedAt);
                 $('#finishedAt').text(containerData.general.finishedAt);
 
-                // remove previous color classess on item
-                // remove from background
                 $('#status').parent()[0].classList.remove('bg-dark');
                 $('#status').parent()[0].classList.remove('bg-light');
                 $('#status').parent()[0].classList.remove('bg-success');
@@ -67,7 +65,6 @@ function loadContainerInfo(container) {
                 $('#status').parent()[0].classList.remove('bg-info');
                 $('#status').parent()[0].classList.remove('bg-warning');
                 $('#status').parent()[0].classList.remove('bg-primary');
-                // remove from foreground(text) 
                 $('#status')[0].classList.remove('text-white');
                 $('#status')[0].classList.remove('text-black');
 
@@ -120,7 +117,6 @@ $('main').ready((e) => {
         let containersNames = localStorage['containers_list'].split(',')
         containersNames.forEach(name => $('#selectContainer').append(new Option(name, name)));
     } else {
-        // make a request to flask server and get only containers names
         let reqObj = {
             'type': 'GET',
             'url': `/containers/json`,
@@ -152,7 +148,6 @@ $('main').ready((e) => {
         container = localStorage.getItem('container');
         $('#selectContainer').val(container);
     } else {
-        // selects the default container on select input
         container = $('#selectContainer')[0].value;
     }
     if(container != '') {

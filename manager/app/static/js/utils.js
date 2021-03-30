@@ -1,6 +1,3 @@
-// Description: Object containing the default messages
-// that are shown on login fields when invalid input is
-// entered.`
 var loginFieldsMessages = {
     'username': 'Only numbers, letters, _, and - are allowed.',
     'password': 'No Whitespaces',
@@ -16,7 +13,6 @@ function portsArrayToString(portsArray) {
     return str;
 }
 
-// Convert from unix timestamp to normal date format
 function timeConverter(UNIX_timestamp){
     var a = new Date(UNIX_timestamp * 1000);
     var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -30,8 +26,6 @@ function timeConverter(UNIX_timestamp){
     return time;
 }
 
-// Description: Validates 'str' for the 'type'
-// that is specified.
 function validateStrFor(str, type) {
     if(str == '') return false
     if(type == 'number') {
@@ -40,11 +34,6 @@ function validateStrFor(str, type) {
     return true;
 }
 
-// alertCount is used mainly to set the margin between alerts
-// when displaying on browsers.
-// showAlert displays an colored notification with a message.
-// The colors that uses are the same as bootstrap: 
-// success, danger, warning, primary, etc.
 var alertCount = 0;
 var alertTopMargin = 70;
 var prevAlertHeight = 0;
@@ -60,7 +49,6 @@ function showAlert(msg, type) {
     prevAlertHeight = $(`#alert-${alertCount}`)[0].clientHeight;
     alertTopMargin +=  prevAlertHeight + ALERT_GAP;
 
-    // set timeout to disappear the alert after 5 secs.
     setTimeout(() => {
         $(`.alert#alert-${alertCount}`).alert('close');
         alertCount--;
@@ -68,12 +56,8 @@ function showAlert(msg, type) {
     }, 5000);
 }
 
-// sendRequests encapsulates, some data when using xmlhttprequest,
-// mainly to reduce code invoking it every time is needed,
-// is the replacement for jquery's ajax request methods.
 function sendRequest(reqObj, onProgress, onLoad, onError, onAbort) {
     var xhr = new XMLHttpRequest();
-    // set to null to prevent using previous listeners assigned
     if(onProgress) xhr.onprogress = onProgress;
     else xhr.onprogress = null;
     if(onLoad) xhr.onload = onLoad;
@@ -86,37 +70,26 @@ function sendRequest(reqObj, onProgress, onLoad, onError, onAbort) {
     xhr.open(reqObj.type, reqObj.url, reqObj.isAsync);
     if('requestHeaders' in reqObj) {
         for(header in reqObj.requestHeaders) {
-            // adding every request header indicated
             xhr.setRequestHeader(header, reqObj.requestHeaders[header]);
         }
     }
     xhr.send(reqObj.params);
 }
 
-// As it's name says, this function collapse or expands,
-// the cards that have the event asigned.
-// The ones shown on the description pages.
 function collapseCard(event) {
     let target =  event.target;
     let parent = $(target.parentNode);
 
     if(parent[0].classList.contains('collapsed')) {
-        // after expand actions
         target.children[1].style.transform = 'rotate(0deg)';
     } else {
-        // after collapse actions 
         target.children[1].style.transform = 'rotate(180deg)';
     }
 
     parent[0].classList.toggle('collapsed');
-    // hide card-body
     parent[0].children[1].classList.toggle('hide');
 }
 
-// Modal templates, they're here because every time they are hidden
-// or shown, it's necesary to delete or add them to the DOM Completely,
-// in order to make dynamic use of them to show different things.
-// ================ MODALS =======================
 let modalTemplate = `
  <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-hidden="true">
      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -155,14 +128,8 @@ let confirmationModalTemplate = `
     </div>
 </div>`
 
-// showConfirmationModal, and showModal, both make what their name says,
-// the confirmation modal has an greater z-index than the normal modal,
-// in case a confirmation modal should be displayed on top of a normal 
-// modal.
 function showConfirmationModal(msg, onConfirm, onCancel) {
     $('body').append(confirmationModalTemplate);
-
-    // set the current modal to the back
     $('#modal').css({'z-index': '0'}); 
 
     $('#modalConfirmBody').text(msg);
@@ -173,7 +140,6 @@ function showConfirmationModal(msg, onConfirm, onCancel) {
         $('#modalConfirm #btnConfirm').on('click', (e) => onConfirm(e));
     });
 
-    // when the confirmation hides, show again the modal on front.
     $('#modalConfirm').on('hidden.bs.modal', (e) => {
         $('#modal').css({'z-index': ''});
     });
@@ -202,15 +168,11 @@ function showModal(title, body, footer, onHide, onHidden, onShow, onShown) {
 }
 
 function hideModal() {
-    // hide modal removes completely from html the modal
     $('#modal').unbind('hide.bs.modal');
     $('#modal').unbind('hidden.bs.modal');
     $('#modal').modal('hide');
 }
-// ================================ END MODALS ====================================
 
-
-// return null if the passed string is empty.
 function valueOrNull(str, type) {
     if(type == 'number') {
         if(isNaN(Number(str))) return null;
@@ -220,7 +182,6 @@ function valueOrNull(str, type) {
     }
 }
 
-// check if an object is empty
 function isObjectEmpty(obj) {
     for(var key in obj) {
         if(obj.hasOwnProperty(key)) return false;
@@ -228,8 +189,6 @@ function isObjectEmpty(obj) {
     return true;
 }
 
-// check if an element is an object,
-// NOTE: null is also considered an object.
 function isObject(obj) {
     return typeof obj === 'object' && obj !== null && !Array.isArray(obj);
 }
@@ -238,22 +197,6 @@ function isEmptyString(str) {
     return str == '';
 }
 
-// If a json needs to be displayed and that json object,
-// has objects with their own children on various levels
-// e.g:
-// {
-//   'prop1': '',
-//   'prop2': {
-//      'prop3': '',
-//      'prop4': {
-//         'prop5': ''
-//       }
-//    }
-// },
-// or has an array of data, this method builds an html 
-// table prepared to show those 2 kind of obejcts
-// using createTableForJSON and createListForArray methods.
-//
 function fillTableWithJSON(tableid, jsonObject) {
     let table = $(`#${tableid} .table-body`);
     table.empty();
@@ -278,9 +221,6 @@ function fillTableWithJSON(tableid, jsonObject) {
     }
 }
 
-// returns the complete table html template formatted as
-// key - value, recursively calling itself again if needed,
-// or createListForArray
 function createTableForJSON(obj) {
     let table = `<table class="table"><tbody class="table-body">`; 
     for(key in obj) {
@@ -294,8 +234,6 @@ function createTableForJSON(obj) {
     return table;
 }
 
-// simply returns a list html template with the 
-// passed array argument.
 function createListForArray(array) {
     let list = `<ul>`; 
     array.forEach(el => list += `<li>${el}</li>`);
@@ -308,53 +246,33 @@ function deleteDataRow(event, onDeleteProp) {
     let rowToDelete = event.target.parentNode.closest('tr');
     let propToDelete = rowToDelete.children[0].children[0].value;
 
-    // remove row from table
     rowToDelete.remove();
 
-    // delete property from dictionary 'data'
     if(propToDelete in data) delete data[propToDelete];
 }
 
 function addNewDataRow() {
-    // serch prev new row
     let prevNewRow = $('.empty-row');
     let key = $('.empty-row').find('.key-input').val();
     let value = $('.empty-row').find('.value-input').val();
-    // if key is not empty, procceed to remove prev new row and add new empty row.
     if(key != '') {
-        // change add button to remove button
         prevNewRow.find('button')[0].onclick = (event) => deleteDataRow(event);
         prevNewRow.find('button')[0].classList.remove('btn-primary');
         prevNewRow.find('button')[0].classList.add('btn-danger');
         prevNewRow.find('button').text('Delete');
-        // delete 'empty-row' class from prev new row
         prevNewRow[0].classList.remove('empty-row');
-        // add new-row class, for further validation use.
         prevNewRow[0].classList.add('new-row');
-        // REVIEW: maybe make the fields read only(?)
-        // get prev 'empty-row' data and pass to onAddProp
         $('#tableBody').append(`
         <tr class="empty-row">
             <td><input class="form-control key-input" type="text" placeholder="Data Key"></td>
             <td><input class="form-control value-input" type="text" placeholder="Data Value"></td>
             <td><button class="btn btn-sm btn-primary" onclick="addNewDataRow()">Add</a></td>
         </tr>`); 
-        // adds the data to the dictionary 'data'
         if(!(key in data)) data[key] = value;
     } else {
         showAlert('Cannot add an empty key property!', 'danger');
     }
 }
-
-// getDynamicDictTemplate() and getDynamicListTemplate()
-// are methods to generate an html section to use when a 
-// dictionary or a set of key-value pairs is needed as input.
-// e.g. when entering container labels, they can be unlimited
-// labels(dynamic) and have a key-value format.
-// Lists, on the other hand, is similar but when multiple
-// strings are needed, for example with container's arguments.
-// 
-// NOTE: Both examples can be found on the container_creation page.
 
 function getDynamicDictTemplate(dict) {
 
@@ -436,11 +354,9 @@ function showListModal(list, listName) {
 
     showModal(title, body, footer, 
         (e) => {
-            // onHide modal
             e.preventDefault();
             e.stopImmediatePropagation();
 
-            // send modal to back to show the confirmation above all;
             let inputsToValidate = $('.new-list-item');
             if(inputsToValidate.length > 0) {
                 if(validateInputs($('#modal input')) == false) {
@@ -466,7 +382,6 @@ function showListModal(list, listName) {
             return false;
         }, null,
         (e) => {
-            // on modal show load delete icon.
             feather.replace();
         }
     );
@@ -485,10 +400,9 @@ function updateDictionaryDisplay(dictName) {
 }
 
 function updateListDisplay(listName) {
-    $(`#${listName}`)[0].value = listData.toString();}
+    $(`#${listName}`)[0].value = listData.toString();
+}
 
-// shows a modal with a generated html table for json
-// inputs.
 function showDictionaryModal(dict, dictName) {
     let title = `Mananage ${dictName} data`;
 
@@ -501,11 +415,9 @@ function showDictionaryModal(dict, dictName) {
 
     showModal(title, body, footer,
         (e) => {
-            // onHide modal
             e.preventDefault();
             e.stopImmediatePropagation();
 
-            // send modal to back to show the confirmation above all;
             let inputsToValidate = $('.new-row');
             if(inputsToValidate.length > 0) {
                 if(validateInputs($('#modal input')) == false) {

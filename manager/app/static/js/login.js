@@ -163,12 +163,7 @@ function onEnter(event) {
     }
 }
 
-$('form').ready((e) => { 
-    // check if the invalidity popup should show after the
-    // content of an input changed
-    setValidities();
-
-});
+$('form').ready((e) => { setValidities(); });
 
 function setValidities() { 
     $('input:not([readonly])').on('change', (e) => {

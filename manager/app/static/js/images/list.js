@@ -15,11 +15,8 @@ function findImagesBy(pattern) {
 }
 
 function goToDetailsOf(image, textType) {
-    // split text in case multiple tags are loaded.
-    // any tag used will result on the same data.
     if(textType == 'tag') localStorage.setItem('image', image);
     else {
-        // get the tags of the current image id
         name = images.find(i => i.Id == image).RepoTags.toString(); 
         localStorage.setItem('image', name);
     }
@@ -125,7 +122,6 @@ function showImageModal(imageid, action) {
         `;
 
         $('#modalBody').ready(e => {
-            // Add tags when the modal loads.
             images.find(img => img.Id == imageid).RepoTags.forEach(tag => {
                 $('#selectTag').append(new Option(tag, tag));
             });
@@ -138,7 +134,6 @@ function showImageModal(imageid, action) {
 }
 
 function createContainerFrom(imageid) {
-    // get all image data.
     showConfirmationModal(
         'If a field is left empty, container will be created anyway but without that argument. Do you want to continue?',
         (e) => { 
@@ -335,7 +330,6 @@ function showPullImageModal(imageName, source) {
 } 
 
 function pullImage(imageRep, source) {
-    // rep + tag = imageToPull
     let imageToPull = `${source=='registry'?'localhost:5000/':''}${imageRep}:${$('#imageTag')[0].value}`;
 
     let reqObj = {
