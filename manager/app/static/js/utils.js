@@ -46,18 +46,25 @@ function validateStrFor(str, type) {
 // The colors that uses are the same as bootstrap: 
 // success, danger, warning, primary, etc.
 var alertCount = 0;
+var alertTopMargin = 70;
+var prevAlertHeight = 0;
+const ALERT_GAP = 10;
 function showAlert(msg, type) { 
     alertCount++;
     let alertEl = `<div id="alert-${alertCount}" class="alert alert-${type} position-absolute d-flex justify-content-between p-2 w-25" 
-    style="z-index: 100!important;top: ${50 * alertCount + 20}px;right: 50px" role="alert">${msg}
+    style="z-index: 100!important;top: ${alertTopMargin}px;right: 50px" role="alert">${msg}
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
     <span aria-hidden="true">&times;</span></button></div>`
     $('body').append(alertEl);
+
+    prevAlertHeight = $(`#alert-${alertCount}`)[0].clientHeight;
+    alertTopMargin +=  prevAlertHeight + ALERT_GAP;
 
     // set timeout to disappear the alert after 5 secs.
     setTimeout(() => {
         $(`.alert#alert-${alertCount}`).alert('close');
         alertCount--;
+        alertTopMargin -= (prevAlertHeight + 10);
     }, 5000);
 }
 
@@ -521,4 +528,14 @@ function showDictionaryModal(dict, dictName) {
 
             return false;
         });
+}
+
+function isJson(str) {
+    let json;
+    try {
+        json = JSON.parse(str);
+    } catch(e) {
+        return { 'error': str }
+    }
+    return json;
 }

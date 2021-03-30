@@ -23,7 +23,7 @@ function loadContainerInfo(container) {
     };
     sendRequest(reqObj, null,
         (response) => {
-            let res = JSON.parse(response.srcElement.response);
+            let res = isJson(response.srcElement.response);
             if('error' in res) {
                 showAlert('An error occurred loading containers!', 'danger');
                 console.log('error: ', res['error']);
@@ -155,7 +155,9 @@ $('main').ready((e) => {
         // selects the default container on select input
         container = $('#selectContainer')[0].value;
     }
-    loadContainerInfo(container);
+    if(container != '') {
+        loadContainerInfo(container);
+    } else showAlert('No containers to inspect. Try creating one.', 'warning');
 
     $('#selectContainer').on('change', (e) => {
         loadContainerInfo($('#selectContainer')[0].value);

@@ -90,8 +90,9 @@ function login() {
                     showAlert(`Failed to log in, error: ${res['error']}`, 'danger');
                 }
                 else {
-                    showAlert('login successfull!', 'success');
-                    location.href = '/home';
+                    showAlert('Login successfull!', 'success');
+                    localStorage['username'] = username;
+                    location.href = '/home'; 
                 }
             }, 
             (error) => {
@@ -136,10 +137,11 @@ function signup() {
             (response) => {
                 let res = JSON.parse(response.srcElement.response);
                 if('error' in res) { 
-                    showAlert(`Failed to sign up, error: ${res['error']}`, 'danger');
+                    showAlert(`Failed to sign up, error: ${res['error']}.`, 'danger');
                 }
                 else {
-                    showAlert('successfully registered, loggin in!', 'success');
+                    showAlert('Successfully registered, loggin in!', 'success');
+                    localStorage['username'] = username;
                     location.href = '/home';
                 }
             }, 

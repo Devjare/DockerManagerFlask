@@ -32,3 +32,7 @@ function logout() {
             showAlert('Failed to logout...', 'danger')
         });
 }
+
+$('main').ready(() => {
+    $('#usernameTitle').text(localStorage['username']);
+});

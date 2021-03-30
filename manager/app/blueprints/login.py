@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, session
 from app import dockercli, client, db
-from app.constants import USERID, USERNAME, USERCONTAINERS
+from app.constants import USERID, USERNAME, USERCONTAINERS, USERROLE
 from app.db_models import User, Container, UsersContainers
 
 login_bp = Blueprint("login", __name__, static_folder="url_for('static')", template_folder="url_for('templates')")
@@ -32,7 +32,11 @@ def login():
             session[USERNAME] = username
 
             try:
-                conts = db.session.query(UsersContainers).filter(UsersContainers.user_id == session[USERID]).all()
+                conts = []
+                if(session[USERROLE] == 1):
+                    conts = db.session.query(UsersContainers).all()
+                else:
+                    conts = db.session.query(UsersContainers).filter(UsersContainers.user_id == session[USERID]).all()
                 session[USERCONTAINERS] = []
                 for x in conts:
                     session[USERCONTAINERS].append(x.container_id)
@@ -41,7 +45,7 @@ def login():
 
             return { 'login': True }
         else:
-            return { 'error': res } 
+            return { 'error': res }
 
     return { 'error': 'An error occurred, failed to authenticate.' } 
 
@@ -54,6 +58,7 @@ def authenticate(username, password):
         if(user.username == username):
             if(user.password == password):
                 session[USERID] = user.uid
+                session[USERROLE] = user.role
                 return True
             else:
                 return 'Incorret password.'
@@ -68,13 +73,13 @@ def signup():
         username = params.get('username')
         password = params.get('password')
 
-        exists = authenticate(username, password)
-        if(exists):
+        user = User.query.filter_by(username=username).first()
+        if(user):
             return { 'error': 'User already exists, login instead'}
         else:
             session[USERNAME] = username
             session[USERCONTAINERS] = []
-            user = User(username, password)
+            user = User(username, password, 2)
             
             db.session.add(user)
             db.session.commit()

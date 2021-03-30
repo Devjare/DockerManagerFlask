@@ -24,7 +24,7 @@ def showImageDetails():
 
 @images_bp.route('/json')
 def getAllImages():
-    images = dockercli.images()
+    images = dockercli.images(filters={"dangling": False})
     return { 'images': images }
 
 def getTagsOf(repname, source):
@@ -122,8 +122,21 @@ def pullImageFrom():
     return { 'id': imageid }
 
 
-@images_bp.route('/inspect', methods=["GET"])
+@images_bp.route('/get', methods=["POST"])
 def getImageInfo():
+    print('request json: ', request.json)
+    id = request.json['id']
+    image = {}
+    try:
+        image = client.images.get(id).tags[0]
+    except docker.errors.APIError as err:
+        print('Failed to get image info, error: ', str(err))
+        return { "error": str(err) }
+    return {"image": image} 
+    
+
+@images_bp.route('/inspect', methods=["GET"])
+def inspectImage():
     id = request.args['id']
     image = {}
     try:
@@ -147,7 +160,7 @@ def buildImage():
     dockerfile = args['dockerfile'] if ('dockerfile' in args and args['dockerfile'] != '') else None
     quiet = (args['quiet'] == 'on') if 'quiet' in args else None
     nocache = (args['noCache'] == 'on') if 'noCache' in args else None
-    timeout = args['timeout'] if ('timeout' in args and args['timeout'] != '') else None
+    timeout = float(args['timeout']) if ('timeout' in args and args['timeout'] != '') else None
     encoding = args['encodig'] if ('encodig' in args and args['encoding'] != '') else None
     shmsize = args['shmsize'] if ('shmsize' in args and args['shmsize'] != '')  else None
     cache_from = args['cacheFrom'].split(',') if ('cacheFrom' in args and args['cacheFrom'] != '')  else None

@@ -10,13 +10,17 @@ containers_bp = Blueprint("containers", __name__, static_folder="url_for('static
 
 @containers_bp.route('/creation')
 def showContainerCreation():
-    images = dockercli.images() 
+    images = dockercli.images(filters={"dangling": False}) 
     return render_template('containers/creator.html', images=images)
 
 @containers_bp.route('/create', methods=['POST'])
 def createContainer():
     data = request.json
     container = {}
+   
+    labels = data['labels'] if 'labels' in data else {}
+    if('author' not in labels):
+        labels['author'] = session[USERNAME]
 
     if('advancedCreation' in data):
         if(not data['run']):
@@ -32,7 +36,7 @@ def createContainer():
                     entrypoint = data['entrypoint'] if 'entrypoint' in data else None,
                     working_dir = data['working_dir'] if 'working_dir' in data else None,
                     restart_policy = data['restart_policy'] if 'restart_policy' in data else None,
-                    labels = data['labels'] if 'labels' in data else None,
+                    labels = labels,
                     environment = data['environment'] if 'environment' in data else None,
                     detach = data['detach'] if 'detach' in data else None,
                     auto_remove = data['auto_remove'] if 'auto_remove' in data else None,
@@ -123,7 +127,7 @@ def createContainer():
                     entrypoint = data['entrypoint'] if 'entrypoint' in data else None,
                     working_dir = data['working_dir'] if 'working_dir' in data else None,
                     restart_policy = data['restart_policy'] if 'restart_policy' in data else None,
-                    labels = data['labels'] if 'labels' in data else None,
+                    labels = labels,
                     environment = data['environment'] if 'environment' in data else None,
                     detach = data['detach'] if 'detach' in data else None,
                     auto_remove = data['auto_remove'] if 'auto_remove' in data else None,
@@ -216,7 +220,7 @@ def createContainer():
         command = data['command'] if 'command' in data else None
 
         try:
-            container = client.containers.create(image=data['image'], name=data['name'], ports=ports, command=command, tty=data['tty'], volumes=volume)
+            container = client.containers.create(image=data['image'], name=data['name'], ports=ports, command=command, tty=data['tty'], volumes=volume, labels=labels)
         except docker.errors.APIError as err:
             return { 'error': str(err) }
         except docker.errors.ImageNotFount as img_err:
@@ -248,13 +252,15 @@ def deleteContainer():
 
     try:
         container = client.containers.get(str(container))
+        if(container.status in ['running', 'paused', 'restarting']):
+            return { 'error': 'Cannot delete container try stopping it first' }
         containerDb = Container.query.get(container.id)
         db.session.delete(containerDb)
         
-        usercontainer = UsersContainers.query.filter_by(user_id=session[USERID], container_id=container.id).first()
+        usercontainer = UsersContainers.query.filter_by(container_id=container.id).first()
         db.session.delete(usercontainer)
         db.session.commit()
-        container.remove(v=volumes, link=links, force=force)
+        container.remove(v=volumes, force=force)
 
     except docker.errors.ImageNotFound as e: 
         print('error: ', e)

@@ -1,3 +1,4 @@
+
 // currentFilter defines which containers are listed
 // by state.
 var currentFilter = 'all';
@@ -27,49 +28,53 @@ function triggerContainerAction(id, action) {
             console.log('error: ', error);
             showAlert('An error occurred trying to make a request, check console for more info.', 'danger');
         });
+
+    showAlert('Executing action...', 'info');
 }
 
-function goToDetailsOf(containerName) {
+function goToDetailsOfContainer(containerName) {
     localStorage.setItem('container', containerName.substr(1, containerName.length));
     location.href = '/containers/details';
 }
 
 function goToDetailsOfImage(image) {
-    localStorage.setItem('image', image);
-    location.href = '/images/details';
+    let params = { 'id': image };
+    let reqObj = {
+        'type': 'POST',
+        'url': `/images/get`,
+        'isAsync': true,
+        'params': JSON.stringify(params),
+        'requestHeaders': { 
+            'Content-Type': 'application/json' 
+        }
+    };
+
+    sendRequest(reqObj, null,
+        (response) => {
+            let res = JSON.parse(response.srcElement.response);
+            if('error' in res) {
+                showAlert('An error occurred fetching image name, check console logs.', 'danger');
+                console.log('error: ', res['error']);
+            }
+            else { 
+                localStorage.setItem('image', res['image']);
+                location.href = '/images/details';
+            }
+        },
+        (error) => {
+            console.log('error: ', error);
+            showAlert('An error occurred trying to make a request, check console for more info.', 'danger');
+        });
+
 }
 
 var modalContentType = 'information';
-function changeContainerModalBody(contentType) {
-    if(contentType == 'information') {
-        $('#containerInformation').text('Container Information');
-        $('#containerInformation')[0].classList.toggle('text-muted');
-
-        $('#commitContainer').text('Commit container >');
-        $('#commitContainer')[0].classList.toggle('text-muted');
-    } else {
-        $('#containerInformation').text('< Container Information');
-        $('#containerInformation')[0].classList.toggle('text-muted');
-
-        $('#commitContainer').text('Commit container');
-        $('#commitContainer')[0].classList.toggle('text-muted');
-    }
-    
-    // ModalBodyContainer Toggle for Info/Commit template display.
-    $('#mbContainerInfo')[0].classList.toggle('d-none');
-    $('#mbContainerCommit')[0].classList.toggle('d-none');
-    
-    // Modal Footer Container Toggle for Info/Commit template display.
-    $('#mfContainerAction')[0].classList.toggle('d-none');
-    $('#mfContainerCommit')[0].classList.toggle('d-none');
-    modalContentType = contentType;
-}
 
 function getContainerModalInfo(container) {
     let body = `
     <div id="mbContainerInfo">
     <div class="row"><strong>ID: ${container.Id}</strong><p id="container-id"></p></div>
-    <div class="row"><strong>Name: ${container.Names}</strong><p id="container-name"></p></div>
+    <div class="row"><strong>Name: ${container.Names}</strong><p href="#" id="container-name"></p></div>
     <div class="row"><strong>IP/Ports: ${portsArrayToString(container.Ports)}</strong><p id="container-ipport"></p></div>
     <div class="row"><strong>State: ${container.State}</strong><p id="container-state"></p></div>
     <div class="row"><strong>Status: ${container.Status}</strong><p id="container-status"></p></div>
@@ -79,83 +84,22 @@ function getContainerModalInfo(container) {
     return body;
 }
 
-var commitConfs = {};
-
-function getContainerCommitTemplate(containerid) {
-    let body = `
-    <div id="mbContainerCommit" class="d-none">
-    <div><input id="tag" type="text" class="m-1 form-control" placeholder="Commit tag"></div>
-    <div><input id="repository" type="text" class="m-1 form-control" placeholder="Repository tag"></div>
-    <div><textarea id="message" class="m-1 form-control" placeholder="Message" rows="4" columns="50"></textarea></div>
-    <div><input id="author" type="text" class="m-1 form-control" placeholder="Default user name"></div>
-    <div><textarea id="changes" class="m-1 form-control" placeholder="Changes" rows="4" columns="50"></textarea></div>
-    <div>`;
-    // COMMIT CONFIGS ARE PENDING.
-    // body += getDynamicDictTemplate(commitConfs,);
-    body += `</div></div>`;
-
-    return body;
-}
-
-function commitContainer(id) {
-    let params = {
-        'id': id,
-        'tag': $('#tag').val(),
-        'repository': $('#repository').val(),
-        'message': $('#message').val(),
-        'author': $('#author').val(),
-        'changes': $('#changes').val() ,
-        'conf': commitConfs
-    };
-
-    let reqObj = {
-        'type': 'POST',
-        'url': `/containers/commit`,
-        'isAsync': true,
-        'params': JSON.stringify(params),
-        'requestHeaders': { 'Content-Type': 'application/json' }
-    };
-
-    sendRequest(reqObj, null,
-        (response) => {
-            let res = JSON.parse(response.srcElement.response);
-            if('error' in res) {
-                showAlert('An error ocurred obtaining containers, check console logs.', 'danger');
-                console.log('error: ', res['error']);
-            }
-            else {
-                showAlert('Container new image successfully commited!', 'success');
-                console.log('Commit Response: ', res);
-            }
-        },
-        (error) => {
-            console.log('error: ', error);
-            showAlert('An error occurred trying to make a request, check console for more info.', 'danger');
-        });
-}
-
 function showContainerModal(container) {
     let state = container.State;
     let id = container.Id;
 
     let title = 'Container action';
- 
-    let body = `
-    <div class="mb-2 d-flex align-items-start justify-content-between">
-    <a id="containerInformation" href="#" class="text-muted" onclick="changeContainerModalBody('information')">Container Information</a>
-    <a id="commitContainer" href="#" onclick="changeContainerModalBody('commit')">Commit Container &gt;</a></div>
-    <div id="bodyContent" class="container-fluid bg-light">`;
+
+    let body = `<div id="bodyContent" class="container-fluid bg-light">`;
 
     let containerInfo = getContainerModalInfo(container);
-    let commitTemplate = getContainerCommitTemplate(id);
- 
+
     body += containerInfo;
-    body += commitTemplate;
 
     let footer = `
         <div class="w-100 d-flex justify-content-between">
         <div class="d-flex flex-column">
-        <a class="d-flex" href="#" onclick="goToDetailsOf('${container.Names[0]}')">Container details</a>
+        <a class="d-flex" href="#" onclick="goToDetailsOfContainer('${container.Names[0]}')">Container details</a>
         </div>`;
     footer += `
         <div id="mfContainerCommit" class="d-none">
@@ -217,17 +161,16 @@ function buildContainerTableRow(container, index) {
     else if(state == 'paused') color = 'info';
     else if(state == 'stopped') color = 'danger';
     else if(state == 'restarting') color = 'warning';
-    let template = `<tr class="table-${color}">
-      <th scope="row">${index}</th>
-      <td scope="row"><span class="icon" onclick="showDeleteContainerModal('${container.Names[0]}')" data-feather="trash"></span></td>
-      <td>${container.Id}</td>
-      <td>${container.Names[0]}</td>
-      <td>${container.State}</td>
-      <td>${ipport == ""?"NONE":ipport}</td>
-      <td><a href="#" id="${container.Id}" class="popover-item" onclick="goToDetailsOfImage('${container.Image}')" 
-      data-placement="bottom" data-toggle="popover" title="Image Info" data-content="ID: 
-      ${container.ImageID}">${container.Image}</a></td>
-      <td><a href="#" onclick="showContainerDetails('${container.Id}')">More</a></td>
+    let template = `<tr class="table-${color} d-flex">
+      <th class="col-s-2" scope="row">${index}</th>
+      <td class="col-s-2" scope="row"><span class="icon" onclick="showDeleteContainerModal('${container.Names[0]}')" data-feather="trash"></span></td>
+      <td class="col-3 text-truncate">${container.Id}</td>
+      <td class="col-2"><a href="#" id="${container.Names[0]}" onclick="goToDetailsOfContainer('${container.Names[0]}')">${container.Names[0]}</a></td>
+      <td class="col-1">${container.State}</td>
+      <td class="col-2">${ipport == ""?"NONE":ipport}</td>
+      <td class="col-2">${container.Labels['author']}</td>
+      <td class="col-3"><a href="#" id="${container.Id}" onclick="goToDetailsOfImage('${container.Image}')">${container.Image}</a></td>
+      <td class="col-1"><a href="#" onclick="showContainerDetails('${container.Id}')">More</a></td>
     </tr>`
     return template;
 }
@@ -235,7 +178,7 @@ function buildContainerTableRow(container, index) {
 function loadContainers(containers, filter) {
     clearContainersPanel();
     let filtered;
-   
+
     if(containers.length == 0) {
         // adds a html element to say that there's no containers
         // instead of showing the table of containers.
@@ -339,8 +282,7 @@ function deleteContainer(container) {
         (response) => {
             let res = JSON.parse(response.srcElement.response);
             if('error' in res) {
-                showAlert('An error ocurred deleting the container, check server logs.', 'danger');
-                console.log('error: ', res['error']);
+                showAlert(res['error'], 'danger');
             }
             else {
                 showAlert('Container deleted successfully!', 'success');
@@ -380,5 +322,4 @@ function showDeleteContainerModal(container) {
 $('.site-content').ready((e) => {
     refresh();
 });
-
 

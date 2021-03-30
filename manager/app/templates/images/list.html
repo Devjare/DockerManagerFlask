@@ -2,7 +2,6 @@
 block content %}
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4 py-1 position-relative">
     <div class="site-content">
-        <!-- CONTAINER LIST PANEL *** START ***-->
         <div class="content m-0">
             <div class="row titlebar p-3">
                 <div class="d-flex p-2 justify-content-between align-items-center">
@@ -24,16 +23,16 @@ block content %}
                     </div>
                     <div id="imagesList" class="images-list images">
                         <div class="list-group">
-                            <table class="table table-bordered table-stripped table-responsive table-hover">
+                            <table class="table table-bordered table-stripped table-responsive-sm table-hover m-0 h-100">
                                 <thead class="thead-dark">
                                     <tr class="d-flex">
                                         <th class="col-s-1" scope="col">#</th>
-                                        <th class="col-s-1" scope="col">DEL</th>
+                                        <th class="col-s-1" scope="col">RM</th>
                                         <th class="col-5" scope="col">Image ID</th>
                                         <th class="col-3" scope="col">Image Tags</th>
                                         <th class="col-1" scope="col">Created</th>
                                         <th class="col-1" scope="col">Size</th>
-                                        <th class="col-3" scope="col">More</th>
+                                        <th class="col-sm-1" scope="col">More</th>
                                     </tr>
                                 </thead>
                                 <tbody id="images-table" class="table-body">
@@ -43,7 +42,6 @@ block content %}
                     </div>
                 </div>
                 <div id="tabs" class="my-0 px-1 d-flex justify-content-between align-items-center">
-                    <!-- REVIEW: CONSIDER USING DYNAMIC TABS FOR MULTIPLE PRIVATE REPOSITORIES -->
                     <h4>Repository</h4>
                     <div class="options">
                         <div class="form-group mx-3 mt-3">
@@ -54,17 +52,13 @@ block content %}
                         </div>
                         <div class="searchbar">
                             <input oninput="searchRegistry()" type="text" id="searchRegistryText" class="form-control" placeholder="Search" autocomplete="off">
-                        </div>
-                        <div class="view-format">
-                            <span onclick="refresh()" data-feather="refresh-cw"></span>
+                            <input id="searchDockerhubText" onkeyup="searchDockerhub(event)" type="text" class="form-control" placeholder="Search" autocomplete="off">
                         </div>
                     </div>
                 </div>
                 <div class="repositories">
                     <div id="rep-1-tab">
-                        <!-- TODO: ADD PULL FROM REGISTRY(DOCKERHUB) AND PUSH TO LOCAL REGISTRY ACTION -->
-                        <!-- CONTENT EXAMPLE, CHANGE WITH JS-->
-                        <table class="table table-bordered table-stripped table-responsive-sm table-hover">
+                        <table class="table table-bordered table-stripped table-responsive-sm table-hover m-0 h-100">
                             <thead class="thead-dark">
                                 <tr class="d-flex">
                                     <th class="col-s-2" scope="col">#</th>
@@ -78,7 +72,7 @@ block content %}
                         </table>
                     </div>
                     <div id="rep-dockerhub">
-                        <table class="table table-bordered table-stripped table-responsive-sm table-hover">
+                        <table class="table table-bordered table-stripped table-responsive-sm table-hover m-0 h-100">
                             <thead class="thead-dark">
                                 <tr class="d-flex">
                                     <th class="col-s-2" scope="col">#</th>
@@ -98,7 +92,6 @@ block content %}
             </div>
 
         </div>
-        <!-- CONTAINER LIST PANEL ***  END  ***-->
     </div>
     <script src="{{url_for('static', filename='js/images/list.js')}}"></script>
 </main>

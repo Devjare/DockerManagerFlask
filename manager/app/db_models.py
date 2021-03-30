@@ -6,12 +6,14 @@ class User(db.Model):
     uid = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(255))
     password = db.Column(db.String(255))
+    role = db.Column(db.Integer)
 
     containers = db.relationship('Container', secondary='users_containers')
 
-    def __init__(self, username, password):
+    def __init__(self, username, password, role):
         self.username = username
         self.password = password
+        self.role = role
 
 class Container(db.Model):
     __tablename__ = 'containers'

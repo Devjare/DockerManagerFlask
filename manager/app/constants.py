@@ -3,6 +3,7 @@ import os
 USERCONTAINERS = 'usercontainers'
 USERNAME = 'username'
 USERID = 'userid'
+USERROLE = 'userrole'
 
 if(os.environ["DOCKER_HOST_IP"]):
     LOCALIP = os.environ["DOCKER_HOST_IP"]
