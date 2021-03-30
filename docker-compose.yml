@@ -4,8 +4,6 @@ services:
         build: ./manager
         container_name: production_manager
         restart: always
-        volumes:
-            - ./manager:/manager/
         ports:
             - 46000:46000
         environment:
