@@ -220,7 +220,7 @@ def createContainer():
         command = data['command'] if 'command' in data else None
 
         try:
-            container = client.containers.create(image=data['image'], name=data['name'], ports=ports, command=command, tty=data['tty'], volumes=volume)
+            container = client.containers.create(image=data['image'], name=data['name'], ports=ports, command=command, tty=data['tty'], volumes=volume, labels=labels)
         except docker.errors.APIError as err:
             return { 'error': str(err) }
         except docker.errors.ImageNotFount as img_err:
