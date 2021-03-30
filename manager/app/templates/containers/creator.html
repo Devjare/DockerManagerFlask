@@ -1,15 +1,14 @@
 {% extends 'base.html' %} {% block title %} Container Creation {% endblock %} {% block head %} {{ super() }} {% endblock %} {%
 block content %}
-<link href="{{url_for('static', filename='css/details_page.css')}}" rel="stylesheet"> 
+<link href="{{url_for('static', filename='css/creator.css')}}" rel="stylesheet"> 
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4 py-1 position-relative">
     <div class="row titlebar p-3">
         <div class="d-flex p-2 justify-content-between align-items-center">
             <h4 class="m-2">Container Creator Tool</h4>
         </div>
     </div>
-    <!-- CONTAINER CREATION TOOL TEMPLATE -->
     <div class="page d-flex flex-column p-3">
-        <div class="page-body d-flex flex-column p-2">
+        <div class="d-flex flex-column p-2">
             <div class="page-body-title form-group">
                 <label for="selectImage">Select base image</label>
                 <select id="selectImage" class="form-control">

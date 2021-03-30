@@ -27,7 +27,16 @@ def create_app(config_filename):
     def main():
         return render_template('index.html', username=session[USERNAME])
 
-
     db.init_app(app)
+    @app.before_first_request
+    def before_first_request():
+        from db_models import User
+        try:
+            default_admin = User('admin', 'admin', 2) 
+            db.session.add(default_admin)
+            db.session.commit()
+        except Exception as ex:
+            print('Admin already created, procceding normally.')
 
     return app
+
