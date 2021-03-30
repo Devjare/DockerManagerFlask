@@ -61,7 +61,7 @@ def authenticate(username, password):
                 session[USERROLE] = user.role
                 return True
             else:
-                return 'Incorret password.'
+                return 'Incorrect password.'
     
     return "User doesn't exist"
 
