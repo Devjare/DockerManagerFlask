@@ -111,9 +111,11 @@ def createContainer():
                 )
                 addContainerToUser(container.id)
             except docker.errors.APIError as api_error:
-                return { 'error': str(api_error) }
+                print(str(api_error))
+                return { 'error': getExplicitErrorMessage(str(api_error)) }
             except docker.errors.ImageNotFound as error:
-                return { 'error': str(error) }
+                print(str(error))
+                return { 'error': getExplicitErrorMessage(str(error)) }
         else:        
             try:
                 container = client.containers.create(
@@ -202,9 +204,11 @@ def createContainer():
                  )
                 addContainerToUser(container.id)
             except docker.errors.APIError as api_error:
-                return { 'error': str(api_error) }
+                print(str(api_error))
+                return { 'error': getExplicitErrorMessage(str(api_error)) }
             except docker.errors.ImageNotFound as error:
-                return { 'error': str(error) }
+                print(str(error))
+                return { 'error': getExplicitErrorMessage(str(error)) }
     else:
         volumeData = data['volume'].split(':') if 'volume' in data else None
         volume = {}
@@ -221,10 +225,12 @@ def createContainer():
 
         try:
             container = client.containers.create(image=data['image'], name=data['name'], ports=ports, command=command, tty=data['tty'], volumes=volume, labels=labels)
-        except docker.errors.APIError as err:
-            return { 'error': str(err) }
-        except docker.errors.ImageNotFount as img_err:
-            return { 'error': str(img_err) }
+        except docker.errors.APIError as api_error:
+            print(str(api_error))
+            return { 'error': getExplicitErrorMessage(str(api_error)) }
+        except docker.errors.ImageNotFound as error:
+            print(str(error))
+            return { 'error': getExplicitErrorMessage(str(error)) }
 
         addContainerToUser(container.id)
    
@@ -385,3 +391,8 @@ def removeContainerFromDB(id):
     usercontainer = UsersContainers.query.filter_by(container_id=id).first()
     db.session.delete(usercontainer)
     db.session.commit()
+
+def getExplicitErrorMessage(msg):
+    start = msg.find('"') + 1
+    end = msg.find('"', start)
+    return msg[start:end]

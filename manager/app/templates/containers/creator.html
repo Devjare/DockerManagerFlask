@@ -137,8 +137,8 @@ block content %}
                             <input autocomplete="off" id="cpuPercent" type="number" placeholder="CPU Percent(Windows Only)" class="form-control" onchange="checkValidity(event)">
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
-                            <label for="cpuPeriod">CPU Perid:</label>
-                            <input autocomplete="off" id="cpuPeriod" type="number" placeholder="CPU Period" class="form-control">
+                            <label for="cpuPeriod">CPU Period:</label>
+                            <input autocomplete="off" id="cpuPeriod" type="number" placeholder="1ms(1000) - 1s(1000000)." class="form-control" min="1000" max="1000000" oninput="setCustomValidity('')">
                         </div>
                         <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
                             <label for="cpuQuota">CPU Quota:</label>
