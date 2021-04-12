@@ -13,8 +13,6 @@
                     <div id="dockerfile-content" class="bg-light w-100">
                         <div class="tabs bg-dark shadow-sm d-flex w-100 p-0 m-0">
                             <input type="button" id="btnToggleFile" class="btn btn-sm rounded-0 btn-primary" value="Upload file">
-                            <!-- for now only tarball files image building works -->
-                            <!-- <input type="button" id="btnTogglePath" class="btn btn-sm rounded-0 bg-light" value="Use path"> -->
                         </div>
                         <div class="tabs-content p-2">
                             <div id="file-tab" class="">
@@ -22,11 +20,6 @@
                                     <label for="fileInput">File input...</label>
                                     <input type="file" class="form-control-file" id="fileInput" name="file" accept=".tar.gz,.zip">
                                 </div>
-                                <!--
-                                <div class="input-group-sm m-2 d-flex align-items-center p-2 w-25 bg-light shadow-sm">
-                                     <input id="chkCustomContext" class="mr-1" name="chkCustomContext" type="checkbox"> 
-                                    <label class="m-0 p-0" for="chkCustomContext">Custom context?</label>
-                                </div>-->
                                 <input id="customContext" name="customContext" class="form-control d-none" type="text" placeholder="Custom context path(Optional)">
                             </div>
                             <div id="path-tab" class="d-none">

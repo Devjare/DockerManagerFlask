@@ -10,6 +10,6 @@ services:
             - 46000:46000
         environment:
             - PORT=46000
-            - DOCKER_HOST_IP=192.168.1.198:2375
-            - PRIVATE_REGISTRY=192.168.1.198:5000
+            - DOCKER_HOST_IP=192.168.1.72:2375
+            - PRIVATE_REGISTRY=192.168.1.72:5000
         tty: true
