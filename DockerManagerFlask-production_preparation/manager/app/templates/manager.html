@@ -1,0 +1,147 @@
+<html>
+    <head>
+        <title>
+            Container Manager
+        </title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="css/styles.css">
+    </head>
+    <body>
+        <nav class="navbar navbar-dark bg-dark">
+            <a class="navbar-brand" href="#">Navbar</a>
+        </nav>
+        <div class="site-content">
+            <div class="side-bar">
+                <li class="listoptions">
+                    <ul id="ul-home" class="list-element d-flex justify-content-center text-white p-2">Home</ul>
+                    <ul id="ul-containers" class="list-element d-flex justify-content-center text-white p-2">Containers</ul>
+                    <ul id="ul-images" class="list-element d-flex justify-content-center text-white p-2">Images</ul>
+                    <ul id="ul-builder" class="list-element d-flex justify-content-center text-white p-2">Builder</ul>
+                </li>
+                <div class="logout-button bg-danger d-flex justify-content-center align-items-center">
+                    <img src="img/logouticon.png" alt="" class="imgLogout" width="25px" height="25px">
+                    <button id="btnLogout">Logout</button>
+                </div>
+            </div>
+            <!-- CONTAINER LIST PANEL *** START ***-->
+            <div class="content m-0 p-5">
+                <div class="row titlebar p-3">
+                    <div class="d-flex p-2 justify-contente-between align-items-center">
+                        <h4 class="m-2">Container List</h4>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filter by</button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="#">Running</a>
+                                <a class="dropdown-item" href="#">Stopped/Paused</a>
+                                <a class="dropdown-item" href="#">Created</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="options">
+                        <div class="searchbar">
+                            <input type="text" id="searchText" placeholder="Search">
+                        </div>
+                        <div class="view-format">
+                            <img src="img/gridviewicon.png" alt="" id="vgrid" width="20px" height="20px">
+                            <img src="img/listicon.png" alt="" id="vlist" width="20px" height="20px">
+                        </div>
+                    </div>
+                </div>
+                <div class="row containers">
+
+                    <div class="card-columns">
+                        <div class="card">
+                            <div class="card-header">
+                                Container Name
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">Card title</h5>
+                                <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                                <button class="btn btn-success">Launch</button>
+                            </div>
+                            <div class="card-footer">
+                                <small class="text-muted">Last updated 3 mins ago</small>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header bg-success text-white">
+                                Container Name (Running)
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">Card title</h5>
+                                <p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
+                                <button class="btn btn-danger">Stop</button>
+                            </div>
+                            <div class="card-footer">
+                                <small class="text-muted">Last updated 3 mins ago</small>
+                            </div>
+                        </div>
+
+
+                        <div class="card">
+                            <div class="card-header bg-danger text-white">
+                                Container name(Stopped)
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">Card title</h5>
+                                <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.</p>
+                                <button class="btn btn-primary">Start</button>
+                            </div>
+                            <div class="card-footer">
+                                <small class="text-muted">Last updated 3 mins ago</small>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <img class="card-img-top" src="..." alt="Card image cap">
+                            <div class="card-body">
+                                <h5 class="card-title">Card title</h5>
+                                <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.</p>
+                            </div>
+                            <div class="card-footer">
+                                <small class="text-muted">Last updated 3 mins ago</small>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <img class="card-img-top" src="..." alt="Card image cap">
+                            <div class="card-body">
+                                <h5 class="card-title">Card title</h5>
+                                <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.</p>
+                            </div>
+                            <div class="card-footer">
+                                <small class="text-muted">Last updated 3 mins ago</small>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <img class="card-img-top" src="..." alt="Card image cap">
+                            <div class="card-body">
+                                <h5 class="card-title">Card title</h5>
+                                <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.</p>
+                            </div>
+                            <div class="card-footer">
+                                <small class="text-muted">Last updated 3 mins ago</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- CONTAINER LIST PANEL ***  END  ***-->
+        </div>
+        <div class="right-panel">
+            <div class="container">
+                <div class="row">
+                    <h3 id="rp-title">Launch Detalis</h3>	
+                </div>
+                <div class="row">
+                    <div class="line"></div>
+                </div>
+            </div>
+        </div>
+
+        <script src="js/jquery.min.js"></script>
+        <script src="js/popper.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/main.js"></script>
+    </body>
+</html>

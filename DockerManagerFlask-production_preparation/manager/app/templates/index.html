@@ -1,0 +1,48 @@
+{% extends 'base.html' %} {% block title %} Panel de control {% endblock %} {% block head %} {{ super() }}
+{% endblock %} {% block content %}
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Control panel</h1>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <h3>Welcome, what are you goning to do today?</h3>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-6">
+
+                            <div class="card text-white bg-info mb-3 text-center" style="max-width: 18rem;">
+                                <div class="card-body">
+                                    <h5 class="card-title">Containers</h5>
+                                    <p class="card-text">Shows a container list</p>
+                                    <a href="/containers" class="btn btn-dark">Open</a>
+                                </div>
+                            </div>
+
+                            <div class="card text-white bg-info mb-3 text-center" style="max-width: 18rem;">
+                                <!--<div class="card-header">Header</div>-->
+                                <div class="card-body">
+                                    <h5 class="card-title">Images</h5>
+                                    <p class="card-text">Shows a image list</p>
+                                    <a href="/images" class="btn btn-dark">Open</a>
+                                </div>
+                            </div>
+
+                                                                </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+</div>
+</div>
+{% endblock %}
+{% block footer %} {{ super() }} {% endblock %}

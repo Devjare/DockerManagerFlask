@@ -2,11 +2,12 @@ version: "2"
 services: 
     app:
         build: ./manager
+        container_name: production_manager
         restart: always
+        volumes:
+            - ./manager:/manager/
         ports:
             - 46000:46000
-        volumes:
-            - ./manager/:/manager/
         environment:
             - PORT=46000
             - DOCKER_HOST_IP=192.168.1.198:2375
