@@ -1,0 +1,147 @@
+{% extends 'base.html' %} {% block title %} Container Details {% endblock %} {% block head %} {{ super() }} {% endblock %} {%
+block content %}
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4 py-1 position-relative">
+    <div class="site-content d-flex flex-column">
+        <div class="row titlebar p-3">
+            <div class="d-flex p-2 justify-content-between align-items-center">
+                <h4 class="m-2">Container Details</h4>
+            </div>
+        </div>
+        <div class="d-flex flex-column justify-content-start bg-light p-2 overflow-auto">
+            <div class="d-flex justify-content-between p-2">
+                <div class="d-flex justify-content-center w-50 p-2">
+                    <select id="selectContainer" class="form-control w-100"></select>
+                </div>
+                <div class="d-flex justify-content-end py-2 px-4">
+                    <h3 id="status" class="font-weight-bold"></h3>
+                </div>
+            </div>
+            <div class="d-flex">
+                <div class="d-flex flex-wrap p-1">
+                    <div class="d-flex flex-wrap">
+                        <div class="d-flex flex-column px-1 m-2">
+                            <h5>Image Id:</h5>
+                            <p class="p-0 m-0 text-muted" id="imageId"></p>
+                        </div>
+                        <div class="d-flex px-1 flex-column m-2">
+                            <h5>Id: </h5>
+                            <p class="p-0 m-0 text-muted" id="containerId"></p>
+                        </div>
+                        <div class="d-flex px-1 flex-column m-2">
+                            <h5>Created at:</h5>
+                            <p class="p-0 m-0 text-muted" id="createdAt"></p>
+                        </div>
+                        <div class="d-flex flex-column m-2">
+                            <h5>Started at:</h5>
+                            <p class="p-0 m-0 text-muted" id="startedAt"></p>
+                        </div>
+                        <div class="d-flex flex-column m-2">
+                            <h5>Finished at:</h5>
+                            <p class="p-0 m-0 text-muted" id="finishedAt"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-options d-flex flex-wrap pb-3">
+            <!-- BASICS CARD -->
+            <div class="card basics w-100">
+                <div class="card-header d-flex justify-content-between align-items-center" onclick="collapseCard(event)">
+                    <strong>Basics</strong>
+                    <span data-feather="chevron-down"></span>
+                </div>
+                <div class="card-body p-2 d-flex flex-wrap">
+                    <table id="basics-table" class="table table-sm table-bordered table-stripped table-hover m-1">
+                        <thead class="thead-dark">
+                            <tr class="d-flex">
+                                <th class="col-4">Property</th>
+                                <th class="col-8">Value</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- HOST CONFIG CARD -->
+            <div class="card hostconfig w-100">
+                <div class="card-header d-flex justify-content-between align-items-center" onclick="collapseCard(event)">
+                    <strong>Host Config</strong>
+                    <span data-feather="chevron-down"></span>
+                </div>
+                <div class="card-body p-2 d-flex flex-wrap">
+                    <table id="hostconfig-table" class="table table-sm table-bordered table-stripped table-hover m-1">
+                        <thead class="thead-dark">
+                            <tr class="d-flex">
+                                <th class="col-4">Property</th>
+                                <th class="col-8">Value</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- CONFIG CARD -->
+            <div class="card config w-100">
+                <div class="card-header d-flex justify-content-between align-items-center" onclick="collapseCard(event)">
+                    <strong>Config</strong>
+                    <span data-feather="chevron-down"></span>
+                </div>
+                <div class="card-body p-2 d-flex flex-wrap">
+                    <table id="config-table" class="table table-sm table-bordered table-stripped table-hover m-1">
+                        <thead class="thead-dark">
+                            <tr class="d-flex">
+                                <th class="col-4">Property</th>
+                                <th class="col-8">Value</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- GRAPH DRIVER CARD -->
+            <div class="card graph-driver w-100">
+                <div class="card-header d-flex justify-content-between align-items-center" onclick="collapseCard(event)">
+                    <strong>Graph Driver</strong>
+                    <span data-feather="chevron-down"></span>
+                </div>
+                <div class="card-body p-2 d-flex flex-wrap">
+                    <table id="graphdriver-table" class="table table-sm table-bordered table-stripped table-hover m-1">
+                        <thead class="thead-dark">
+                            <tr class="d-flex">
+                                <th class="col-4">Property</th>
+                                <th class="col-8">Value</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- NETWORK CONFIG CARD -->
+            <div class="card network-settings w-100">
+                <div class="card-header d-flex justify-content-between align-items-center" onclick="collapseCard(event)">
+                    <strong>Network Settings</strong>
+                    <span data-feather="chevron-down"></span>
+                </div>
+                <div class="card-body p-2 d-flex flex-wrap">
+                    <table id="networksettings-table" class="table table-sm table-bordered table-stripped table-hover m-1">
+                        <thead class="thead-dark">
+                            <tr class="d-flex">
+                                <th class="col-4">Property</th>
+                                <th class="col-8">Value</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <script src="{{url_for('static', filename='js/containers/details.js')}}"></script>
+</main>
+{% endblock %} {% block footer %} {{ super() }} {% endblock %}
