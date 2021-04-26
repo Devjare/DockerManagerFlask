@@ -37,7 +37,7 @@ def create_app(config_filename):
     def before_first_request():
         from db_models import User
         try:
-            default_admin = User('admin', 'admin', 2) 
+            default_admin = User('admin', 'admin', 1) 
             db.session.add(default_admin)
             db.session.commit()
         except Exception as ex:
