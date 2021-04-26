@@ -2,3 +2,4 @@
 *.swp
 *.swo
 /manager/history/*
+/manager/app/db/manager.db
