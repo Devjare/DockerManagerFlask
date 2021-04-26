@@ -11,6 +11,11 @@ dockercli = docker.APIClient(base_url=LOCALIP)
 db = SQLAlchemy()
 ma = Marshmallow()
 
+def getExplicitErrorMessage(msg):
+    start = msg.find('"') + 1
+    end = msg.find('"', start)
+    return msg[start:end]
+
 def create_app(config_filename):
     from blueprints import images, containers, login, settings
     

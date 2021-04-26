@@ -162,7 +162,7 @@
         }
         function error(obj) {
             console.log('An error ocurred building image, error: ', decodeHtml(obj));
-            showAlert(`An error has ocurred building image, check logs.`, 'danger');
+            showAlert(`An error has ocurred building image, error: ${decodeHtml(obj)}.`, 'danger');
         }
     </script>
     {% endif %}

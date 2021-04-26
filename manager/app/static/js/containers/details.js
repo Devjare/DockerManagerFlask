@@ -25,7 +25,7 @@ function loadContainerInfo(container) {
         (response) => {
             let res = isJson(response.srcElement.response);
             if('error' in res) {
-                showAlert('An error occurred loading containers!', 'danger');
+                showAlert(`An error occurred loading containers, error: ${res.error}`, 'danger');
                 console.log('error: ', res['error']);
             }
             else {
@@ -110,7 +110,7 @@ function loadContainerInfo(container) {
         },
         (error) => { 
             console.log('error: ', error);
-            showAlert(`An error occurred, check console.`, 'danger');
+            showAlert(`An error occurred, error: ${error}.`, 'danger');
         });
 }
 
@@ -132,7 +132,7 @@ $('main').ready((e) => {
                 let res = JSON.parse(response.srcElement.response);
                 if('error' in res) {
                     console.log('error: ', res['error']);
-                    showAlert('An error ocurred obtaining containers, check server logs.', 'danger');
+                    showAlert(`An error ocurred obtaining containers, error: ${res.error}.`, 'danger');
                 }
                 else {
                     showAlert('Containers obtained successfully!, refreshing list!', 'success');
@@ -145,7 +145,7 @@ $('main').ready((e) => {
             },
             (error) => {
                 console.log('error: ', error);
-                showAlert('An error occurred trying to make a request, check console for more info.', 'danger');
+                showAlert(`An error occurred trying to make a request, error: ${error}.`, 'danger');
             });
     }
     if(localStorage['container']) {

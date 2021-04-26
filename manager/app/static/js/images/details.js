@@ -21,7 +21,7 @@ function loadImageInfo(image) {
     sendRequest(reqObj, null,
         (response) => {
             let res = JSON.parse(response.srcElement.response);
-            if('error' in res) showAlert('An error occurred loading image info!', 'danger');
+            if('error' in res) showAlert(`An error occurred loading image info, error: ${res.error}`, 'danger');
             else {
                 imageInfo = res.image;
 
@@ -54,7 +54,7 @@ function loadImageInfo(image) {
         },
         (error) => {
             console.log('error: ', error);
-            showAlert(`An error occurred, check console.`, 'danger');
+            showAlert(`An error occurred, ${error}.`, 'danger');
         });
 }
 
@@ -74,7 +74,7 @@ $('main').ready((e) => {
             (response) => {
                 let res = JSON.parse(response.srcElement.response);
                 if('error' in res) {
-                    showAlert('An error ocurred obtaining images, check server logs.', 'danger');
+                    showAlert(`An error ocurred obtaining images, ${res.error}.`, 'danger');
                     console.log('error: ', res['error']);
                 }
                 else {
@@ -88,7 +88,7 @@ $('main').ready((e) => {
             },
             (error) => {
                 console.log('error: ', error);
-                showAlert('An error occurred trying to make a request, check console for more info.', 'danger');
+                showAlert(`An error occurred trying to make a request, error: ${error}.`, 'danger');
             });
     }
 

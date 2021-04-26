@@ -96,8 +96,8 @@ function login() {
                 }
             }, 
             (error) => {
-                showAlert('Container failed to create', 'danger');
-                console.log('error for container creation: ', error);
+                showAlert(`An error ocurred, error: ${error}`, 'danger');
+                console.log('An error ocurred, error: ', error);
             });
     } else {
         showAlert(`Don't leave empty fields`, 'danger');

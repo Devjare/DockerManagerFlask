@@ -16,7 +16,7 @@ function triggerContainerAction(id, action) {
         (response) => {
             let res = JSON.parse(response.srcElement.response);
             if('error' in res) {
-                showAlert('An error occurred triggering container action, check console logs.', 'danger');
+                showAlert(`An error occurred triggering container action, error: ${res.error}.`, 'danger');
                 console.log('error: ', res['error']);
             }
             else { 
@@ -26,7 +26,7 @@ function triggerContainerAction(id, action) {
         },
         (error) => {
             console.log('error: ', error);
-            showAlert('An error occurred trying to make a request, check console for more info.', 'danger');
+            showAlert(`An error occurred trying to make a request, ${error}`, 'danger');
         });
 
     showAlert('Executing action...', 'info');
@@ -53,7 +53,7 @@ function goToDetailsOfImage(image) {
         (response) => {
             let res = JSON.parse(response.srcElement.response);
             if('error' in res) {
-                showAlert('An error occurred fetching image name, check console logs.', 'danger');
+                showAlert(`An error occurred fetching image name, error: ${res.error}.`, 'danger');
                 console.log('error: ', res['error']);
             }
             else { 
@@ -63,7 +63,7 @@ function goToDetailsOfImage(image) {
         },
         (error) => {
             console.log('error: ', error);
-            showAlert('An error occurred trying to make a request, check console for more info.', 'danger');
+            showAlert(`An error occurred trying to make a request, error: ${error}.`, 'danger');
         });
 
 }
@@ -211,7 +211,7 @@ function refresh() {
     sendRequest(reqObj, null,
         (response) => {
             let res = JSON.parse(response.srcElement.response);
-            if('error' in res) showAlert('An error ocurred obtaining containers, check server logs.', 'danger');
+            if('error' in res) showAlert(`An error ocurred obtaining containers, error: ${res.error}.`, 'danger');
             else {
                 showAlert('Containers obtained successfully!, refreshing list!', 'success');
                 containers = res['containers'];
@@ -225,7 +225,7 @@ function refresh() {
         },
         (error) => {
             console.log('error: ', error);
-            showAlert('An error occurred trying to make a request, check console for more info.', 'danger');
+            showAlert(`An error occurred trying to make a request, error: ${error}.`, 'danger');
         });
 }
 
@@ -282,7 +282,7 @@ function deleteContainer(container) {
         (response) => {
             let res = JSON.parse(response.srcElement.response);
             if('error' in res) {
-                showAlert(res['error'], 'danger');
+                showAlert(`Failed to delete container, error: ${res['error']}`, 'danger');
             }
             else {
                 showAlert('Container deleted successfully!', 'success');
@@ -291,7 +291,7 @@ function deleteContainer(container) {
         },
         (error) => {
             console.log('error: ', error);
-            showAlert('An error occurred trying to make a request, check console for more info.', 'danger');
+            showAlert(`An error occurred trying to make a request, error: ${error}.`, 'danger');
         });
 }
 

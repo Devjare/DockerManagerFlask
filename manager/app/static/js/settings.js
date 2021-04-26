@@ -32,7 +32,7 @@ function saveNewUsername(event) {
             }
         },
         (error) => { 
-            showAlert(`An error occurred, check console.`, 'danger');
+            showAlert(`An error occurred, error: ${error}.`, 'danger');
             console.log('error: ', error);
         });
 
@@ -76,7 +76,7 @@ function saveNewPassword(event) {
             }
         },
         (error) => { 
-            showAlert(`An error occurred, check console.`, 'danger');
+            showAlert(`An error occurred, error: ${error}.`, 'danger');
             console.log('error: ', error);
         });
     

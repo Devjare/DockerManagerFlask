@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, session, request, current_app
-from app import dockercli, client, db
+from app import dockercli, client, db, getExplicitErrorMessage
 from app.constants import USERID, USERCONTAINERS, USERNAME
 from app.db_models import UsersContainers, Container
 import requests
@@ -238,7 +238,7 @@ def createContainer():
         try:
             container.start()
         except docker.errors.APIError as err:
-            return { 'error': str(err) }
+            return { 'error': getExplicitErrorMessage(str(err)) }
     
     new_container = Container(container.id, container.name, container.image.id)
     db.session.add(new_container)
@@ -266,24 +266,24 @@ def deleteContainer():
 
     except docker.errors.ImageNotFound as e: 
         print('error: ', e)
-        return { 'error': str(e) }
+        return { 'error': getExplicitErrorMessage(str(e)) }
     except docker.errors.APIError as e: 
         print('error: ', e)
-        return { 'error': str(e) }
+        return { 'error': getExplicitErrorMessage(str(e)) }
     except Exception as e: 
         print('error: ', e)
-        return { 'error': str(e) }
+        return { 'error': getExplicitErrorMessage(str(e)) }
 
         container.remove(v=volumes, force=force)
     except docker.errors.ImageNotFound as inferr: 
         print('error: ', inferr)
-        return { 'error': str(inferr) }
+        return { 'error': getExplicitErrorMessage(str(inferr)) }
     except docker.errors.APIError as apierr: 
         print('error: ', apierr)
-        return { 'error': str(apierr) }
+        return { 'error': getExplicitErrorMessage(str(apierr)) }
     except Exception as err: 
         print('error: ', err)
-        return { 'error': str(err) }
+        return { 'error': getExplicitErrorMessage(str(err)) }
 
     current_containers = session[USERCONTAINERS]
     current_containers.remove(container.id)
@@ -303,7 +303,7 @@ def getContainers():
             containers = filter(lambda c: c['Id'] in session[USERCONTAINERS], containers) 
         except Exception as err:
             print('Exception while filtering containers: ', err)
-            return { 'error': 'An error ocurred, check server logs.' }
+            return { 'error': getExplicitErrorMessage(str(err)) }
     else:
         return { 'containers': [] }
 
@@ -324,7 +324,7 @@ def getContainerInfo(id):
         container = dockercli.inspect_container(id)
     except docker.errors.APIError as err:
         print('error: ', err)
-        return { "error": str(err) }
+        return { 'error': getExplicitErrorMessage(str(err)) }
     return {"container": container} 
 
 @containers_bp.route('/start/<id>')
@@ -333,7 +333,7 @@ def startContainer(id):
         dockercli.start(id)
     except docker.errors.APIError as err:
         print('error: ', err)
-        return { 'error': str(err) }
+        return { 'error': getExplicitErrorMessage(str(err)) }
     return { 'started': True }
 
 @containers_bp.route('/stop/<id>')
@@ -345,7 +345,7 @@ def stopContainer(id):
         dockercli.stop(id)
     except docker.errors.APIError as err:
         print('error: ', err)
-        return { 'error': str(err) }
+        return { 'error': getExplicitErrorMessage(str(err)) }
     return { 'stopped': True }
 
 @containers_bp.route('/restart/<id>')
@@ -354,7 +354,7 @@ def restartContainer(id):
         dockercli.restart(id)
     except docker.errors.APIError as err:
         print('error: ', err)
-        return { 'error': str(err) }
+        return { 'error': getExplicitErrorMessage(str(err)) }
     return { 'restarting': True }
 
 @containers_bp.route('/pause/<id>')
@@ -363,7 +363,7 @@ def pauseContainer(id):
         dockercli.pause(id)
     except docker.errors.APIError as err:
         print('error: ', err)
-        return { 'error': str(err) }
+        return { 'error': getExplicitErrorMessage(str(err)) }
     return { 'paused': True }
 
 @containers_bp.route('/unpause/<id>')
@@ -372,7 +372,7 @@ def unpauseContainer(id):
         dockercli.unpause(id)
     except docker.errors.APIError as err:
         print('error: ', err)
-        return { 'error': str(err) }
+        return { 'error': getExplicitErrorMessage(str(err)) }
     return { 'unpaused': True }
 
 def containerToJson(container):
@@ -391,8 +391,3 @@ def removeContainerFromDB(id):
     usercontainer = UsersContainers.query.filter_by(container_id=id).first()
     db.session.delete(usercontainer)
     db.session.commit()
-
-def getExplicitErrorMessage(msg):
-    start = msg.find('"') + 1
-    end = msg.find('"', start)
-    return msg[start:end]

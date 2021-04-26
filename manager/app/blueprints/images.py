@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for
-from app import dockercli, client
+from app import dockercli, client, getExplicitErrorMessage
 from app.constants import PRIVATE_REGISTRY 
 import requests
 import docker
@@ -36,7 +36,7 @@ def getTagsOf(repname, source):
             data = requests.get(url).json()
         except Exception as err:
             print('Error while getting tags(dockerhub): ', err)
-            return { 'error': str(err) }
+            return { 'error': getExplicitErrorMessage(str(err)) }
 
         for t in data:
             tags.append(t['name'])
@@ -46,7 +46,7 @@ def getTagsOf(repname, source):
             data = requests.get(url).json();
         except Exception as err:
             print('Error while getting tags(registry): ', err)
-            return { 'error': str(err) }
+            return { 'error': getExplicitErrorMessage(str(err)) }
         tags = data['tags']
     
     return tags
@@ -61,13 +61,13 @@ def getImagesFromRegistry():
             repositories = client.images.search(text)
         except docker.errors.APIError as err:
             print('Error while getting images from dockerhub: ', err)
-            return { 'error': str(err) }
+            return { 'error': getExplicitErrorMessage(str(err)) }
     else:
         try:
             repositories = requests.get(PRIVATE_REGISTRY + '/v2/_catalog').json()['repositories']
         except Exception as err:
             print('Error while getting images from registry: ', err)
-            return { 'error': str(err) }
+            return { 'error': getExplicitErrorMessage(str(err)) }
        
     repsWithTags = dict()
     for rep in repositories:
@@ -181,11 +181,11 @@ def buildImage():
         use_config_proxy = use_config_proxy)
     except docker.errors.BuildError as berr:
         print('Failed to build, error: ', berr)
-        error = { 'error': str(berr) }
+        error = { 'error': getExplicitErrorMessage(str(berr)) }
         return render_template('/images/builder.html', error=error)
     except docker.errors.APIError as apierr:
         print('Failed to build, error: ', apierr)
-        error = { 'error': str(apierr) }
+        error = { 'error': getExplicitErrorMessage(str(apierr)) }
         return render_template('/images/builder.html', error=error)
 
     return render_template('/images/list.html')

@@ -345,12 +345,12 @@ function createContainer() {
                 console.log('error: ', res.error);
             }
             else {
-                showAlert('Container created succesfully', 'success');
+                showAlert('Container created succesfully!', 'success');
                 location.href = '/containers';
             }
         }, 
         (error) => {
-            showAlert('Container failed to create', 'danger');
+            showAlert(`Container failed to create, error: ${error}.`, 'danger');
             console.log('error for container creation: ', error);
         });
 }

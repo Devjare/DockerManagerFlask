@@ -38,7 +38,7 @@ function loadAllImages() {
         (response) => {
             let res = JSON.parse(response.srcElement.response);
             if('error' in res) {
-                showAlert('An error occurred loading image info! Check console logs.', 'danger');
+                showAlert(`An error occurred loading image info, error: ${res.error}.`, 'danger');
                 console.log('Error loading image info: ', res['error']);
             }
             else {
@@ -52,7 +52,7 @@ function loadAllImages() {
         },
         (error) => { 
             console.log('error: ', error);
-            showAlert(`An error occurred, check console.`, 'danger');
+            showAlert(`An error occurred, ${error}.`, 'danger');
         });
 }
 
@@ -167,10 +167,9 @@ function createContainerFrom(imageid) {
 
             sendRequest(reqObj, null,
                 (response) => {
-                    console.log('create response: ', response);
                     let res = JSON.parse(response.srcElement.response);
                     if('error' in res) {
-                        showAlert('An error occurred creating container! Check console logs.', 'danger');
+                        showAlert(`An error occurred creating container, ${res.error}.`, 'danger');
                         console.log('error: ', res['error']);
                     }
                     else {
@@ -180,7 +179,7 @@ function createContainerFrom(imageid) {
                     }
                 },
                 (error) => {
-                    showAlert('An error occurred making a request!', 'danger');
+                    showAlert(`An error occurred making a request, ${error}`, 'danger');
                     console.log('error: ', error);
                 });
 
@@ -273,7 +272,7 @@ function deleteImage() {
         (response) => {
             let res = JSON.parse(response.srcElement.response);
             if('error' in res) {
-                showAlert('An error occurred deleting the image! Check console logs.', 'danger');
+                showAlert(`An error occurred deleting the image, error: ${res.error}.`, 'danger');
                 console.log('error: ', res['error']);
             }
             else {
@@ -283,7 +282,7 @@ function deleteImage() {
         },
         (error) => {
             console.log('error: ', error);
-            showAlert(`An error occurred, check console`, 'danger'); 
+            showAlert(`An error occurred, error: ${error}`, 'danger'); 
         });
 }
 
@@ -350,7 +349,7 @@ function pullImage(imageRep, source) {
         (response) => {
             let res = JSON.parse(response.srcElement.response);
             if('error' in res) { 
-                showAlert('An error occurred pulling image! Check console logs.', 'danger');
+                showAlert(`An error occurred pulling image, ${res.error}.`, 'danger');
                 console.log('Error while pulling image: ', res['error']);
             }
             else {
@@ -360,7 +359,7 @@ function pullImage(imageRep, source) {
         },
         (error) => {
             console.log('error: ', error);
-            showAlert(`An error occurred, check console.`, 'danger')
+            showAlert(`An error occurred, ${error}.`, 'danger')
         });
 
 }
@@ -419,7 +418,7 @@ function loadRegistry() {
         (response) => {
             let res = JSON.parse(response.srcElement.response);
             if('error' in res) {
-                showAlert('An error occurred loading registry! Check console logs.', 'danger');
+                showAlert(`An error occurred loading registry, error: ${res.error}.`, 'danger');
                 console.log('Error loading registry: ', res['error']);
             }
             else {
@@ -430,7 +429,7 @@ function loadRegistry() {
         },
         (error) => {
             console.log('error: ', error);
-            showAlert(`An error occurred, check console`, 'danger')
+            showAlert(`An error occurred, error: ${error}`, 'danger')
         });
 }
 
@@ -446,7 +445,7 @@ function searchOnDockerhub(text) {
         (response) => {
             let res = JSON.parse(response.srcElement.response);
             if('error' in res) {
-                showAlert('An error occurred trying to search on dockerhub! Check console logs.', 'danger');
+                showAlert(`An error occurred trying to search on dockerhub, error: ${res.error}.`, 'danger');
                 console.log('Error trying to search on dockerhub: ', res['error']); 
             }
             else {
@@ -457,7 +456,7 @@ function searchOnDockerhub(text) {
         },
         (error) => {
             console.log(`error:  ${error}`);
-            showAlert('An error occurred, check console.', 'danger')
+            showAlert(`An error occurred, error: ${error}`, 'danger')
         });    
     showAlert('Loading dockerhub repositories...', 'info')
 }

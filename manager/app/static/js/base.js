@@ -18,7 +18,7 @@ function logout() {
         (response) => { 
             let res = JSON.parse(response.srcElement.response);
             if('error' in res) {
-                showAlert('An error occurred trying to logout! Check logs.', 'danger');
+                showAlert(`An error occurred trying to logout, error: ${res.error}.`, 'danger');
                 console.log('error: ', res['error']);
             }
             else {
